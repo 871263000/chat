@@ -1,0 +1,20 @@
+# For MacOS:
+.DS_Store
+
+# For *nix:
+*.swp
+
+# For node
+**/node_modules
+
+# For smarty
+**/templates_c
+
+# For PHP
+**/vendor
+
+# For  Intellij IDE
+**/.idea
+
+# For  gizp
+**/.gz
