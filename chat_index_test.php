@@ -1,7 +1,6 @@
 <?php
 require_once('config.inc.php');
 require_once('lib/mesages.class.php');
-phpinfo();
 $uid = $_SESSION['staffid'];
 $oms_id = $_SESSION['oms_id'];
 $uid = 1;
