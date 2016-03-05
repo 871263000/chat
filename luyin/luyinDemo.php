@@ -45,10 +45,10 @@
             gRecorder = rec;
         });
      
-        ws = new WebSocket("ws://127.0.0.1:7272");
+        ws = new WebSocket("ws://127.0.0.1:8333");
      
         ws.onopen = function() {
-            console.log('握手成功');
+            console.log('握手成功,可以语音了。');
             // ws.send('user:' + a.value);
         };
      
@@ -79,19 +79,11 @@
                     audio.src = URL.createObjectURL(gRecorder.getBlob());
 
                     // var mesBlob = gRecorder.getBlob();
-                    // $.ajax({
-                    //     url: "erjinzhi.php",
-                    //     data: "data",
-                    //     type: "post",
-                    //     success: function (data){
-                    //         alert(2)
-                    //     }
-                    // })
                     ws.send(gRecorder.getBlob());
                     // ws.send(gRecorder.getBlob());
 
                     gRecorder.clear();
-                    gRecorder.stop();
+                    // gRecorder.stop();
                     door = false;
                 }
             }
@@ -247,7 +239,7 @@
     }
     window.URL = URL || window.URL || window.webkitURL;
     function receive(e) {
-        // alert(2)
+        alert(e)
         // audio.src = window.URL.createObjectURL(e);
     }
 </script>

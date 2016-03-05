@@ -1,5 +1,7 @@
 <?php
 require_once('config.inc.php');
-echo $_POST;
+header ( "Content-Type:'blob'") ;
+print_r($_POST);
+print_r($_FILES);
 // file_put_contents("/", $_POST);
  ?>

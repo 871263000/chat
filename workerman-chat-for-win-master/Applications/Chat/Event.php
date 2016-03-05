@@ -34,7 +34,10 @@ class Event
         // echo "client:{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} gateway:{$_SERVER['GATEWAY_ADDR']}:{$_SERVER['GATEWAY_PORT']}  client_id:$client_id session:".json_encode($_SESSION)." onMessage:".$message."\n";
 
         // 客户端传递的是json数据
+        // $save_path = 'file/audio.mp3';
+        // file_put_contents($save_path, $message);
         $adminUid = 1;
+        // return;
         $message = str_replace("script", "'script'" , $message);
         $message_data = json_decode($message, true);
         if(!$message_data)
@@ -80,7 +83,6 @@ class Event
                 }
                 // 获取房间内所有用户列表 
                 $clients_list = Gateway::getClientInfoByGroup($room_id);
-                print_r($clients_list);
                 if (!empty($clients_list)) {
                     foreach($clients_list as $tmp_client_id=>$item)
                     {

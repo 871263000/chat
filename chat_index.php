@@ -12,21 +12,6 @@ $mesNum = 0;
 $mes_type = 'message';
 //实例化消息
 $mes = new messageList($uid, $oms_id);
-//对话内容
-// if (isset($_GET['session_no'])) {
-//   $arrmesContent = $mes->groupMesContent();
-//   $mes_type = $mes->mes_type;
-//   $session_no = $mes->session_no;
-// } else {
-  //根据staffid 获得对话内容
-  // if (isset($_GET['staffid'])) {
-  //   $arrmesContent = $mes->MesContent();
-  //   $mes_type = $mes->mes_type;
-  //   $session_no = $mes->session_no;
-  // }
-// }
-//接受人名字
-// $accname = $mes->accname;
 //最近联系人
 if (isset($uid)) {
   $recentContact = $mes->recentContact();
@@ -147,22 +132,6 @@ $arrGroup = $mes->groupChatList();
                 $herder_img = '/chat/images/rens.png';
               }
               $cont_id = $value['mes_id'];
-              // if ($value['pid'] != $uid) {
-              //   $herder_img = $value['card_image'];
-              //   // $cont_name = $value['sender_name'];
-              //   $cont_id = $value['pid'];
-              //   if ($value['mestype'] !== "message") {
-              //     $herder_img = '/chat/images/rens.png';
-              //     $cont_name = $value['accept_name'];
-              //   }
-              // } else {
-              //   $herder_img = $value['to_uid_header_img'];
-              //   if ($value['mestype'] !== "message") {
-              //     $herder_img = '/chat/images/rens.png';
-              //   }
-              //   $cont_name = $value['accept_name'];
-                
-              // }
             ?>
             <?php if ($value['mestype'] !== "message") :?>
              <li class="session_no recent-hover" data-placement="right" group-name="<?php echo $value['accept_name']; ?>" delConId = <?php echo $value['id'];?>  session_no="<?php echo $value['session_no'];?>" mes_id="<?php echo $cont_id;?>" mestype ="<?php echo $value['mestype'];?>" ><span class="header-img"><img src="<?php echo $herder_img?>" alt=""></span><i><?php echo $contacts_name;?></i><span title = "从列表中删除" mestype="<?php echo $value['mestype'];?>" delConId = <?php echo $value['id'];?>  session="<?php echo $value['session_no'];?>" class="recent-close">&times;</span></li>
@@ -186,15 +155,6 @@ $arrGroup = $mes->groupChatList();
                               <div class="panel-body">
                                 <ul class="list-group">
                                 <!-- 群聊参加人 -->
-                               <!--  <?php if ($value['group_founder'] == $uid) {
-                                	$addClass = "group-people";
-                                } else {
-                                	$addClass = "";
-                                }
-                                ?>
-                                  <?php foreach ($value['group_people'] as $k => $val) :?>
-                                    <li class="db_chat_people chat_people <?php echo $addClass;?>" group-name="<?php echo $val['name'];?>" groupId="<?php echo $val['pid'];?>" mes_id="<?php echo $val['staffid'];?>"><span class="header-img"><img src="<?php echo $val['card_image'];?>" alt="<?php echo $val['name'];?>"></span><i><?php echo $val['name'];?></i><span class="delgroupman" groupId="<?php echo $val['pid'];?>" id="<?php echo $val['staffid'];?>">&times;</span></li>
-                                    <?php endforeach;?> -->
                                 </ul>
                               </div>
                           </div>
@@ -290,7 +250,7 @@ $arrGroup = $mes->groupChatList();
             <div class="onlinesSroll"></div>
           </div>
           <!-- 人员列表 -->
-           <ul class="list-group"> </ul>
+           <ul class="list-group oms_onlineNum"> </ul>
         </div>
         <div class="mes_con" style="display: none;">
             <div class="mes_tittle">
@@ -382,10 +342,6 @@ $arrGroup = $mes->groupChatList();
 </div>
 <!-- 上传进度 -->
 <div id="progressbar"><div class="progress-label"></div><div id="formatSpeed"></div></div><script type="text/javascript">
-//粘贴
-// $('.mes_inout').bind('paste', function (){
-// 	// alert(1);
-// })
 //客服
 $('.kefu-icon').hover(function (e){
 	$('.kefu-icon .kefu').animate({
@@ -407,13 +363,13 @@ $('.kefu').on('click', function (){
 //判断是不是移动端
 function IsPC()  
 {  
-           var userAgentInfo = navigator.userAgent;  
-           var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
-           var flag = true;  
-           for (var v = 0; v < Agents.length; v++) {  
-               if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
-           }  
-           return flag;  
+   var userAgentInfo = navigator.userAgent;  
+   var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
+   var flag = true;  
+   for (var v = 0; v < Agents.length; v++) {  
+       if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
+   }  
+   return flag;  
 } 
 //判断是不是移动端
 if (IsPC()) {
@@ -505,7 +461,7 @@ if (IsPC()) {
 };
 var onlineTopT = 0;
 var onlinesSrollT = 0;
-$(".list-group").swipe({
+$(".oms_onlineNum").swipe({
 	 swipeStatus:function(event, phase, direction, distance, duration,fingerCount){
 	 	if (phase == 'start') {
 	 		onlineTopT = onlineTop;
@@ -552,11 +508,11 @@ $('.group-man-show').click(function (e){
 //   return '您确定离开此页面吗？';
 // });
 //最近联系人删除
-$(document).on('mouseover', '.list-group .recent-hover', function (){
+$(document).on('mouseover', '.oms_onlineNum .recent-hover', function (){
   $('.recent-action').removeClass('recent-action');
   $(this).find('.recent-close').addClass('recent-action');
 })
-$(document).on('mouseout', '.list-group .recent-hover', function (){
+$(document).on('mouseout', '.oms_onlineNum .recent-hover', function (){
   $('.recent-action').removeClass('recent-action');
 })
 var mes_bottom = parseInt($('.mes_fixed').css('bottom'));

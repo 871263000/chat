@@ -1,10 +1,5 @@
 <?php 
-namespace Workerman\Protocols;
-
-
-/**
- * WebSocket 协议服务端解包和打包
- */
+namespace Protocols;
 class BinaryTransfer
 {
     // 协议头长度

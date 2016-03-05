@@ -79,6 +79,19 @@
                     audio.src = URL.createObjectURL(gRecorder.getBlob());
 
                     // var mesBlob = gRecorder.getBlob();
+                    var url = "erjinzhi.php";
+                    var xhr = new XMLHttpRequest();
+                     XMLHttpRequest.prototype.sendAsBinary = function(datastr) {
+                    　　function byteValue(x) {
+                    　　return x.charCodeAt(0) & 0xff;
+                    　　}
+                    　　var ords = Array.prototype.map.call(datastr, byteValue);
+                    　　var ui8a = new Uint8Array(ords);
+                    　　this.send(ui8a.buffer);
+                    }
+                　　var bindata = gRecorder.getBlob();
+                　　xhr.open("POST", url);
+                　　xhr.sendAsBinary(bindata);
                     // $.ajax({
                     //     url: "erjinzhi.php",
                     //     data: "data",
