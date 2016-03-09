@@ -14,9 +14,29 @@ $ws_worker->reloadable = true;
 $ws_worker->onMessage = function($connection, $data)
 {
     // 向客户端发送hello $data
-     $save_path = 'file/20160305.mp3';
-    file_put_contents($save_path, $data);
-    $connection->send($save_path);
+    $curDate = date('Ymd');
+    //文件保存路径
+	$save_path = "../file/".$curDate . "/";
+	//文件连接路径
+	$save_url = "/chat/file/".$curDate . "/";
+	//创建文件夹
+	if (!file_exists($save_path)) {
+		mkdir($save_path);
+	}
+	//随机生成10位字符串作为文件名
+	$length = 10;
+    $randStr = null;
+    $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+    $max = strlen($strPol)-1;
+	for($i=0;$i<$length;$i++){
+	    $randStr.=$strPol[rand(0,$max)];//rand($min,$max)生成介于min和max两个数之间的一个随机整数
+	}
+
+	
+    $new_save_path = $save_path.$randStr.'.wav';
+    $new_save_url = $save_url.$randStr.'.wav';
+    file_put_contents($new_save_path, $data);
+    $connection->send($new_save_url);
 };
 
 // 运行worker

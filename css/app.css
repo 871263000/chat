@@ -26,9 +26,10 @@ li{list-style: none}
 /*.Chat_le{padding:10px 20px;}*/
 .Chat_le .name{font-size: 12px;padding:0px 10px; float: none !important;display: block; height: 30px;line-height: 30px;color: #fff}
 .user{height: auto;overflow: hidden;width: 100%;}
-.mes_content .jian{border: 5px solid transparent; border-right-color: #d0d7df; border-top-color: #d0d7df;margin-top: 10px;}
-.content-font{background-color: #d0d7df;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
+.mes_content .jian{border: 5px solid transparent; border-right-color: #fff; border-top-color: #fff;margin-top: 10px;}
+.content-font{background-color: #fff;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
 .Chat{background-color: rgba(255, 255, 255, 0.44);padding: 10px 0px;}
+.web_chat_voice{padding: 0px 5px 0 0  !important}
 /*滚动条*/
 .he-ov-box::-webkit-scrollbar{width:100px ;display: block;}
 .he-ov-box::-webkit-scrollbar{width:10px;height:10px}
@@ -47,9 +48,9 @@ li{list-style: none}
 /*.user_ri{padding:10px;}*/
 .Chat_ri .name_ri{font-size: 12px;padding:0px 10px;display: block;float: none; height: 30px;line-height: 30px;text-align: right;color: #fff}
 .head_ri img{border-radius: 50px;width: 60px;}
-.content_ri .arrow{ left: 100%; position: absolute; border: 5px solid transparent; border-left-color: #86d152; border-top-color: #86d152;margin-top: 10px;}
+.content_ri .arrow{ left: 100%; position: absolute; border: 5px solid transparent; border-left-color: #3472CC; border-top-color: #3472CC;margin-top: 10px;}
 .content_ri{margin-top: 10px;position: relative;}
-.content_font_ri{float: right; background-color: #86d152;color: #fff;min-width: 40px; max-width: 400px;font-size: 14px;padding:5px;border-radius: 7px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
+.content_font_ri{float: right; background-color: #3472CC;color: #fff;min-width: 40px; max-width: 400px;font-size: 14px;padding:5px;border-radius: 7px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
 
 
 /*滚动条*/

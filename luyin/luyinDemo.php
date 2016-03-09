@@ -9,7 +9,7 @@
 <body>
 <input id="a" type="text" >
 <input id="b" type="submit" value="点击">
-<audio controls  src="blob:http%3A//localhost/2a334654-b07e-4017-86d9-a45d19599e5e"></audio>
+<audio controls  src=""></audio>
 <!-- <div id="b">bbb</div> -->
 <div id="c">cccc</div>
 <script type="text/javascript">
@@ -26,7 +26,6 @@
     var audio = document.querySelector('audio');
     var door = false;
     var ws = null;
-    console.log(audio.duration);
      audio.onended = function() {
         alert("音频已播放完成");
     };
@@ -83,7 +82,7 @@
                     // ws.send(gRecorder.getBlob());
 
                     gRecorder.clear();
-                    // gRecorder.stop();
+                    gRecorder.stop();
                     door = false;
                 }
             }
@@ -102,11 +101,11 @@
      
         config.sampleBits = config.smapleBits || 8;
         config.sampleRate = config.sampleRate || (44100 / 6);
-     
+        window.AudioContext = window.AudioContext|| window.webkitAudioContext;
         var context = new AudioContext();
         var audioInput = context.createMediaStreamSource(stream);
         var recorder = context.createScriptProcessor(4096, 1, 1);
-     
+        var recorderDoor = true;
         var audioData = {
             size: 0          //录音文件长度
             , buffer: []    //录音缓存
@@ -133,7 +132,8 @@
                 //压缩
                 var compression = parseInt(this.inputSampleRate / this.outputSampleRate);
                 var length = data.length / compression;
-                var result = new Float32Array(length);
+                console.log(length);
+                var result = new Float32Array(Math.ceil(length));
                 var index = 0, j = 0;
                 while (index < length) {
                     result[index] = data[j];
@@ -204,11 +204,13 @@
         };
      
         this.start = function () {
+            recorderDoor = true;
             audioInput.connect(recorder);
             recorder.connect(context.destination);
         }
      
         this.stop = function () {
+            recorderDoor = false;
             recorder.disconnect();
         }
      
@@ -221,7 +223,10 @@
         }
      
         recorder.onaudioprocess = function (e) {
-            audioData.input(e.inputBuffer.getChannelData(0));
+            console.log(recorderDoor);
+            if (recorderDoor) {
+                audioData.input(e.inputBuffer.getChannelData(0));
+            };
         }
     };
      
@@ -242,6 +247,29 @@
         alert(e)
         // audio.src = window.URL.createObjectURL(e);
     }
+    function AudioPerform() {
+            var ua = navigator.userAgent.toLowerCase();
+            var audiopath = "$!{TempletPath}images/ring.wav";
+            if (ua.match(/msie ([\d.]+)/)) {
+                jQuery('#alert_sound').html('<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95"><param name="AutoStart" value="1" /><param name="Src" value="' + audiopath + '" /></object>');
+            }
+            else if (ua.match(/firefox\/([\d.]+)/)) {
+                //            jQuery('#alert_sound').html('<embed src="' + audiopath + '" type="audio/wav" hidden="true" loop="false" mastersound></embed>');
+                jQuery('#alert_sound').html('<audio autoplay="autoplay"><source src="' + audiopath + '" type="audio/wav"/><source src="$!{TempletPath}images/ring.wav" type="audio/mpeg"/></audio>');
+            }
+            else if (ua.match(/chrome\/([\d.]+)/)) {
+                jQuery('#alert_sound').html('<audio src="' + audiopath + '" type="audio/wav" autoplay=”autoplay” hidden="true"></audio>');
+            }
+            else if (ua.match(/opera.([\d.]+)/)) {
+                jQuery('#alert_sound').html('<embed src="' + audiopath + '" hidden="true" loop="false"><noembed><bgsounds src=' + audiopath + '></noembed>');
+            }
+            else if (ua.match(/version\/([\d.]+).*safari/)) {
+                jQuery('#alert_sound').html('<audio src="' + audiopath + '" type="audio/wav" autoplay=”autoplay” hidden="true"></audio>');
+            }
+            else {
+                jQuery('#alert_sound').html('<embed src="' + audiopath + '" type="audio/wav" hidden="true" loop="false" mastersound></embed>');
+            }
+        }
 </script>
 </body>
 </html>

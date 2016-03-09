@@ -30,6 +30,24 @@ h2{margin-top: 0;}
     display: box;
     width: 100%;
 }
+.keydown_voice{
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+    color: #333;
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    font-family: "微软雅黑";
+    resize: none;
+    word-spacing:8px; letter-spacing: 2.5px;
+    white-space: pre-wrap;
+    word-break: initial;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+}
 .textarea{
         font-size: 25px;
         display: block;
@@ -201,6 +219,16 @@ h2{margin-top: 0;}
 .kefu-icon {position: relative; overflow: hidden;}
 .kefu-icon .kefu{position: absolute; width: 40px;top: 40px; height: 40px; background: #000; color: #fff;text-align: center;}
 .mes_fixed{cursor: move;}
+.web_chat_voice_right_play{ min-width: 30px; height: 29px;border-radius: 5px;background: url('/chat/images/voice_right.png') right no-repeat;float:right;}
+.web_voice_right_playing{ min-width: 30px; height: 29px;border-radius: 5px;background: url('/chat/images/voice_right.gif') right no-repeat;float:right;}
+.chat_duration_right{position: absolute; right: 100%;color: #fff;margin-right: 5px;font-size: 16px;}
+.chat_duration_left{position: absolute; left: 100%;color: #fff;margin-left: 5px;font-size: 16px;}
+.web_chat_voice_left_play{ min-width: 30px; height: 29px; border-radius: 5px;background: url('/chat/images/voice_left.png') left no-repeat;float:left;}
+.web_voice_left_playing{ min-width: 30px; height: 29px; border-radius: 5px;background: url('/chat/images/voice_left.gif') left no-repeat;float:left;}
+.mes_content{position: relative;}
+.chat_input_key{cursor: pointer;width: 50px;height: 50px; display: block;background-position: center;background-color: #fff;background-image: url(/chat/images/input_key.png);background-repeat: no-repeat;}
+/*.chat_input_text{-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}*/
+.chat_voice_input{display: none;}
 @media (min-width: 600px){
     .man_tittle{position: absolute; top: 0; z-index: 1111;}
     .online_man .list-group{ top: 38px; position: absolute;width: 100%; }

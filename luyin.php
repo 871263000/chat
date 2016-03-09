@@ -24,7 +24,7 @@
          
             var onSuccess = function(s) {
 				window.AudioContext = window.AudioContext||window.webkitAudioContext;
-                var context = new webkitAudioContext();
+                var context = new AudioContext();
                 var mediaStreamSource = context.createMediaStreamSource(s);
                 rec = new Recorder(mediaStreamSource);
 
@@ -35,7 +35,7 @@
             }
             var navigatorMedia = null;
             window.URL = URL || window.URL || window.webkitURL;
-            navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+             navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
          
             var rec;
             var audio = document.querySelector('audio');

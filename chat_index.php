@@ -88,6 +88,9 @@ $arrGroup = $mes->groupChatList();
   </script>
 </head>
 <body>
+<div class="chat_voice_box" voice_url="">
+	<audio src="" preload></audio>
+</div>
 <div class="alert alert-success" role="alert">
     <button class="close"  data-dismiss="alert" type="button" >&times;</button>
     <p>恭喜您操作成功！</p>
@@ -123,7 +126,6 @@ $arrGroup = $mes->groupChatList();
           <ul class="list-group">
           <li class="recent-contact chat_people recent-hover" style="display:none"  group-name="客服" session_no="customer"  mes_id="1" mestype ="message"></li>
           <?php if (!empty($recentContact)): foreach ($recentContact as $key => $value) :?>
-          	<?php for ($i=0; $i < 10 ; $i++): ?>
             <?php
               $herder_img = $value['card_image'];
               $contacts_name = $value['contacts_name'];
@@ -138,7 +140,6 @@ $arrGroup = $mes->groupChatList();
             <?php else: ?>
             <li class="recent-contact content-staff-info chat_people recent-hover" data-placement="right" group-name="<?php echo $contacts_name;?>" delConId = <?php echo $value['id'];?>  session_no="<?php echo $value['session_no'];?>"  mes_id="<?php echo $cont_id;?>" mestype ="<?php echo $value['mestype'];?>" ><span class="header-img"><img src="<?php echo $herder_img;?>" alt=""></span><i><?php echo $contacts_name;?></i><span title = "删除聊天记录" mestype="<?php echo $value['mestype'];?>" delConId = <?php echo $value['id'];?>  session="<?php echo $value['session_no'];?>" class="recent-close">&times;</span></li>
             <?php endif; ?>
-        <?php endfor; ?>
           <?php endforeach; ?>
           <?php endif; ?>
           </ul>
@@ -163,7 +164,6 @@ $arrGroup = $mes->groupChatList();
                               <i class="icon-list"></i>
                               <span class="caret"></span>
                             </i>
-
                             <ul class="dropdown-menu" aria-labelledby="dLabel<?php echo $key;?>">
                             <?php if ($uid == $value['group_founder']):?>
                               <li groupId="<?php echo $val['pid'];?>" class="dropdown-menu-man dissolve-group">解散该群</li>
@@ -200,16 +200,18 @@ $arrGroup = $mes->groupChatList();
               <div class="mes_footer">
               <div class="plus_menu_box">
                 <div class="plus_menu">
-                  <span class="header_icon plus-list"><img src="images/header_icon.png" alt=""></span><span class="plus-list"><img src="images/uploadimg1.png" id="upclick" alt=""><input style="display:none" type="file" multiple id="send-upimg"></span><span id="cli-upFile"><img src="images/uploadfile.png" alt=""></span>
+                  <span class="header_icon plus-list"><img src="images/header_icon.png" alt=""></span><span class="plus-list"><img src="images/uploadimg1.png" id="upclick" alt=""><input style="display:none" type="file" multiple id="send-upimg"></span><span id="cli-upFile"><img src="images/uploadfile.png" alt=""></span><span class="plus-list" id="mesChat_audio"><img src="images/iconfont-yuyin.png" alt=""></span>
                 </div>
                 <i class="icon-caret-down"></i>
               </div>
                   <!-- <form onsubmit="onSubmit(); return false;"> -->
                       <div class="mes_input">
                         <i class="plus_icon"></i>
-                        <div class="mes_inout textarea" id="mes_textarea" style="height:auto;" contenteditable="true"></div>
-                        <textarea style="display:none" class="mes_inout" ></textarea>
-                        <input type="submit" class="btn btn-primary" id="submit" value="发送" />
+	                        <div class="mes_inout textarea chat_text_voice" id="mes_textarea" style="height:auto;" contenteditable="true"></div>
+	                        <textarea style="display:none" class="mes_inout" ></textarea>
+	                        <input type="submit" class="btn btn-primary chat_text_voice" id="submit" value="发送" />
+                        	<div class="keydown_voice chat_voice_input">按下开始说话</div>
+                        	<div class="chat_input_key chat_voice_input"></div>
                         <div style="clear:both"></div>
                       </div>
                       <div class="emoticons"></div>
@@ -272,6 +274,9 @@ $arrGroup = $mes->groupChatList();
                 case 'file':
                   $content = '【文件】';
                   break;
+                case 'voice':
+                 $content = '【语音】';
+                 break;
                 default:
                 $content = '出错了';
                   break;
@@ -341,7 +346,12 @@ $arrGroup = $mes->groupChatList();
   </ul>
 </div>
 <!-- 上传进度 -->
-<div id="progressbar"><div class="progress-label"></div><div id="formatSpeed"></div></div><script type="text/javascript">
+<div id="progressbar"><div class="progress-label"></div><div id="formatSpeed"></div></div>
+<script type="text/javascript" src="js/webChataAudio.js"></script>
+<script type="text/javascript">
+    // $('#mesChat_audio').click(function () {
+    //     // console.log(2)
+    // })
 //客服
 $('.kefu-icon').hover(function (e){
 	$('.kefu-icon .kefu').animate({
@@ -352,14 +362,14 @@ $('.kefu-icon').hover(function (e){
 		top: 40,
 	})
 });
-$('.kefu').on('click', function (){
-	session_no = $(this).attr('mes_id');
-	$('.he-ov-box').unbind('scroll');
-	$(".he_ov").html('');
-  //会话id的改变
-  $('.mes_title_con').html($(this).attr('group-name'));
-	// ws.send('{"type": "customer"}');
-})
+// $('.kefu').on('click', function (){
+// 	session_no = $(this).attr('mes_id');
+// 	$('.he-ov-box').unbind('scroll');
+// 	$(".he_ov").html('');
+//   //会话id的改变
+//   $('.mes_title_con').html($(this).attr('group-name'));
+// 	// ws.send('{"type": "customer"}');
+// })
 //判断是不是移动端
 function IsPC()  
 {  
@@ -403,7 +413,6 @@ if (IsPC()) {
   })
   jQuery(document).ready(function ($) {
       $(".onlinesSroll-box").mousedown(function (e) {
-        console.log(onlineTop);
           _move = true;
           __y = e.pageY;
           _y = e.pageY - parseInt($(".onlinesSroll-box").css("top"));
@@ -508,11 +517,11 @@ $('.group-man-show').click(function (e){
 //   return '您确定离开此页面吗？';
 // });
 //最近联系人删除
-$(document).on('mouseover', '.oms_onlineNum .recent-hover', function (){
+$(document).on('mouseover', '.list-group .recent-hover', function (){
   $('.recent-action').removeClass('recent-action');
   $(this).find('.recent-close').addClass('recent-action');
 })
-$(document).on('mouseout', '.oms_onlineNum .recent-hover', function (){
+$(document).on('mouseout', '.list-group .recent-hover', function (){
   $('.recent-action').removeClass('recent-action');
 })
 var mes_bottom = parseInt($('.mes_fixed').css('bottom'));
@@ -1220,6 +1229,7 @@ $(document).on('mouseleave', '.content-staff-info', function (){
     var mestype = $(this).attr('mestype');
     var mes_num = $(this).parent().next('.mes_num').html();
     session_no = $(this).attr('session_no');
+    console.log(session_no);
     mes_chakan_close(mestype, session_no, mes_num);
   })
   $('.mes_close').live('click', function (){
