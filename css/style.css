@@ -1,3 +1,4 @@
+
 h2{margin-top: 0;}
 .say-btn
 {
@@ -229,12 +230,16 @@ h2{margin-top: 0;}
 .chat_input_key{cursor: pointer;width: 50px;height: 50px; display: block;background-position: center;background-color: #fff;background-image: url(/chat/images/input_key.png);background-repeat: no-repeat;}
 /*.chat_input_text{-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}*/
 .chat_voice_input{display: none;}
+.chainEmployees{ display: none;position: absolute;top:20px; left: 20px;width: 200px; box-shadow: 0 0 10px #ccc; height: 600px; overflow: auto; border-radius: 10px; padding: 5px;}
+.chainEmployees ul li{list-style: none;transition: border 1s;-moz-transition: border 1s; /* Firefox 4 */-webkit-transition: border 1s; /* Safari 和 Chrome */-o-transition: border 1s; /* Opera */}
+.externalStaffid-header-img img{width: 40px; height: 40px;padding: 3px;border-radius: 5px;margin-right: 5px; }
+.staff-close{float: right; cursor: pointer;}
 @media (min-width: 600px){
     .man_tittle{position: absolute; top: 0; z-index: 1111;}
     .online_man .list-group{ top: 38px; position: absolute;width: 100%; }
     .mes_dclose{display: none;}
     .container-box {width: 1000px; margin: 0 auto;}
-    .chat-container{position: relative;background: rgba(0,0,0,.5)!important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
+    .chat-container{box-shadow: 0 0 10px #000; position: relative;background: rgba(0,0,0,.5)!important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
     .details-list{ position: absolute; box-shadow: 0 0 10px #656e73; width: 260px; background-color: #fff;height: 100%; float: left;}
     .container-title{background: rgba(0,0,0,.5)!important;color: #fff; height: 64px;border-bottom: 1px solid #000; }
     .container-header {height: 64px;text-align: center; background: url(../images/herderbg.jpg) no-repeat;}

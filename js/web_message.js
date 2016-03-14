@@ -7,7 +7,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function connect() {
        // 创建websocket
        ws = new WebSocket("ws://"+document.domain+":7272");
-       // 当socket连接打开时，输入用户名
        ws.onopen = onopen;
        // 当有消息时根据消息类型显示不同信息
        ws.onmessage = onmessage; 
@@ -24,6 +23,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function onopen()
     {
         // 登录
+        console.log(2)
       var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+name+'","room_id":"'+room_id+'"}';
       ws.send(login_data);
     }
@@ -74,6 +74,13 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             //消息的加载
             case 'onlode':
               onlode(data);
+              break;
+            case 'chain_staff_list':
+              var staff_list = data['staff_list'];
+              $('.chainEmployees ul.list-group').html('');
+              for ( var i in staff_list) {
+                $('.chainEmployees ul.list-group').append('<li><span class="externalStaffid-header-img"><img src="'+staff_list[i].header_img_url+'" alt="'+staff_list[i].client_name+'" /></span>'+staff_list[i].client_name+'</li>');
+              }
               break;
             case 'logout':
                 delete client_list[data['from_uid_id']];

@@ -463,6 +463,22 @@ class Event
                     Gateway::sendToCurrentClient(json_encode($new_allOnlineNum));
                 }
                 return;
+            case 'getChainEmployees':
+                $Uid = $_SESSION['uid'];
+                // $oms_id = $_SESSION['oms_id'];
+                $oms_id = $message_data['oms_id'];
+                $staff_list = Gateway::getClientInfoByGroup($oms_id);
+                $new_staff_list = [];
+                if (!empty($staff_list)) {
+                    foreach($staff_list as $tmp_client_id=>$item)
+                    {
+                        $new_staff_list[$item['uid']]['client_name'] = $item['client_name'];
+                        $new_staff_list[$item['uid']]['header_img_url'] = $item['header_img_url'];
+                    }
+                }
+                $new_message_data = ['type'=>'chain_staff_list', 'staff_list'=>$new_staff_list];
+                Gateway::sendToCurrentClient(json_encode($new_message_data));
+                return;
             case 'active':
                 // 非法请求
                 if(!isset($_SESSION['room_id']))

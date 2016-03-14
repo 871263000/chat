@@ -14,16 +14,22 @@ $mes_type = 'message';
 $mes = new messageList($uid, $oms_id);
 //最近联系人
 if (isset($uid)) {
-  $recentContact = $mes->recentContact();
+  	$recentContact = $mes->recentContact();
 }
+//最近联系人session_no集合;
+$ContactManSession = [];
+foreach ($recentContact as $key => $value) {
+	$ContactManSession[] = $value['session_no'];
+}
+print_r($ContactManSession);
 //提示消息列表
 if (isset($uid)) {
-  $arrMes = $mes->mesAlertList();
-  if (!empty($arrMes)) {
-    foreach ($arrMes as $key => $value) {
-      $mesNum  += $value['mes_num'];
-    }
-  }
+  	$arrMes = $mes->mesAlertList();
+  	if (!empty($arrMes)) {
+	    foreach ($arrMes as $key => $value) {
+	      $mesNum  += $value['mes_num'];
+	    }
+  	}
 }
 // print_r($arrMes);
 //自己的信息
@@ -43,7 +49,6 @@ $arrGroup = $mes->groupChatList();
   <script type="text/javascript" src="js/swfobject.js"></script>
   <script type="text/javascript" src="js/web_socket.js"></script>
   <script type="text/javascript" src="js/jquery.js"></script>
-  <!--<script type="text/javascript" src="js/indexeddb.js"></script> -->
   <script type="text/javascript" src="js/touchSwipe.js"></script>
   <script src="js/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="css/jquery-ui.css">
@@ -54,7 +59,6 @@ $arrGroup = $mes->groupChatList();
   <link href="css/style.css" rel="stylesheet">
   <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css"/>
   <link rel="stylesheet" href="css/app.css" type="text/css"/>
-  <!-- <link rel="stylesheet" href="css/phone.css" type="text/css"/> -->
 <style type="text/css">
   *{font-family: 'Microsoft YaHei', SimSun, sans-serif !important;}
   .online_man{ text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
@@ -85,6 +89,10 @@ $arrGroup = $mes->groupChatList();
     var document_url = "<?php echo DOCUMENT_URL?>";
     var groupId = 0;
     var header_img_url = "<?php echo $card_image?>";
+    nearestContact = new Object();
+
+    var nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): '没有';?>;
+    console.log(nearestContact);
   </script>
 </head>
 <body>
@@ -183,8 +191,7 @@ $arrGroup = $mes->groupChatList();
         <div class="mes_title">
           <h2 class="mes_title_con"><?php echo $accname;?><i title="群聊添加人" class="add-groupMan"></i></h2><span aria-hidden="true" class="mes_dclose">&times;</span>
         </div>
-
-      <div class="mes_con_box">
+        <div class="mes_con_box">
     	    <div class="row clearfix">
     	           <div class="he-ov-box mes-scroll">
     	               <div class="">
@@ -263,31 +270,31 @@ $arrGroup = $mes->groupChatList();
             <?php if (!empty($arrMes)):?>
             <?php foreach ($arrMes as $key => $value) :?>
             <?php 
-              switch ($value['mesages_types']) {
-                case 'text':
-                  $rest =preg_replace('/%6b/', '<br/>',$value['message_content']);
-                  $content = preg_replace('/%5C/', '\\',$rest);
-                  break;
-                case 'image':
-                  $content = '【图片】';
-                  break;
-                case 'file':
-                  $content = '【文件】';
-                  break;
-                case 'voice':
-                 $content = '【语音】';
-                 break;
-                default:
-                $content = '出错了';
-                  break;
-              }
-              if ($value['message_type'] == 'message') {
-                  $sender_name = $value['sender_name'];
-                  $addClass = "chat_people";
-              } else {
-                  $sender_name = $value['accept_name'];
-                  $addClass = "session_no";
-              }
+	             switch ($value['mesages_types']) {
+	                case 'text':
+	                  	$rest =preg_replace('/%6b/', '<br/>',$value['message_content']);
+	                  	$content = preg_replace('/%5C/', '\\',$rest);
+	                  	break;
+	                case 'image':
+	                  	$content = '【图片】';
+	                  	break;
+	                case 'file':
+	                  	$content = '【文件】';
+	                  	break;
+	                case 'voice':
+	                  	$content = '【语音】';
+	                  	break;
+	                default:
+	                  	$content = '出错了';
+	                  	break;
+	            }
+              	if ($value['message_type'] == 'message') {
+                  	$sender_name = $value['sender_name'];
+                  	$addClass = "chat_people";
+              	} else {
+                  	$sender_name = $value['accept_name'];
+                 	$addClass = "session_no";
+              	}
             ?>
             <div class="mes_box">
                 <span class='mex_con'><?php echo $sender_name.":".$content;?></span>
@@ -353,6 +360,15 @@ $arrGroup = $mes->groupChatList();
     //     // console.log(2)
     // })
 //客服
+//判断当前会话在最近联系人哪里有没有 
+var  addContact =  function (session_id) {
+	for (var i in nearestContact) {
+		if ( nearestContact[i] == session_id) {
+			return true;
+		};
+	}
+	return false;
+}
 $('.kefu-icon').hover(function (e){
 	$('.kefu-icon .kefu').animate({
 		top: 0,
@@ -373,79 +389,78 @@ $('.kefu-icon').hover(function (e){
 //判断是不是移动端
 function IsPC()  
 {  
-   var userAgentInfo = navigator.userAgent;  
-   var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
-   var flag = true;  
-   for (var v = 0; v < Agents.length; v++) {  
+   	var userAgentInfo = navigator.userAgent;  
+   	var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
+   	var flag = true;  
+   	for (var v = 0; v < Agents.length; v++) {  
        if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
-   }  
-   return flag;  
+   	}  
+   	return flag;  
 } 
 //判断是不是移动端
 if (IsPC()) {
-  //在线人员滚动条滚动
-  var _move = false;
-  var ismove = false; //移动标记
-  var _x, _y, __y; //鼠标离控件左上角的相对位置
-
-  //在线人员滚动
-  var ScrollDistance = 47;//每次滑动距离；
-  var onlineTop = parseInt($(".online_man .list-group").css('top'));
-  var maxScroll = docuHeight - onlineTop; //滚动条的最大高度；
-  var onlineTopCh = onlineTop;
-  var onlinesSroll = onlineTopCh;//滚动条top;
-  var onlineScrollHeight = 0;//滚动条可以滚动的距离；
-  var onlineHeight = 0; // 在线人数的高度; 
-  var hideOnlineHeightPro = 0; // 在线人数隐藏的高度； 
-  var onlineSeeHeight = docuHeight - onlineTop;//在线人数可视化的高度；
-  var docuHeight = $(window).height();
-  var proScroll =  0; //在线人数的高度和文档高度的比例；
-  var mousewheelevt=(/Firefox/i.test(navigator.userAgent))?"DOMMouseScroll": "mousewheel"//FF doesn't recognize mousewheel as of FF3.x
-  var mousedir=(/Firefox/i.test(navigator.userAgent))?"detail": "deltaY"//FF doesn't recognize mousewheel as of FF3.x
-  //拖动
-  $(document).on('mouseover', ".online_man", function (){
-    if (proScroll < 1) {
-      $(".onlinesSroll-box").css('display', 'block');
-    };
-  })
-  $(document).on('mouseout', ".online_man", function (){
-    $(".onlinesSroll-box").css('display', 'none');
-  })
-  jQuery(document).ready(function ($) {
-      $(".onlinesSroll-box").mousedown(function (e) {
-          _move = true;
-          __y = e.pageY;
-          _y = e.pageY - parseInt($(".onlinesSroll-box").css("top"));
+	  //在线人员滚动条滚动
+	var _move = false;
+	var ismove = false; //移动标记
+	var _x, _y, __y; //鼠标离控件左上角的相对位置
+	//在线人员滚动
+	var ScrollDistance = 47;//每次滑动距离；
+	var onlineTop = parseInt($(".online_man .list-group").css('top'));
+	var maxScroll = docuHeight - onlineTop; //滚动条的最大高度；
+	var onlineTopCh = onlineTop;
+	var onlinesSroll = onlineTopCh;//滚动条top;
+	var onlineScrollHeight = 0;//滚动条可以滚动的距离；
+	var onlineHeight = 0; // 在线人数的高度; 
+	var hideOnlineHeightPro = 0; // 在线人数隐藏的高度； 
+	var onlineSeeHeight = docuHeight - onlineTop;//在线人数可视化的高度；
+	var docuHeight = $(window).height();
+	var proScroll =  0; //在线人数的高度和文档高度的比例；
+	var mousewheelevt=(/Firefox/i.test(navigator.userAgent))?"DOMMouseScroll": "mousewheel"//FF doesn't recognize mousewheel as of FF3.x
+	var mousedir=(/Firefox/i.test(navigator.userAgent))?"detail": "deltaY"//FF doesn't recognize mousewheel as of FF3.x
+	  //拖动
+	$(document).on('mouseover', ".online_man", function (){
+	    if (proScroll < 1) {
+	      $(".onlinesSroll-box").css('display', 'block');
+	    };
+	})
+	$(document).on('mouseout', ".online_man", function (){
+	    $(".onlinesSroll-box").css('display', 'none');
+	})
+	jQuery(document).ready(function ($) {
+    $(".onlinesSroll-box").mousedown(function (e) {
+        _move = true;
+        __y = e.pageY;
+        _y = e.pageY - parseInt($(".onlinesSroll-box").css("top"));
        });
-      $(".onlinesSroll-box").mousemove(function (e) {
-          if (_move) {
-              var y = e.pageY - _y;
-              var my = e.pageY - __y;
-              // var wx = $(window).width() - $('#spig').width();
-              var dy = $(document).height() - $('.onlinesSroll-box').height();
-              if( y >= onlineTopCh && y < onlineTopCh + onlineScrollHeight ) {
-                  onlineTop -= hideOnlineHeightPro * ((e.pageY -__y )/onlineScrollHeight);
+    $(".onlinesSroll-box").mousemove(function (e) {
+        if (_move) {
+            var y = e.pageY - _y;
+            var my = e.pageY - __y;
+            // var wx = $(window).width() - $('#spig').width();
+            var dy = $(document).height() - $('.onlinesSroll-box').height();
+            if( y >= onlineTopCh && y < onlineTopCh + onlineScrollHeight ) {
+                onlineTop -= hideOnlineHeightPro * ((e.pageY -__y )/onlineScrollHeight);
                 onlinesSroll +=( e.pageY -__y);
                 $('.online_man .list-group').css('top',onlineTop );
                 $(".onlinesSroll-box").css({
                   top: onlinesSroll,
                 }); //控件新位置
-              ismove = true;
-              __y = e.pageY;
-              }
+              	ismove = true;
+              	__y = e.pageY;
+            }
           }
       }).mouseup(function () {
-          _move = false;
+          	_move = false;
       });
   });
   $(document).on(mousewheelevt,".online_man",function (event){
-	e = event || window.event;
-	e.preventDefault();
-	var wheeldir = e.originalEvent.deltaY;
-	if (mousedir == "detail") {
-	    var wheeldir = e.originalEvent.detail;
+  	e = event || window.event;
+  	e.preventDefault();
+  	var wheeldir = e.originalEvent.deltaY;
+  	if (mousedir == "detail") {
+  	    var wheeldir = e.originalEvent.detail;
 
-	};
+  	};
     if(wheeldir > 0 && onlineTop+onlineHeight > docuHeight ){
         onlinesSroll += onlineScrollHeight * ( ScrollDistance/hideOnlineHeightPro );
         if ( 0 < onlineTop+onlineHeight - docuHeight &&  onlineTop+onlineHeight - docuHeight < ScrollDistance ) {
@@ -464,14 +479,14 @@ if (IsPC()) {
           onlineTop +=ScrollDistance;
         }
     }
-      $('.online_man .list-group').css('top',onlineTop );
-      $('.onlinesSroll-box').css('top',onlinesSroll );
+    $('.online_man .list-group').css('top',onlineTop );
+    $('.onlinesSroll-box').css('top',onlinesSroll );
   });
 };
 var onlineTopT = 0;
 var onlinesSrollT = 0;
 $(".oms_onlineNum").swipe({
-	 swipeStatus:function(event, phase, direction, distance, duration,fingerCount){
+	swipeStatus:function(event, phase, direction, distance, duration,fingerCount){
 	 	if (phase == 'start') {
 	 		onlineTopT = onlineTop;
 	 		onlinesSrollT = onlinesSroll;
@@ -496,19 +511,19 @@ $(".oms_onlineNum").swipe({
 })
 //群聊人显示
 var gpManSh = function (groupid){
-  ws.send('{"type": "groupManShow", "session_no":"'+groupid+'"}');
+  	ws.send('{"type": "groupManShow", "session_no":"'+groupid+'"}');
 }
 
 //群聊名字点击
 $('.group-man-show').click(function (e){
-  var obj = $(this);
-  var showMansessionNo = obj.attr('groupid');
-  if (!$(e.target).is('.groupSign')) {
-    gpManSh(showMansessionNo);
-  };
-  $('.groupAct').removeClass('groupAct');
-  obj.addClass('groupAct');
-  obj.addClass('groupSign');
+  	var obj = $(this);
+  	var showMansessionNo = obj.attr('groupid');
+  	if (!$(e.target).is('.groupSign')) {
+    	gpManSh(showMansessionNo);
+  	};
+  	$('.groupAct').removeClass('groupAct');
+  	obj.addClass('groupAct');
+  	obj.addClass('groupSign');
 
 })
 
@@ -518,36 +533,28 @@ $('.group-man-show').click(function (e){
 // });
 //最近联系人删除
 $(document).on('mouseover', '.list-group .recent-hover', function (){
-  $('.recent-action').removeClass('recent-action');
-  $(this).find('.recent-close').addClass('recent-action');
+  	$('.recent-action').removeClass('recent-action');
+  	$(this).find('.recent-close').addClass('recent-action');
 })
 $(document).on('mouseout', '.list-group .recent-hover', function (){
-  $('.recent-action').removeClass('recent-action');
+  	$('.recent-action').removeClass('recent-action');
 })
 var mes_bottom = parseInt($('.mes_fixed').css('bottom'));
 $('.mes_fixed').swipe( {
 	swipeStatus:function(event, phase, direction, distance, duration, fingerCount) {
-	  if (direction == 'down' && mes_bottom > 0) {
-	    // console.log(distance)
+	  	if (direction == 'down' && mes_bottom > 0) {
+	    	// console.log(distance)
 	      $('.mes_fixed').css('bottom', mes_bottom - distance);
-	      // console.log($('.mes_fixed').css('bottom'))
-	  } else if (direction == 'up') {
-	    // console.log(distance)
-	      $('.mes_fixed').css('bottom', distance + mes_bottom);
-	  };
-	  if (phase == 'cancel' || phase == 'end') {
-	    mes_bottom = parseInt($('.mes_fixed').css('bottom'));
-	  };
+	      	// console.log($('.mes_fixed').css('bottom'))
+	  	} else if (direction == 'up') {
+	    	// console.log(distance)
+	      	$('.mes_fixed').css('bottom', distance + mes_bottom);
+	  	};
+	  	if (phase == 'cancel' || phase == 'end') {
+	   		mes_bottom = parseInt($('.mes_fixed').css('bottom'));
+	  	};
 	},
 });
-  //   $(document).swipe( {
-  //   swipeStatus:function(event, phase, direction, distance, duration,fingerCount) {
-  //     console.log(4);
-  //   },
-  //   longTap: function () {
-  //     console.log(2);
-  //   }
-  // });
 //indexeddb 初始化
 // H5AppDB.indexedDB.open();
 //右边隐藏
@@ -605,224 +612,228 @@ var trig = function (obj){
     obj.trigger('click');
 }
 $('#upclick').click( function(){
-  trig($('#send-upimg'));
+  	trig($('#send-upimg'));
 });
 $('#cli-upFile img').click(function(){
-  trig($('#file'));
-  return;
+  	trig($('#file'));
+  	return;
 });
   // 选择图片的改变
 $('#send-upimg').on('change', function(){
-        //检验是否为图像文件
-        var obj = $(this) ;
-        // var file = $(this)[0].files[0];                                                                                                                          
-        $.each( $(this)[0].files, function (i, file){
-          if(!/image\/\w+/.test(file.type)){  
-              alert("只能发送图片");  
-              return false;  
-          }  
-          var reader = new FileReader();  
-          //将文件以Data URL形式读入页面  
-          reader.readAsDataURL(file);  
-          reader.onload=function(e){
-                  var img = new Image();
-                  img.src = this.result;
-                  img.className = "send-img";
-                  $('.sending-img-box').html('');
-                  $('.sending-img-box').append( img );
-                  $('.send-clipboard-img').trigger('click');
-                  $('.plus_menu_box').hide();
-              //显示文件  
-          }
-        });
-  
+  	//检验是否为图像文件
+  	var obj = $(this) ;
+  	// var file = $(this)[0].files[0];                                                                                                                          
+  	$.each( $(this)[0].files, function (i, file){
+	    if(!/image\/\w+/.test(file.type)){  
+	        alert("只能发送图片");  
+	        return false;  
+	    }  
+    	var reader = new FileReader();  
+    	//将文件以Data URL形式读入页面  
+    	reader.readAsDataURL(file);  
+    	reader.onload=function(e){
+            var img = new Image();
+            img.src = this.result;
+            img.className = "send-img";
+            $('.sending-img-box').html('');
+            $('.sending-img-box').append( img );
+            $('.send-clipboard-img').trigger('click');
+            $('.plus_menu_box').hide();
+        	//显示文件  
+    	}
+  	});
 })
 //粘贴发送的图片取消
 $('.com-close-act').click(function(){
-  $('.img-box').hide();
+  	$('.img-box').hide();
 })
 //群聊参加人滑过事件
 $('.group-people').live('mouseover', function(){
-  $(this).find('.delgroupman').show();
+  	$(this).find('.delgroupman').show();
 })
 $('.group-people').live('mouseout', function(){
-  $(this).find('.delgroupman').hide();
+  	$(this).find('.delgroupman').hide();
 })
 
 //群聊删除人
 $('.delgroupman').live('click', function(){
-    var obj = $(this);
-    var groupid = obj.attr("groupid");
-    var id = obj.attr("id");
-    $('.alertvalue').attr('groupid', groupid);
-    $('.alertvalue').attr('atype', 'del');
-    $('.alertvalue').attr('id', id);
-    $(this).parent().addClass('mandel');
-    $('.mes_alert_con').html('你确定要删除他吗？');
-    $('.cd-popup').addClass('is-visible'); return false;
+  	var obj = $(this);
+  	var groupid = obj.attr("groupid");
+  	var id = obj.attr("id");
+  	$('.alertvalue').attr('groupid', groupid);
+  	$('.alertvalue').attr('atype', 'del');
+  	$('.alertvalue').attr('id', id);
+  	$(this).parent().addClass('mandel');
+  	$('.mes_alert_con').html('你确定要删除他吗？');
+  	$('.cd-popup').addClass('is-visible'); return false;
 
 });
 //退出群
 $('.esc-group').live('click', function (){
-  alert('还没有开放！');
-  return;
+  	alert('还没有开放！');
+  	return;
 })
 //群聊解散
 $('.dissolve-group').live('click', function (){
-  var groupId = $(this).attr('groupId');
-  ws.send('{"type": "dissolve_group", "groupId": "'+groupId+'"}');
+  	var groupId = $(this).attr('groupId');
+  	ws.send('{"type": "dissolve_group", "groupId": "'+groupId+'"}');
 })
 $('.alertvalue').on('click', function (){
-  var obj = $(this);
-  if (obj.attr('atype') == "del") {
-    $('.mandel').remove();
-    var groupid = obj.attr("groupid");
-    var id = obj.attr("id");
-    ws.send('{"type":"delgroupman", "groupid": "'+groupid+'", "id":"'+id+'"}'); 
-  };
+  	var obj = $(this);
+  	if (obj.attr('atype') == "del") {
+    	$('.mandel').remove();
+    	var groupid = obj.attr("groupid");
+    	var id = obj.attr("id");
+    	ws.send('{"type":"delgroupman", "groupid": "'+groupid+'", "id":"'+id+'"}'); 
+  	};
 })
 //对话框的高度
 var mesHeight = 0;
 //查看更多
-
 $('.onload').live("click", function(){
     $('.he-ov-box').trigger("scroll");
 })
 //联系人tab
 $('.tab-title').click(function(){
-  var index = $(this).index();
-  var ind = $(this).attr('ind');
-  $('.tab-content').hide();
-  $('.tab-content').eq(ind).show()
-  //小三角移动
-  $('.sanjiao').animate({left:((index+1)*2-1)*12.5+"%"}, 'linear');
+  	var index = $(this).index();
+  	var ind = $(this).attr('ind');
+  	$('.tab-content').hide();
+  	$('.tab-content').eq(ind).show()
+  	//小三角移动
+  	$('.sanjiao').animate({left:((index+1)*2-1)*12.5+"%"}, 'linear');
 })
 //对话框关闭
 $('.mes_dclose').on('click', function (){
-  $('.chat-container').hide();
-  $('.details-list').show();
+  	$('.chat-container').hide();
+  	$('.details-list').show();
 })
 //滚动条滚动事件
 var mesScroll = function (){
-  if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
-    var mes_loadnum = $('#mes_load').html();
-    $('.loader').show()
-    mesHeight = $('.he_ov').height()
-    ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
-  };
+  	if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
+    	var mes_loadnum = $('#mes_load').html();
+    	$('.loader').show()
+    	mesHeight = $('.he_ov').height()
+    	ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
+  	};
 }
 //删除最近联系人
-var delContactFun = function( id, mestype ){
-   $('.recent-action').parent('li').remove()
-   ws.send('{"type": "delContact" ,"mestype":"'+mestype+'", "id": "'+id+'"}');
+var arr = [1,2,3];
+var delContactFun = function( id, mestype, session_id){
+	delete arr[1];
+	console.log(arr);
+	console.log(nearestContact);
+   	$('.recent-action').parent('li').remove()
+   	ws.send('{"type": "delContact" ,"mestype":"'+mestype+'", "id": "'+id+'"}');
 }
 
 // 选择人聊天
 $('.chat_people').live('click', function( e ){
-  to_uid = $(this).attr('mes_id');
-  to_uid_header_img = $(this).find('img').attr('src');
-  //会话id的改变
-  session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
-  mes_type = "message";
-  if (!$(e.target).is('.recent-action')) {
-    if ($(window).width() < 700) {
-      $('.chat-container').show();
-      $('.details-list').hide();  
-    };
-  //end
-    // groupId = $(this).attr('groupId');
-    if (!$(e.target).is('.mes_chakan_close')) {
-      if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
-         var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
-         mes_chakan_close('message', session_no, con_mes_num);
-      };
-    };
-    ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
-    $('#mes_load').html(10);
-    $('.mes_title_con').html($(this).attr('group-name'));
-    //消息向上滚动
-    $('.he-ov-box').unbind('scroll');
-    $('.he-ov-box').bind("scroll", function (){
-      mesScroll();
-    })
-  } else if ($(e.target).is('.recent-action')) {
-    var delconid = ($(this).attr('delconid'));
-    delContactFun( delconid, mes_type );
-    // H5AppDB.indexedDB.deleteTodo($(this).attr('db_id'))
+  	to_uid = $(this).attr('mes_id');
+  	to_uid_header_img = $(this).find('img').attr('src');
+  	//会话id的改变
+  	session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
+  	mes_type = "message";
+  	if (!$(e.target).is('.recent-action')) {
+    	if ($(window).width() < 700) {
+      		$('.chat-container').show();
+      		$('.details-list').hide();  
+    	};
+	  	//end
+	    // groupId = $(this).attr('groupId');
+	    if (!$(e.target).is('.mes_chakan_close')) {
+	      	if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+	         	var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
+	         	mes_chakan_close('message', session_no, con_mes_num);
+	      	};
+	    };
+	    ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
+	    $('#mes_load').html(10);
+	    $('.mes_title_con').html($(this).attr('group-name'));
+	    //消息向上滚动
+	    $('.he-ov-box').unbind('scroll');
+	    $('.he-ov-box').bind("scroll", function (){
+	      mesScroll();
+	    })
+  	} else if ($(e.target).is('.recent-action')) {
+    	var delconid = ($(this).attr('delconid'));
+    	var session_id = ($(this).attr('session_no'));
+    	delContactFun( delconid, mes_type, session_id);
+    	// H5AppDB.indexedDB.deleteTodo($(this).attr('db_id'))
   };
 })
 
 //选择群列表显示对话内容
 $('.session_no').live('click', function ( event ){
-    session_no = $(this).attr('session_no')//会话id
-    mes_type = "groupMessage";//消息类型
-    if (!$(event.target).is('.recent-action')) {
-        // if (session_no == $(this).attr('session_no')) { return ; };
-        //在手机上交替显示
-        if ($(window).width() < 700) {
-          $('.chat-container').show();
-        $('.details-list').hide();  
-        };
-        //end
-        var valName = $(this).attr('group-name');//会话名字
-        // groupId = $(this).attr('groupId');
-        //消息向上滚动
-        $('.he-ov-box').unbind('scroll');
-        $('.he-ov-box').bind("scroll", function (){
-          mesScroll();
-        })
-        $('.mes_title_con').html(valName);
-        $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
-        $('.add-groupMan').show();
-        if (!$(event.target).is('.mes_chakan_close')) {
-          if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
-             var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
-             mes_chakan_close('groupMessage', session_no, con_mes_num);
-          };
-        };
-        ws.send('{"type":"mes_groupChat", "session_no":"'+session_no+'" }');
-        $('#mes_load').html(10);
-      } else if ($(event.target).is('.recent-action')) {
-        var delconid = ($(this).attr('delconid'));
-        delContactFun( delconid, mes_type );
-      };
+  	session_no = $(this).attr('session_no')//会话id
+  	mes_type = "groupMessage";//消息类型
+  	if (!$(event.target).is('.recent-action')) {
+    	// if (session_no == $(this).attr('session_no')) { return ; };
+    	//在手机上交替显示
+    if ($(window).width() < 700) {
+      	$('.chat-container').show();
+    	$('.details-list').hide();  
+    };
+    //end
+    var valName = $(this).attr('group-name');//会话名字
+    // groupId = $(this).attr('groupId');
+    //消息向上滚动
+    $('.he-ov-box').unbind('scroll');
+    $('.he-ov-box').bind("scroll", function (){
+      mesScroll();
+    })
+    $('.mes_title_con').html(valName);
+    $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
+    $('.add-groupMan').show();
+    if (!$(event.target).is('.mes_chakan_close')) {
+      	if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+         	var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
+         	mes_chakan_close('groupMessage', session_no, con_mes_num);
+      	};
+    };
+    ws.send('{"type":"mes_groupChat", "session_no":"'+session_no+'" }');
+    $('#mes_load').html(10);
+  } else if ($(event.target).is('.recent-action')) {
+    var delconid = ($(this).attr('delconid'));
+    var session_id = ($(this).attr('session_no'));
+    delContactFun( delconid, mes_type, session_id );
+  };
 })
 //表情的添加
 function addempath() {
-  var emPath = "<?php echo DOCUMENT_URL?>/chat/emoticons/images/";//表情路径
-  var total = 134;//表情的个数
-  var newTotal = 14;//新增表情的个数
-  for(var i=0; i < newTotal ; i++) {
-    $('.emoticons').append('<div class="em_gif"><img width="24px" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
-  }
-  for(var i=0; i < total ; i++) {
-    $('.emoticons').append('<div class="em_gif"><img class="cli_em" src="'+emPath+i+'.gif"></div>');
-  }
+  	var emPath = "<?php echo DOCUMENT_URL?>/chat/emoticons/images/";//表情路径
+  	var total = 134;//表情的个数
+  	var newTotal = 14;//新增表情的个数
+  	for(var i=0; i < newTotal ; i++) {
+    	$('.emoticons').append('<div class="em_gif"><img width="24px" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
+  	}
+  	for(var i=0; i < total ; i++) {
+    	$('.emoticons').append('<div class="em_gif"><img class="cli_em" src="'+emPath+i+'.gif"></div>');
+  	}
 }
 //加号的单击
 $(".plus_icon").click( function (){
-  $(".plus_menu_box").toggle();
+  	$(".plus_menu_box").toggle();
 });
 //输入框聚焦
 $('#mes_textarea').focus( function(){
-  $(".emoticons").hide();
-  var inputHeight = $('.mes_footer').height();// 输入框的高度
-  $(".he-ov-box").css("bottom", inputHeight);
-  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+  	$(".emoticons").hide();
+  	var inputHeight = $('.mes_footer').height();// 输入框的高度
+  	$(".he-ov-box").css("bottom", inputHeight);
+  	$(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 })
 //表情的点击事件
 $(".emoticons .cli_em").live('click',function (){
-  $(this).clone().append().appendTo('.textarea');
-  $('textarea').val($('.textarea').html())
+  	$(this).clone().append().appendTo('.textarea');
+  	$('textarea').val($('.textarea').html())
 })
 //表情的显示
 $('.header_icon').click(function () {
-  addempath();
-  $(".emoticons").toggle();
-  $(".plus_menu_box").hide();
-  var inputHeight = $('.mes_footer').height();// 输入框的高度
-  $(".he-ov-box").css("bottom", inputHeight);
-  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+  	addempath();
+  	$(".emoticons").toggle();
+  	$(".plus_menu_box").hide();
+  	var inputHeight = $('.mes_footer').height();// 输入框的高度
+  	$(".he-ov-box").css("bottom", inputHeight);
+  	$(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 })
 
 // 右边消息的个数
@@ -844,31 +855,30 @@ $('.loader').hide();
 $(".he-ov-box").scrollTop($(".he_ov")[0].scrollHeight);
 //close popup
 $('.cd-popup').on('click', function(event){
-  if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') || $(event.target).is('.clo_alert') ) {
-    event.preventDefault();
-    $(this).removeClass('is-visible');
-  }
+	if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') || $(event.target).is('.clo_alert') ) {
+	    event.preventDefault();
+	    $(this).removeClass('is-visible');
+	}
 });
 //close popup when clicking the esc keyboard button
 $(document).keyup(function(event){
     if(event.which=='27'){
-      $('.cd-popup').removeClass('is-visible');
+      	$('.cd-popup').removeClass('is-visible');
     }
-  });
+});
 //shift+enter 换行
 //enter 提交
- $(".mes_footer").keydown(function(e){
-  var e = e || event,
-  keycode = e.which || e.keyCode;
-  if(e.shiftKey && (e.keyCode==13)){
-    $('#mes_textarea').append('<br/>')
-  } else  if (keycode==13) {
-    $("#submit").trigger("click");
-  }
+$(".mes_footer").keydown(function(e){
+	var e = e || event,
+	keycode = e.which || e.keyCode;
+	if(e.shiftKey && (e.keyCode==13)){
+	   	$('#mes_textarea').append('<br/>')
+	} else  if (keycode==13) {
+	   	$("#submit").trigger("click");
+	}
 });
-
  //消息提交
- var mesParam = {
+var mesParam = {
   mes_obj: function (){
     if (to_uid == 0 && session_no == 0) {
         $('.mes_alert_con').html('请选择聊天对象！')
@@ -881,258 +891,249 @@ $(document).keyup(function(event){
         $('.cd-popup').addClass('is-visible'); return false;
     } else { return true; }
   },
- };
+};
 //消息提交
 var Qiniu_UploadUrl = "http://up.qiniu.com";
 var progressbar = $("#progressbar"),
-    progressLabel = $(".progress-label");
+progressLabel = $(".progress-label");
 progressbar.progressbar({
     value: false,
     change: function() {
-      $('#progressbar').show();
+      	$('#progressbar').show();
         // progressLabel.text(progressbar.progressbar("value") + "%");
     },
     complete: function() {
-      $('#progressbar').hide();
-      // progressLabel.hide();
+      	$('#progressbar').hide();
+      	// progressLabel.hide();
         // progressLabel.text("Complete!");
     }
 });
  //发送文件
 $('#file').on('change', function (){
-  var nowTime = new Date().getTime();
-    if (!mesParam.mes_obj()) {
-      $(this).val('');
-      return false;
-    };
-    $key = $file.value.split(/(\\|\/)/g).pop();
-    document.getElementById('filename').value = $key;
-    $key ='file/'+uid+'/'+to_uid+'/'+nowTime+'/'+$key;
-    document.getElementById('key').value = $key;
-    //普通上传
-    var Qiniu_upload = function(f, token, key) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', Qiniu_UploadUrl, true);
-        var formData, startDate;
-        formData = new FormData();
-        if (key !== null && key !== undefined) formData.append('key', key);
-        formData.append('token', token);
-        formData.append('file', f);
-        var taking;
-        xhr.upload.addEventListener("progress", function(evt) {
-            if (evt.lengthComputable) {
-                var nowDate = new Date().getTime();
-                taking = nowDate - startDate;
-                var x = (evt.loaded) / 1024;
-                var y = taking / 1000;
-                // var uploadSpeed = (x / y);
-                // var formatSpeed;
-                // if (uploadSpeed > 1024) {
-                //     formatSpeed = (uploadSpeed / 1024).toFixed(2) + "Mb\/s";
-                //     // $('#formatSpeed').html(formatSpeed);
-                // } else {
-                //     formatSpeed = uploadSpeed.toFixed(2) + "Kb\/s";
-                //     // $('#formatSpeed').html(formatSpeed);
-                // }
-                var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                progressbar.progressbar("value", percentComplete);
-                // console && console.log(percentComplete, ",", formatSpeed);
-            }
-        }, false);
-        xhr.onreadystatechange = function(response) {
-            if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
-                var blkRet = JSON.parse(xhr.responseText);
-                onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
-                // console && console.log(blkRet);
-                // $("#dialog").html(xhr.responseText).dialog();
-            } else if (xhr.status != 200 && xhr.responseText) {
-              var blkRet = JSON.parse(xhr.responseText);
-              // onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
-              alert(blkRet);
-              // console.log(blkRet);
-            }
-        };
-        startDate = new Date().getTime();
-        $("#progressbar").show();
-        xhr.send(formData);
-    };
-    var token = $("#token").val();
-    if ($("#file")[0].files.length > 0 && token != "") {
-        Qiniu_upload($("#file")[0].files[0], token, $key);
-    } else {
-        console && console.log("form input error");
-    }
-    
+  	var nowTime = new Date().getTime();
+  	if (!mesParam.mes_obj()) {
+    	$(this).val('');
+    	return false;
+  	};
+  	$key = $file.value.split(/(\\|\/)/g).pop();
+  	document.getElementById('filename').value = $key;
+  	$key ='file/'+uid+'/'+to_uid+'/'+nowTime+'/'+$key;
+  	document.getElementById('key').value = $key;
+  	//普通上传
+  	var Qiniu_upload = function(f, token, key) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('POST', Qiniu_UploadUrl, true);
+	    var formData, startDate;
+	    formData = new FormData();
+	    if (key !== null && key !== undefined) formData.append('key', key);
+	    formData.append('token', token);
+	    formData.append('file', f);
+	    var taking;
+	    xhr.upload.addEventListener("progress", function(evt) {
+	      if (evt.lengthComputable) {
+	        var nowDate = new Date().getTime();
+	        taking = nowDate - startDate;
+	        var x = (evt.loaded) / 1024;
+	        var y = taking / 1000;
+	        // var uploadSpeed = (x / y);
+	        // var formatSpeed;
+	        // if (uploadSpeed > 1024) {
+	        //     formatSpeed = (uploadSpeed / 1024).toFixed(2) + "Mb\/s";
+	        //     // $('#formatSpeed').html(formatSpeed);
+	        // } else {
+	        //     formatSpeed = uploadSpeed.toFixed(2) + "Kb\/s";
+	        //     // $('#formatSpeed').html(formatSpeed);
+	        // }
+	        var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+	        progressbar.progressbar("value", percentComplete);
+	        // console && console.log(percentComplete, ",", formatSpeed);
+	      }
+	    }, false);
+	    xhr.onreadystatechange = function(response) {
+		    if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
+		        var blkRet = JSON.parse(xhr.responseText);
+		        onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
+		        // console && console.log(blkRet);
+		        // $("#dialog").html(xhr.responseText).dialog();
+		    } else if (xhr.status != 200 && xhr.responseText) {
+		        var blkRet = JSON.parse(xhr.responseText);
+		        // onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
+		        alert(blkRet);
+		        // console.log(blkRet);
+		    }
+	    };
+	    startDate = new Date().getTime();
+	    $("#progressbar").show();
+	    xhr.send(formData);
+  	};
+  	var token = $("#token").val();
+  	if ($("#file")[0].files.length > 0 && token != "") {
+     	Qiniu_upload($("#file")[0].files[0], token, $key);
+  	} else {
+      	console && console.log("form input error");
+  	}
 });
 document.getElementById('submit').onclick = function (){
   //接收人名字
-  if (!mesParam.mes_obj() || !mesParam.mes_empty()) {
-      return false;
-  };
-  if (mes_type == 'groupMessage') {
-    to_uid_header_img = '/chat/images/rens.png'
-  } else {
-    // to_uid_header_img = 
-  }
+  	if (!mesParam.mes_obj() || !mesParam.mes_empty()) {
+     	return false;
+  	};
+  	if (mes_type == 'groupMessage') {
+    	to_uid_header_img = '/chat/images/rens.png'
+  	} else {
+    	// to_uid_header_img = 
+  	}
     var data = {
-    "type": "addContact",
-   "mestype": mes_type,
-   "session_no" : session_no,
-   "sender_name": name,
-   "accept_name": $('.mes_title_con').text(),
-   "mes_id": to_uid,
-  "to_uid_header_img": to_uid_header_img,
-   "timeStamp": new Date().getTime(),
-  };
-  if ($('.recent-hover[session_no="'+session_no+'"]').length == 0) {
-    if (mes_type == "message") {
-      $('.con-tab-content .list-group').prepend('<li class="recent-contact staff-info chat_people recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'"  mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
-    } else {
-      $('.con-tab-content .list-group').prepend('<li class="session_no staff-info recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'" mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><div><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
-    }
+	    "type": "addContact",
+	   	"mestype": mes_type,
+	   	"session_no" : session_no,
+	   	"sender_name": name,
+	   	"accept_name": $('.mes_title_con').text(),
+	   	"mes_id": to_uid,
+	  	"to_uid_header_img": to_uid_header_img,
+	   	"timeStamp": new Date().getTime(),
+  	};
+  	// if ($('.recent-hover[session_no="'+session_no+'"]').length == 0) {
+  	if ( addContact( session_no ) == false ) {
+    	if (mes_type == "message") {
+      		$('.con-tab-content .list-group').prepend('<li class="recent-contact staff-info chat_people recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'"  mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+    	} else {
+      		$('.con-tab-content .list-group').prepend('<li class="session_no staff-info recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'" mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><div><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+    	}
       ws.send(JSON.stringify(data));
-  } else {
-    if ($('.recent-hover[session_no="'+session_no+'"]').parent('li').index() !=0 ) {
-      $('.con-tab-content .list-group').prepend($('span[session_no="'+session_no+'"]').parent('li'));
-      ws.send('{"type": "updContact", "session_no": "'+session_no+'"}')
-    };
-  }
-  // H5AppDB.indexedDB.selectData(data)
-  onSubmit(to_uid, uid, groupId, mes_type, 'text',session_no);
+  	} else {
+    	if ($('.recent-hover[session_no="'+session_no+'"]').parent('li').index() !=0 ) {
+      		$('.con-tab-content .list-group').prepend($('span[session_no="'+session_no+'"]').parent('li'));
+      		ws.send('{"type": "updContact", "session_no": "'+session_no+'"}')
+    	};
+  	}
+  	// H5AppDB.indexedDB.selectData(data)
+  	onSubmit(to_uid, uid, groupId, mes_type, 'text',session_no);
 };
 //消息提交
 document.getElementsByClassName('send-clipboard-img')[0].onclick = function (){
-  //接收人名字
-  if (!mesParam.mes_obj()) {
-      return false;
-  };
-  onSubmit(to_uid, uid, groupId, mes_type, 'image',session_no);
+  	//接收人名字
+  	if (!mesParam.mes_obj()) {
+      	return false;
+  	};
+  	onSubmit(to_uid, uid, groupId, mes_type, 'image',session_no);
 };;
 //textare 自适应高度
 (function($){
-    $.fn.autoTextarea = function(options) {
-        var defaults={
-            maxHeight:null,
-            minHeight:$(this).height()
-        };
-        var opts = $.extend({},defaults,options);
-        $(this).each(function() {
-            $(this).bind("keyup",function(){
-                var height,style=this.style;
-                var inputHeight = $('.mes_footer').height();
-                $(".mes_inout").val($(this).html());
-                this.style.height =  opts.minHeight + 'px';
-                if (this.scrollHeight > opts.minHeight) {
-                    if (opts.maxHeight && this.scrollHeight > opts.maxHeight) {
-                        height = opts.maxHeight;
-                        style.overflowY = 'scroll';
-                    } else {
-                        height = this.scrollHeight;
-                        style.overflowY = 'hidden';
-                    }
-                    style.height = height  + 'px';
-                    $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight+45)
-                    $(".he-ov-box").css("bottom", inputHeight);
-                }
-            });
-        });
-    };
+  	$.fn.autoTextarea = function(options) {
+    	var defaults={
+        	maxHeight:null,
+        	minHeight:$(this).height()
+    	};
+    	var opts = $.extend({},defaults,options);
+    	$(this).each(function() {
+      		$(this).bind("keyup",function(){
+	        	var height,style=this.style;
+	        	var inputHeight = $('.mes_footer').height();
+	        	$(".mes_inout").val($(this).html());
+	        	this.style.height =  opts.minHeight + 'px';
+	        	if (this.scrollHeight > opts.minHeight) {
+	          		if (opts.maxHeight && this.scrollHeight > opts.maxHeight) {
+	              		height = opts.maxHeight;
+	              		style.overflowY = 'scroll';
+	          		} else {
+	              		height = this.scrollHeight;
+	              		style.overflowY = 'hidden';
+	          		}
+	          		style.height = height  + 'px';
+	          		$(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight+45)
+	          		$(".he-ov-box").css("bottom", inputHeight);
+	        	}
+      		});
+    	});
+  	};
 })(jQuery);
 $("#mes_textarea").autoTextarea({
-   maxHeight:260,
-   minHeight:50
+   	maxHeight:260,
+   	minHeight:50
 });
-
 //单聊选择人
 $('#s_man').click(function(){
-  $('#b_is').attr('val', 'selman');
-  $('#name_box').show();
+  	$('#b_is').attr('val', 'selman');
+  	$('#name_box').show();
 })
   //增加群聊人数选择人
 $('.add-groupMan').live('click', function(){
-  $('#b_is').attr('val', 'addGroupMan');
-  $('#name_box').show();
+  	$('#b_is').attr('val', 'addGroupMan');
+  	$('#name_box').show();
 })
 //右边图标点击事件
 $('.mes_ico_box').swipe( {
-    click:function(event, phase, direction, distance, duration,fingerCount) {
-        var mes_abs = $('.mes_abs').css('right');
-        var cata_box = $(this).attr('cata-box')
-        if (cata_box == 'ren') {
-            $('.online_man').show();
-            $('.mes_con').hide();
-            //0px 消息隐藏
-            if (mes_abs == '0px' || mes_abs == '200px') {
-                $('.mes_abs').animate({
-                        right: 140
-                    },
-                    {
-                        queue: true,
-                        duration: 500
-                    })
-//        $('.mes_abs').css("right", "140px")
-            } else {
-                $('.mes_abs').animate({
-                        right: 0
-                    },
-                    {
-                        queue: true,
-                        duration: 500
-                    })
-//        $('.mes_abs').css("right", "0")
-            }
-
-        } else {
-            $('.online_man').hide();
-            $('.mes_con').show();
-            //0px 消息隐藏
-            if (mes_abs == '0px' || mes_abs == '140px') {
-//          $('.mes_abs').css("right", "141px")
-                $('.mes_abs').animate({
-                        right: 200
-                    },
-                    {
-                        queue: true,
-                        duration: 500
-                    })
-            } else {
-//          $('.mes_abs').css("right", "0")
-                $('.mes_abs').animate({
-                        right: 0
-                    },
-                    {
-                        queue: true,
-                        duration: 500
-                    })
-            }
-
-        }
-    }
+  	click:function(event, phase, direction, distance, duration,fingerCount) {
+    	var mes_abs = $('.mes_abs').css('right');
+    	var cata_box = $(this).attr('cata-box')
+    	if (cata_box == 'ren') {
+      		$('.online_man').show();
+      		$('.mes_con').hide();
+	      	//0px 消息隐藏
+	      	if (mes_abs == '0px' || mes_abs == '200px') {
+	          	$('.mes_abs').animate({
+	                  right: 140
+	            },
+	            {
+	                queue: true,
+	                duration: 500
+	            })
+	      	} else {
+		        $('.mes_abs').animate({
+		          	right: 0
+		        },
+		        {
+		          	queue: true,
+		          	duration: 500
+		        })
+	      	}
+    	} else {
+      		$('.online_man').hide();
+      		$('.mes_con').show();
+      		if (mes_abs == '0px' || mes_abs == '140px') {
+          		$('.mes_abs').animate({
+            		right: 200
+          		},
+          		{
+            		queue: true,
+            		duration: 500
+          		})
+      		} else {
+        		$('.mes_abs').animate({
+          		right: 0
+        		},
+        		{
+         			 queue: true,
+          			duration: 500
+        		})
+      		}
+    	}
+  	}
 })
 // document点击事件
 $(document).click(function (event){
-  if( !$(event.target).parents('.mes_fixed_big').is('.mes_fixed_big') && !$(event.target).is('.mes_close')) {
-    // event.preventDefault();
-    $('.mes_abs').animate({
-        right: 0
-      },
-      {
-        queue: true,
-        duration: 500
-      })
-  }
-  if (!$(event.target).parents('#name_box').is('#name_box')) {
-    if (!$(event.target).is('#s_man') && !$(event.target).is('.add-groupMan')) {
-        $('#name_box').hide();
-    };
-  };
+  	if( !$(event.target).parents('.mes_fixed_big').is('.mes_fixed_big') && !$(event.target).is('.mes_close')) {
+    	// event.preventDefault();
+    	$('.mes_abs').animate({
+      		right: 0
+    	},
+	    {
+	      queue: true,
+	      duration: 500
+	    })
+  	}
+  	if (!$(event.target).parents('#name_box').is('#name_box')) {
+    	if (!$(event.target).is('#s_man') && !$(event.target).is('.add-groupMan')) {
+        	$('#name_box').hide();
+    	};
+  	};
 })
-
 //右边图标
 $('.mes_ico_box').hover(function (){
-  $(this).css('background-color', '#9dd2e7')
+  	$(this).css('background-color', '#9dd2e7')
 }, function (){
-  $(this).css('background-color', '#444851')
+  	$(this).css('background-color', '#444851')
 })
 //消息滑过
 $(document).on('mouseenter' , '.mes_box',function(){
@@ -1146,233 +1147,226 @@ $(document).on('mouseleave', '.mes_box', function (){
 //人员换过
 //人员信息
 var staffInfo = {
-  tel:null,
-  tel_branch:null,
-  mobile_phone:null,
+  	tel:null,
+  	tel_branch:null,
+  	mobile_phone:null,
 };
 //获取人员信息
 var getStaffInfo = function (data){
-  staffInfo.tel = data.tel;
-  staffInfo.tel_branch = data.tel_branch;
-  staffInfo.mobile_phone = data.mobile_phone;
+  	staffInfo.tel = data.tel;
+  	staffInfo.tel_branch = data.tel_branch;
+  	staffInfo.mobile_phone = data.mobile_phone;
 }
 //请求人员信息
 var ajaxGetStaffInfo = function (staffid, direction, css){
-  var arrDirectionCg =new Object();
-  arrDirectionCg = { 'left': 'right','right':'left', 'up': 'bottom', 'down': 'top' };
-  var directionChang = arrDirectionCg[direction];
-  var margin ="margin-"+directionChang;
-  $.ajax({
-    url:"getStaffTels.php",
-    type:"post",
-    data:"staffid="+staffid,
-    success: function ( data ){
-      var data = $.parseJSON(data);
-      getStaffInfo(data);
-      // var index = parseInt($(".infoCurrent").index());
-      $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li></ul></div>');
-      $('.staff-info-box').css(css);
-      $('.staff-info-box').css(directionChang, "100%");
-      $('.staff-info-box').css(margin, "6");
-      $('.staff-info-box .arrow').css('border-'+direction,"8px solid #fff");
-      $('.staff-info-box .arrow').css(direction,"100%");
+  	var arrDirectionCg =new Object();
+  	arrDirectionCg = { 'left': 'right','right':'left', 'up': 'bottom', 'down': 'top' };
+  	var directionChang = arrDirectionCg[direction];
+  	var margin ="margin-"+directionChang;
+  	$.ajax({
+    	url:"getStaffTels.php",
+    	type:"post",
+    	data:"staffid="+staffid,
+    	success: function ( data ){
+    	  	var data = $.parseJSON(data);
+      		getStaffInfo(data);
+      		// var index = parseInt($(".infoCurrent").index());
+      		$(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li></ul></div>');
+      		$('.staff-info-box').css(css);
+      		$('.staff-info-box').css(directionChang, "100%");
+      		$('.staff-info-box').css(margin, "6");
+      		$('.staff-info-box .arrow').css('border-'+direction,"8px solid #fff");
+      		$('.staff-info-box .arrow').css(direction,"100%");
 
-      // $('.staff-info-box').css();
-    }
-  })
+      		// $('.staff-info-box').css();
+    	}
+  	})
 }
-//人员信息弹框
-//
-// var staffPopover = function ( data ){
-
-// }
 //消息滑过
 $(document).on('mouseenter' , '.staff-info',function(){
-  var obj = $(this);
-  var staffid = obj.attr('mes_id');
-  obj.addClass('infoCurrent');
-  var direction = obj.attr('data-placement');
-  var height = obj.height();
-  var offtop = height/2-85/2;
-  ajaxGetStaffInfo(staffid, direction, { top: "-50%"});
-  });
+  	var obj = $(this);
+  	var staffid = obj.attr('mes_id');
+  	obj.addClass('infoCurrent');
+  	var direction = obj.attr('data-placement');
+  	var height = obj.height();
+  	var offtop = height/2-85/2;
+  	ajaxGetStaffInfo(staffid, direction, { top: "-50%"});
+});
 $(document).on('mouseleave', '.staff-info', function (){
-  var obj = $(this);
-  obj.removeClass('infoCurrent');
-  $('.staff-info-box').remove();
+  	var obj = $(this);
+  	obj.removeClass('infoCurrent');
+  	$('.staff-info-box').remove();
 });
 //消息滑过
 $(document).on('mouseenter' , '.content-staff-info',function(){
-  var obj = $(this);
-  var staffid = obj.attr('mes_id');
-  var _index = obj.index();
-  var height = obj.outerHeight();
-  var offtop = ( _index - 1 ) * height + 96 - $('.con-tab-content').scrollTop();
-  $('.details-list').addClass('infoCurrent');
-  var direction = obj.attr('data-placement');
-  ajaxGetStaffInfo(staffid, direction, {top: offtop});
-  });
-$(document).on('mouseleave', '.content-staff-info', function (){
-  $('.details-list').removeClass('infoCurrent');
-  $('.staff-info-box').remove();
+  	var obj = $(this);
+  	var staffid = obj.attr('mes_id');
+  	var _index = obj.index();
+  	var height = obj.outerHeight();
+  	var offtop = ( _index - 1 ) * height + 96 - $('.con-tab-content').scrollTop();
+  	$('.details-list').addClass('infoCurrent');
+  	var direction = obj.attr('data-placement');
+  	ajaxGetStaffInfo(staffid, direction, {top: offtop});
 });
-  //打个消息的关闭
-  var mes_chakan_close = function (mestype, session_no, mes_num){
-      ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
-      // console.log(mesnum);
-      mesnum = parseInt(mesnum) - parseInt(mes_num);
-      $('.mes_radio').html(mesnum);
-      $('.mes_chakan_close[session_no="'+session_no+'"]').parents('.mes_box').remove();
-  }
-  //单个消息关闭
-  $('.mes_chakan_close').live('click', function (){
-    var mestype = $(this).attr('mestype');
-    var mes_num = $(this).parent().next('.mes_num').html();
-    session_no = $(this).attr('session_no');
-    console.log(session_no);
-    mes_chakan_close(mestype, session_no, mes_num);
-  })
-  $('.mes_close').live('click', function (){
-    var mestype = $(this).attr('mestype');
-    var mes_num = $(this).prev('.mes_num').html();
-    session_no = $(this).attr('session_no');
-    mes_chakan_close(mestype, session_no, mes_num);
-  })
-  //消息关闭
-  $('.close').click(function (){
-      $('.mes_abs').animate({
-      right: 0
-    },
-    {
-      queue: true,
-      duration: 0
-    })
-  })
-
-  //粘贴图片
+$(document).on('mouseleave', '.content-staff-info', function (){
+  	$('.details-list').removeClass('infoCurrent');
+  	$('.staff-info-box').remove();
+});
+//打个消息的关闭
+var mes_chakan_close = function (mestype, session_no, mes_num){
+  	ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
+  	// console.log(mesnum);
+  	mesnum = parseInt(mesnum) - parseInt(mes_num);
+  	$('.mes_radio').html(mesnum);
+  	$('.mes_chakan_close[session_no="'+session_no+'"]').parents('.mes_box').remove();
+}
+//单个消息关闭
+$('.mes_chakan_close').live('click', function (){
+  	var mestype = $(this).attr('mestype');
+  	var mes_num = $(this).parent().next('.mes_num').html();
+  	session_no = $(this).attr('session_no');
+  	mes_chakan_close(mestype, session_no, mes_num);
+})
+$('.mes_close').live('click', function (){
+  	var mestype = $(this).attr('mestype');
+  	var mes_num = $(this).prev('.mes_num').html();
+  	session_no = $(this).attr('session_no');
+  	mes_chakan_close(mestype, session_no, mes_num);
+})
+//消息关闭
+$('.close').click(function (){
+    $('.mes_abs').animate({
+    	right: 0
+  	},
+  	{
+    	queue: true,
+    	duration: 0
+  	})
+})
+//粘贴图片
 $(function(){
-  var imgReader = function( item ){
-    var blob = item.getAsFile(),
-      reader = new FileReader();
-    reader.onload = function( e ){
-      var img = new Image();
-      img.src = e.target.result;
-      img.className = "send-img";
-      $('.sending-img-box').html('');
-      $('.sending-img-box').append( img );
-      $('.img-box').show();
-    };
-    reader.readAsDataURL( blob );
-  };
-  document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
-  	e.preventDefault();
-    var clipboardData = e.clipboardData,
-      i = 0,
-      items, item, types;
-    if( clipboardData ){
-      items = clipboardData.items;
-      if( !items ){
-        return;
-      }
-      item = items[0];
-      types = clipboardData.types || [];
-      for( ; i < types.length; i++ ){
-        if( types[i] === 'Files' ){
-          item = items[i];
-          break;
-        }
-      }
-      if ( item && item.kind === 'string') {
-      	$('#mes_textarea').append( clipboardData.getData('text/plain') );
-      };
-      if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
-        imgReader( item );
-      }
-    }
-  })
+  	var imgReader = function( item ){
+    	var blob = item.getAsFile(),
+      	reader = new FileReader();
+    	reader.onload = function( e ){
+	      	var img = new Image();
+	      	img.src = e.target.result;
+	      	img.className = "send-img";
+	      	$('.sending-img-box').html('');
+	      	$('.sending-img-box').append( img );
+	      	$('.img-box').show();
+    	};
+    	reader.readAsDataURL( blob );
+  	};
+  	document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
+  		e.preventDefault();
+    	var clipboardData = e.clipboardData,
+      	i = 0,
+      	items, item, types;
+    	if( clipboardData ){
+	      	items = clipboardData.items;
+	      	if( !items ){
+	        	return;
+	      	}
+	      	item = items[0];
+	      	types = clipboardData.types || [];
+	      	for( ; i < types.length; i++ ){
+	        	if( types[i] === 'Files' ){
+	          		item = items[i];
+	          		break;
+	        	}
+	      	}
+	      	if ( item && item.kind === 'string') {
+	      		$('#mes_textarea').append( clipboardData.getData('text/plain') );
+	      	};
+	      	if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
+	        	imgReader( item );
+	      	}
+    	}
+  	})
 });
 //聊天对话框img放大
 $('.he_ov .send-img').live( 'click', function (){
-  $('.send-img-box img').remove();
-  $('.send-img-box').show();
-  $('.send-img-box').append($(this).clone().attr('id', 'rotimg'));
-  var imgHeight = $('.send-img-box img').height();
-  var imgWidth = $('.send-img-box img').width();
-  $('.send-img-box img').css('margin-top', -imgHeight/2);
-  $('.send-img-box img').css('margin-left', -imgWidth/2);
+  	$('.send-img-box img').remove();
+  	$('.send-img-box').show();
+  	$('.send-img-box').append($(this).clone().attr('id', 'rotimg'));
+  	var imgHeight = $('.send-img-box img').height();
+  	var imgWidth = $('.send-img-box img').width();
+  	$('.send-img-box img').css('margin-top', -imgHeight/2);
+  	$('.send-img-box img').css('margin-left', -imgWidth/2);
 });
 $('.send-img-close, .send-img-box').click( function (event){
-  if ($(event.target).is('i')) {
-    return false;
-  };
+  	if ($(event.target).is('i')) {
+    	return false;
+  	};
     $('.send-img-box').hide();
 })
 //得到人员头像
 var getStaffHead = function (headImg){
-  to_uid_header_img = headImg;
+  	to_uid_header_img = headImg;
 };
-  //组织架构的引用
-   // console.log(sidList)
-    //button确定
-    $('#b_is').click(function (){
-      var val = $(this).attr('val');
-      if (val == "selman") {
-        //在手机上交替显示
-        if ($(window).width() < 500) {
-          $('.chat-container').show();
-          $('.details-list').hide();  
-        };
-        //end
-        var jsonText = JSON.stringify(sidList);
-        if (sidList.length >1) {
-          alert('只能选择一个人！');return false;
-        };
-        to_uid = sidList.join(',');
-        ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}')
-        $('#mes_load').html(10);
-        mes_type = "message";
-        //会话id的改变
-        if (session_no == 0) {
-          if (to_uid < uid) {
-            session_no = to_uid+"-"+uid;
-          } else {
-            session_no = uid+"-"+to_uid;
-          }
-        };
-        //消息向上滚动
-        $('.he-ov-box').unbind('scroll');
-        $('.he-ov-box').bind("scroll", function (){
-          mesScroll();
-        })
-        $.ajax({
-          url:'getndp.php',
-          data:'jsonText='+jsonText,
-          type:'post',
-          success:function(data){
-            var d=eval('('+data+')')
-            for (var i = 0; i < d.length; i++) {
-              $('.mes_title_con').html(d[i].name);  
-              getStaffHead(d[i].card_image);  
-            }
-          }
-        })
-      } else if (val == "addGroupMan") {
-        $('.alert').show(500);
-        setTimeout(function(){
-          $('.alert').hide(500);
-        },2000);
-        ws.send('{"type":"addGroupMan", "session_no":"'+session_no+'", "sidList":['+sidList+']}');
-      };
-      $('#name_box').hide();
-      $('.selected').find('div').html('<ul></ul>');
-      $('#No1').find('.ltclasscheckbox').attr('checked',false);
-      $('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
-      sidList=[];
-    })
-    // 组织架构 button取消
-    $('#b_no').click(function(){
-      $('#name_box').hide();
-    })
+//组织架构的引用
+// console.log(sidList)
+//button确定
+$('#b_is').click(function (){
+  	var val = $(this).attr('val');
+  	if (val == "selman") {
+    	//在手机上交替显示
+    	if ($(window).width() < 500) {
+      		$('.chat-container').show();
+      		$('.details-list').hide();  
+    	};
+    	//end
+    	var jsonText = JSON.stringify(sidList);
+    	if (sidList.length >1) {
+      		alert('只能选择一个人！');return false;
+    	};
+    	to_uid = sidList.join(',');
+    	ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}')
+    	$('#mes_load').html(10);
+    	mes_type = "message";
+    	//会话id的改变
+    	if (session_no == 0) {
+      		if (to_uid < uid) {
+	        	session_no = to_uid+"-"+uid;
+	      	} else {
+	        	session_no = uid+"-"+to_uid;
+	      	}
+    	};
+    	//消息向上滚动
+    	$('.he-ov-box').unbind('scroll');
+    	$('.he-ov-box').bind("scroll", function (){
+     	 	mesScroll();
+    	})
+    	$.ajax({
+	      	url:'getndp.php',
+	      	data:'jsonText='+jsonText,
+	      	type:'post',
+	      	success:function(data){
+	        	var d=eval('('+data+')')
+	        	for (var i = 0; i < d.length; i++) {
+	          	$('.mes_title_con').html(d[i].name);  
+	          		getStaffHead(d[i].card_image);  
+	        	}
+	      	}
+    	})
+  	} else if (val == "addGroupMan") {
+    	$('.alert').show(500);
+    		setTimeout(function(){
+      		$('.alert').hide(500);
+    	},2000);
+    	ws.send('{"type":"addGroupMan", "session_no":"'+session_no+'", "sidList":['+sidList+']}');
+  	};
+  	$('#name_box').hide();
+  	$('.selected').find('div').html('<ul></ul>');
+  	$('#No1').find('.ltclasscheckbox').attr('checked',false);
+  	$('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
+  	sidList=[];
+})
+// 组织架构 button取消
+$('#b_no').click(function(){
+  	$('#name_box').hide();
+})
 //发送文件
 
 //请求 token
@@ -1388,7 +1382,6 @@ function xmlhttp() {
     }
     return $xmlhttp;
 }
-
 window.onload = function() {
 
     $xmlhttp = xmlhttp();

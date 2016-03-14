@@ -128,7 +128,7 @@
         var context = new AudioContext();
         var audioInput = context.createMediaStreamSource(stream);
         var recorder = context.createScriptProcessor(4096, 1, 1);
-     
+        var recorderDoor = true;//火狐不兼容问题
         var audioData = {
             size: 0          //录音文件长度
             , buffer: []    //录音缓存
@@ -226,11 +226,13 @@
         };
      
         this.start = function () {
+            recorderDoor = true;
             audioInput.connect(recorder);
             recorder.connect(context.destination);
         }
      
         this.stop = function () {
+            recorderDoor = false;
             recorder.disconnect();
         }
      
@@ -243,7 +245,9 @@
         }
      
         recorder.onaudioprocess = function (e) {
-            audioData.input(e.inputBuffer.getChannelData(0));
+            if (recorderDoor) {
+                audioData.input(e.inputBuffer.getChannelData(0));
+            };
         }
     };
      

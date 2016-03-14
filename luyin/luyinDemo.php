@@ -44,17 +44,17 @@
             gRecorder = rec;
         });
      
-        ws = new WebSocket("ws://127.0.0.1:8333");
+        // ws = new WebSocket("wss://127.0.0.1:8333");
      
-        ws.onopen = function() {
-            console.log('握手成功,可以语音了。');
-            // ws.send('user:' + a.value);
-        };
+        // ws.onopen = function() {
+        //     console.log('握手成功,可以语音了。');
+        //     // ws.send('user:' + a.value);
+        // };
      
-        ws.onmessage = function(e) {
-            console.log(e)
-            receive(e.data);
-        };
+        // ws.onmessage = function(e) {
+        //     console.log(e)
+        //     receive(e.data);
+        // };
         // $(document).keyup(function (e){
         //     alert(2)
         //     if (e.keyCode == 65) {
@@ -78,7 +78,7 @@
                     audio.src = URL.createObjectURL(gRecorder.getBlob());
 
                     // var mesBlob = gRecorder.getBlob();
-                    ws.send(gRecorder.getBlob());
+                    // ws.send(gRecorder.getBlob());
                     // ws.send(gRecorder.getBlob());
 
                     gRecorder.clear();
@@ -89,12 +89,12 @@
         }
     }
      
-    c.onclick = function() {
-        console.log(audio.duration);
-        if(ws) {
-            ws.close();
-        }
-    }
+    // c.onclick = function() {
+    //     console.log(audio.duration);
+    //     if(ws) {
+    //         ws.close();
+    //     }
+    // }
      
     var SRecorder = function(stream) {
         config = {};
@@ -105,7 +105,7 @@
         var context = new AudioContext();
         var audioInput = context.createMediaStreamSource(stream);
         var recorder = context.createScriptProcessor(4096, 1, 1);
-        var recorderDoor = true;
+        var recorderDoor = true;//火狐不兼容问题
         var audioData = {
             size: 0          //录音文件长度
             , buffer: []    //录音缓存
@@ -223,7 +223,6 @@
         }
      
         recorder.onaudioprocess = function (e) {
-            console.log(recorderDoor);
             if (recorderDoor) {
                 audioData.input(e.inputBuffer.getChannelData(0));
             };
@@ -247,29 +246,6 @@
         alert(e)
         // audio.src = window.URL.createObjectURL(e);
     }
-    function AudioPerform() {
-            var ua = navigator.userAgent.toLowerCase();
-            var audiopath = "$!{TempletPath}images/ring.wav";
-            if (ua.match(/msie ([\d.]+)/)) {
-                jQuery('#alert_sound').html('<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95"><param name="AutoStart" value="1" /><param name="Src" value="' + audiopath + '" /></object>');
-            }
-            else if (ua.match(/firefox\/([\d.]+)/)) {
-                //            jQuery('#alert_sound').html('<embed src="' + audiopath + '" type="audio/wav" hidden="true" loop="false" mastersound></embed>');
-                jQuery('#alert_sound').html('<audio autoplay="autoplay"><source src="' + audiopath + '" type="audio/wav"/><source src="$!{TempletPath}images/ring.wav" type="audio/mpeg"/></audio>');
-            }
-            else if (ua.match(/chrome\/([\d.]+)/)) {
-                jQuery('#alert_sound').html('<audio src="' + audiopath + '" type="audio/wav" autoplay=”autoplay” hidden="true"></audio>');
-            }
-            else if (ua.match(/opera.([\d.]+)/)) {
-                jQuery('#alert_sound').html('<embed src="' + audiopath + '" hidden="true" loop="false"><noembed><bgsounds src=' + audiopath + '></noembed>');
-            }
-            else if (ua.match(/version\/([\d.]+).*safari/)) {
-                jQuery('#alert_sound').html('<audio src="' + audiopath + '" type="audio/wav" autoplay=”autoplay” hidden="true"></audio>');
-            }
-            else {
-                jQuery('#alert_sound').html('<embed src="' + audiopath + '" type="audio/wav" hidden="true" loop="false" mastersound></embed>');
-            }
-        }
 </script>
 </body>
 </html>
