@@ -3,7 +3,7 @@ require_once('config.inc.php');
 require_once('lib/mesages.class.php');
 $uid = $_SESSION['staffid'];
 $oms_id = $_SESSION['oms_id'];
-$uid = 6;
+$uid = 4;
 $oms_id = 2;
 $pageload = 10;//消息显示的条数
 $session_no = 0;//会话id
@@ -21,7 +21,6 @@ $ContactManSession = [];
 foreach ($recentContact as $key => $value) {
 	$ContactManSession[] = $value['session_no'];
 }
-print_r($ContactManSession);
 //提示消息列表
 if (isset($uid)) {
   	$arrMes = $mes->mesAlertList();
@@ -90,9 +89,9 @@ $arrGroup = $mes->groupChatList();
     var groupId = 0;
     var header_img_url = "<?php echo $card_image?>";
     nearestContact = new Object();
-
-    var nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): '没有';?>;
+    nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): json_encode([]);?>;
     console.log(nearestContact);
+
   </script>
 </head>
 <body>
@@ -297,6 +296,9 @@ $arrGroup = $mes->groupChatList();
               	}
             ?>
             <div class="mes_box">
+	            <div class="mes_header">
+	            	
+	            </div>
                 <span class='mex_con'><?php echo $sender_name.":".$content;?></span>
                 <div style='height:30px'>
                     <span class='mes_chakan_close <?php echo $addClass;?>' mes_id="<?php echo $value['sender_id'];?>" session_no='<?php echo $value['session_no'];?>' mesid="<?php echo $value['id'];?>" mestype="<?php echo $value['message_type'];?>" group-name="<?php echo $sender_name;?>" group-all = "<?php echo $value['accept_id'];?>" session_no='<?php echo $value['session_no'];?>' >
@@ -360,14 +362,44 @@ $arrGroup = $mes->groupChatList();
     //     // console.log(2)
     // })
 //客服
+//最近联系人增加与更新
+var addContact = {};
 //判断当前会话在最近联系人哪里有没有 
-var  addContact =  function (session_id) {
+addContact.is =  function (session_id) {
 	for (var i in nearestContact) {
 		if ( nearestContact[i] == session_id) {
 			return true;
 		};
 	}
 	return false;
+}
+//增加最近联系人
+addContact.Dom = function () {
+	var data = {
+	    "type": "addContact",
+	   	"mestype": mes_type,
+	   	"session_no" : session_no,
+	   	"sender_name": name,
+	   	"accept_name": $('.mes_title_con').text(),
+	   	"mes_id": to_uid,
+	  	"to_uid_header_img": to_uid_header_img,
+	   	"timeStamp": new Date().getTime(),
+  	};
+	if (mes_type == "message") {
+  		$('.con-tab-content .list-group').prepend('<li class="recent-contact staff-info chat_people recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'"  mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+	} else {
+  		$('.con-tab-content .list-group').prepend('<li class="session_no staff-info recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'" mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><div><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+	}
+	nearestContact.push(session_no);
+  	ws.send(JSON.stringify(data));
+
+};
+//最近联系人更新
+addContact.upd = function (session_id) {
+	if ($('.recent-hover[session_no="'+session_id+'"]').parent('li').index() !=0 ) {
+  		$('.con-tab-content .list-group').prepend($('span[session_no="'+session_id+'"]').parent('li'));
+  		ws.send('{"type": "updContact", "session_no": "'+session_id+'"}')
+	};
 }
 $('.kefu-icon').hover(function (e){
 	$('.kefu-icon .kefu').animate({
@@ -716,12 +748,16 @@ var mesScroll = function (){
     	ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
   	};
 }
+//删除指定数组元素
+Array.prototype.remove = function(val) {
+	var index = this.indexOf(val);
+	if (index > -1) {
+		this.splice(index, 1);
+	}
+};
 //删除最近联系人
-var arr = [1,2,3];
 var delContactFun = function( id, mestype, session_id){
-	delete arr[1];
-	console.log(arr);
-	console.log(nearestContact);
+	nearestContact.remove(session_no);
    	$('.recent-action').parent('li').remove()
    	ws.send('{"type": "delContact" ,"mestype":"'+mestype+'", "id": "'+id+'"}');
 }
@@ -740,6 +776,7 @@ $('.chat_people').live('click', function( e ){
     	};
 	  	//end
 	    // groupId = $(this).attr('groupId');
+	    console.log()
 	    if (!$(e.target).is('.mes_chakan_close')) {
 	      	if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
 	         	var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
@@ -983,29 +1020,32 @@ document.getElementById('submit').onclick = function (){
   	} else {
     	// to_uid_header_img = 
   	}
-    var data = {
-	    "type": "addContact",
-	   	"mestype": mes_type,
-	   	"session_no" : session_no,
-	   	"sender_name": name,
-	   	"accept_name": $('.mes_title_con').text(),
-	   	"mes_id": to_uid,
-	  	"to_uid_header_img": to_uid_header_img,
-	   	"timeStamp": new Date().getTime(),
-  	};
   	// if ($('.recent-hover[session_no="'+session_no+'"]').length == 0) {
-  	if ( addContact( session_no ) == false ) {
-    	if (mes_type == "message") {
-      		$('.con-tab-content .list-group').prepend('<li class="recent-contact staff-info chat_people recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'"  mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
-    	} else {
-      		$('.con-tab-content .list-group').prepend('<li class="session_no staff-info recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'" mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><div><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
-    	}
-      ws.send(JSON.stringify(data));
+  	if ( addContact.is( session_no ) == false ) {
+  		addContact.Dom();
+  		// var data = {
+		  //   "type": "addContact",
+		  //  	"mestype": mes_type,
+		  //  	"session_no" : session_no,
+		  //  	"sender_name": name,
+		  //  	"accept_name": $('.mes_title_con').text(),
+		  //  	"mes_id": to_uid,
+		  // 	"to_uid_header_img": to_uid_header_img,
+		  //  	"timeStamp": new Date().getTime(),
+	  	// };
+    // 	if (mes_type == "message") {
+    //   		$('.con-tab-content .list-group').prepend('<li class="recent-contact staff-info chat_people recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'"  mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+    // 	} else {
+    //   		$('.con-tab-content .list-group').prepend('<li class="session_no staff-info recent-hover" data-placement="right" group-name="'+data.accept_name+'" session_no="'+data.session_no+'" mes_id="'+data.mes_id+'" mestype ="'+data.mestype+'" ><div><span class="header-img"><img src="'+data.to_uid_header_img+'" alt=""></span><i>'+data.accept_name+'</i><span title = "删除聊天记录" mestype="'+data.mestype+'"  session="'+data.session_no+'" class="recent-close">&times;</span></div></li>')
+    // 	}
+    // 	nearestContact.push(session_no);
+    //   	ws.send(JSON.stringify(data));
   	} else {
-    	if ($('.recent-hover[session_no="'+session_no+'"]').parent('li').index() !=0 ) {
-      		$('.con-tab-content .list-group').prepend($('span[session_no="'+session_no+'"]').parent('li'));
-      		ws.send('{"type": "updContact", "session_no": "'+session_no+'"}')
-    	};
+  		addContact.upd( session_no );
+    	// if ($('.recent-hover[session_no="'+session_no+'"]').parent('li').index() !=0 ) {
+     //  		$('.con-tab-content .list-group').prepend($('span[session_no="'+session_no+'"]').parent('li'));
+     //  		ws.send('{"type": "updContact", "session_no": "'+session_no+'"}')
+    	// };
   	}
   	// H5AppDB.indexedDB.selectData(data)
   	onSubmit(to_uid, uid, groupId, mes_type, 'text',session_no);
@@ -1214,6 +1254,12 @@ $(document).on('mouseleave', '.content-staff-info', function (){
 });
 //打个消息的关闭
 var mes_chakan_close = function (mestype, session_no, mes_num){
+	console.log(211)
+	if ( addContact.is( session_no ) == false ) {
+		addContact.Dom();
+	} else {
+		addContact.upd(session_no);
+	}
   	ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
   	// console.log(mesnum);
   	mesnum = parseInt(mesnum) - parseInt(mes_num);

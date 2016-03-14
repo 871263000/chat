@@ -127,6 +127,7 @@ class Event
                 $room_id = $_SESSION['room_id'];
                 $client_name = $_SESSION['client_name'];
                 $uid = $_SESSION['uid'];
+                $header_img_url = $_SESSION['header_img_url'];
                 // 私聊
                 $message_content = $message_data['content'];
                 if($message_data['to_uid_id'] !== 'all')
@@ -136,6 +137,7 @@ class Event
                         'from_client_id'=>$client_id, 
                         'from_client_name' =>$client_name,
                         'from_uid_id'=>$uid,
+                        'header_img_url'=>$header_img_url,
                         'groupId'=>$message_data['groupId'],
                         'mestype'=>$message_data['message_type'],
                         'content'=>$message_content,
@@ -188,7 +190,6 @@ class Event
                     $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$message_data['to_uid_id'], 'sender_name'=>$client_name, 'accept_name'=>$message_data['accept_name'],'message_type'=>$message_data['message_type'], 'mesages_types'=>$message_data['mes_types'], 'groupId'=>$message_data['groupId'], 'message_content'=>$message_content, 'session_no'=>$session_no, 'create_time'=>time(), 'update_time'=>time()))->query();
                     $new_message['insert_id'] = $insert_id;
                     $new_message['session_no'] = $session_no;
-                    $new_message['header_img_url'] = $_SESSION['header_img_url'];
                     if ($message_data['message_type'] == "groupMessage") {
                         $db1->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != $uid AND `pid`=".$message_data['session_no']);
                     } else if ($message_data['message_type'] == "message") {

@@ -234,6 +234,8 @@ h2{margin-top: 0;}
 .chainEmployees ul li{list-style: none;transition: border 1s;-moz-transition: border 1s; /* Firefox 4 */-webkit-transition: border 1s; /* Safari 和 Chrome */-o-transition: border 1s; /* Opera */}
 .externalStaffid-header-img img{width: 40px; height: 40px;padding: 3px;border-radius: 5px;margin-right: 5px; }
 .staff-close{float: right; cursor: pointer;}
+.mes_header{ width: 55px; height: 55px; float: left;  padding: 5px; }
+.mes_header img{ width: 55px; height: 55px; float: left; padding: 5px; }
 @media (min-width: 600px){
     .man_tittle{position: absolute; top: 0; z-index: 1111;}
     .online_man .list-group{ top: 38px; position: absolute;width: 100%; }
