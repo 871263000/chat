@@ -32,9 +32,9 @@
   font-weight: 700;
   margin: 0 auto;
 }
-.mex_con{padding: 0 20px; display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;line-height:30px;text-align:center;}
+.mex_con{padding: 0 5px; display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;line-height:25px;text-align:left;}
 .mes_chakan{ line-height:30px;text-align:center;cursor:pointer; }
-.mes_box{ height:60px;text-align: center;border-bottom: 1px solid #dedede;position:relative; }
+.mes_box{ height:55px;text-align: center;border-bottom: 1px solid #dedede;position:relative; }
 .mes_abs{
     position: absolute;
     right: 0;

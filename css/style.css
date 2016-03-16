@@ -151,7 +151,7 @@ h2{margin-top: 0;}
 .list-group{margin-bottom: 0px;}
 .online_man{/*overflow: auto !important;*/ text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
 .online_man{  /*overflow: auto;*/ box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0; background: #fff; height: 100%; display: block; }
-.list-group li{/*overflow: hidden;*/ font-size: 16px;border-bottom: 1px solid #ccc;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;}
+.con-tab-content .list-group li, .panel-body .list-group li{/*overflow: hidden;*/ font-size: 16px;border-bottom: 1px solid #ccc;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;}
 .onlinesSroll-box{display: none; min-height: 20px; position: absolute; top: 38px;right: 0; z-index: 99999;width: 10px; border-radius: 5px; background: rgba(0,0,0,.4); height: 100px;}
 /*.man_tittle{ position: absolute; top: 0;z-index: 11111;}*/
 .mes_dclose{cursor: pointer; display: none;position: absolute;top: 0;right: 0;color: #fff;font-size: 38px;padding: 0 10px 0 0;}
@@ -234,8 +234,9 @@ h2{margin-top: 0;}
 .chainEmployees ul li{list-style: none;transition: border 1s;-moz-transition: border 1s; /* Firefox 4 */-webkit-transition: border 1s; /* Safari 和 Chrome */-o-transition: border 1s; /* Opera */}
 .externalStaffid-header-img img{width: 40px; height: 40px;padding: 3px;border-radius: 5px;margin-right: 5px; }
 .staff-close{float: right; cursor: pointer;}
-.mes_header{ width: 55px; height: 55px; float: left;  padding: 5px; }
+.mes_header{ width: 55px; height: 55px; float: left;}
 .mes_header img{ width: 55px; height: 55px; float: left; padding: 5px; }
+.mes_content_list{ width: 100px; height:30px;padding: 0 5px; float: left; white-space: nowrap; overflow: hidden;text-overflow: ellipsis; text-align: left;}
 @media (min-width: 600px){
     .man_tittle{position: absolute; top: 0; z-index: 1111;}
     .online_man .list-group{ top: 38px; position: absolute;width: 100%; }

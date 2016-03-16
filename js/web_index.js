@@ -225,70 +225,67 @@ $('.mes_dclose').on('click', function (){
   $('.chat-container').hide();
 })
 // 选择人聊天
-$('.chat_people').live('click' , function( e ){
-        $('.chat-container').show();
-        //end
-        to_uid = $(this).attr('mes_id');
-        //会话id的改变
-        session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
-        if (!$(e.target).is('.mes_chakan_close')) {
-          if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
-             var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
-             mes_chakan_close('message', session_no, con_mes_num);
-          };
-        };
-        // groupId = $(this).attr('groupId');
-        ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
-        $('#mes_load').html(10);
-        mes_type = "message";
-        $('.mes_title_con').html($(this).attr('group-name'));
-        //消息向上滚动
-        $('.he-ov-box').unbind('scroll');
-        $('.he-ov-box').bind("scroll", function (){
-        if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
-          var mes_loadnum = $('#mes_load').html();
-          $('.loader').show()
-          mesHeight = $('.he_ov').height()
-          ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
-        };
-      })
-});
-$('.session_no').live('click', function (event){
-    if ($(event.target).is('.session_no')) {
-      if (session_no == $(this).attr('session_no')) {
-        return ;
-      };
-        var groupAll = $(this).attr('group-all');
-        to_uid = groupAll;
-        $('#b_is').attr('group-all', groupAll);
-        //在手机上交替显示
+$('.chat_people').live('click', function( e ){
+    to_uid = $(this).attr('mes_id');
+    to_uid_header_img = $(this).find('img').attr('src');
+    //会话id的改变
+    session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
+    mes_type = "message";
+    if (!$(e.target).is('.recent-action')) {
+      if ($(window).width() < 700) {
           $('.chat-container').show();
-        //end
-          var groupvalue = $(this).attr('group-all')
-          var valName = $(this).attr('group-name');//会话名字
-          session_no = $(this).attr('session_no')//会话id
-          mes_type = "groupMessage";//消息类型
-          groupId = $(this).attr('groupId');
-         //消息向上滚动
-        $('.he-ov-box').unbind('scroll');
-        $('.he-ov-box').bind("scroll", function (){
-          if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
-              var mes_loadnum = $('#mes_load').html();
-              $('.loader').show()
-              mesHeight = $('.he_ov').height()
-              ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
-          };
-        })
-        $('.mes_title_con').html(valName);
-        if (!$(event.target).is('.mes_chakan_close')) {
-          if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
-             var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
-             mes_chakan_close('message', session_no, con_mes_num);
-          };
-        };
-        ws.send('{"type":"mes_groupChat", "session_no":"'+session_no+'", "groupvalue":"'+groupvalue+'"}');
-        $('#mes_load').html(10);
+          $('.details-list').hide();  
       };
+      //end
+      // groupId = $(this).attr('groupId');
+      // if (!$(e.target).is('.mes_chakan_close')) {
+      $('.mes_title_con').html($(this).attr('group-name'));
+        if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+          var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
+          mes_chakan_close('message', session_no, con_mes_num);
+        };
+      // };
+      ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
+      $('#mes_load').html(10);
+      //消息向上滚动
+      $('.he-ov-box').unbind('scroll');
+      $('.he-ov-box').bind("scroll", function (){
+        mesScroll();
+      })
+    } 
+})
+
+//选择群列表显示对话内容
+$('.session_no').live('click', function ( event ){
+    session_no = $(this).attr('session_no')//会话id
+    mes_type = "groupMessage";//消息类型
+    if (!$(event.target).is('.recent-action')) {
+      // if (session_no == $(this).attr('session_no')) { return ; };
+      //在手机上交替显示
+    if ($(window).width() < 700) {
+        $('.chat-container').show();
+      $('.details-list').hide();  
+    };
+    //end
+    var valName = $(this).attr('group-name');//会话名字
+    // groupId = $(this).attr('groupId');
+    //消息向上滚动
+    $('.he-ov-box').unbind('scroll');
+    $('.he-ov-box').bind("scroll", function (){
+      mesScroll();
+    })
+    $('.mes_title_con').html(valName);
+    $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
+    $('.add-groupMan').show();
+    // if (!$(event.target).is('.mes_chakan_close')) {
+    if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+      var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").find('.mes_num').html());
+      mes_chakan_close('groupMessage', session_no, con_mes_num);
+    };
+    // };
+    ws.send('{"type":"mes_groupChat", "session_no":"'+session_no+'" }');
+    $('#mes_load').html(10);
+  } 
 })
 //表情的添加
 function addempath() {
@@ -458,21 +455,20 @@ $('.mes_ico_box').hover(function (){
       $(this).css('background-color', '#fff')
       $(this).find('.mes_close').hide()
     });
-  
   //打个消息的关闭
   var mes_chakan_close = function (mestype, session_no, mes_num){
       ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
       mesnum = parseInt(mesnum) - parseInt(mes_num);
       $('.mes_radio').html(mesnum);
-      $('.mes_chakan_close[session_no="'+session_no+'"]').parents('.mes_box').remove();
+      $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
   }
   //单个消息关闭
-  $('.mes_chakan_close').live('click', function (){
-    var mestype = $(this).attr('mestype');
-    var mes_num = $(this).parent().next('.mes_num').html();
-    session_no = $(this).attr('session_no');
-    mes_chakan_close(mestype, session_no, mes_num);
-  })
+  // $('.mes_chakan_close').live('click', function (){
+  //   var mestype = $(this).attr('mestype');
+  //   var mes_num = $(this).parent().next('.mes_num').html();
+  //   session_no = $(this).attr('session_no');
+  //   mes_chakan_close(mestype, session_no, mes_num);
+  // })
   $('.mes_close').live('click', function (){
     var mestype = $(this).attr('mestype');
     var mes_num = $(this).prev('.mes_num').html();

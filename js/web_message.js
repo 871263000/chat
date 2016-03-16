@@ -23,7 +23,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function onopen()
     {
         // 登录
-        console.log(2)
       var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+name+'","room_id":"'+room_id+'"}';
       ws.send(login_data);
     }
@@ -77,9 +76,10 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               break;
             case 'chain_staff_list':
               var staff_list = data['staff_list'];
+              console.log(staff_list);
               $('.chainEmployees ul.list-group').html('');
               for ( var i in staff_list) {
-                $('.chainEmployees ul.list-group').append('<li><span class="externalStaffid-header-img"><img src="'+staff_list[i].header_img_url+'" alt="'+staff_list[i].client_name+'" /></span>'+staff_list[i].client_name+'</li>');
+                $('.chainEmployees ul.list-group').append('<li class="external_chat_people" mes_id = '+i+' group-name = "'+staff_list[i].client_name+'"><span class="externalStaffid-header-img"><img src="'+staff_list[i].header_img_url+'" alt="'+staff_list[i].client_name+'" /></span>'+staff_list[i].client_name+'</li>');
               }
               break;
             case 'logout':
@@ -219,6 +219,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         var content1;
         var content2 = "";
         var addVoiceClass = "";
+        var addClass = "chat_people";
         switch (image){
           case 'image':
             content1 = '【图片】';
@@ -245,25 +246,27 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         if (session_no != from_session_no) {
           if (mestype != "message") {
               from_client_name = group_name;
+              addClass = "session_no";
+              header_img_url = '/chat/images/rens.png';
           }
           if ($(".mes_chakan_close[session_no='"+from_session_no+"']").length > 0) {
-            var curmesnum = parseInt($(".mes_chakan_close[session_no='"+from_session_no+"']").parent().next('.mes_num').html()) + 1;
-            $(".mes_chakan_close[session_no='"+from_session_no+"']").parent().prev('.mex_con').html(from_client_name+':'+content1)
-            $(".mes_chakan_close[session_no='"+from_session_no+"']").parent().next('.mes_num').html(curmesnum);
+            var curmesnum = parseInt($(".mes_chakan_close[session_no='"+from_session_no+"']").find('.mes_num').html()) + 1;
+            $(".mes_chakan_close[session_no='"+from_session_no+"']").attr('chat_mes_num', curmesnum).find('.mex_con').html(from_client_name)
+            $(".mes_chakan_close[session_no='"+from_session_no+"']").find('.mes_num').html(curmesnum);
           } else {
-            $(".mes_con").append('<div class="mes_box"><div class= "mes_header"><img src="'+header_img_url+'" alt="'+from_client_name+'" /></div><span class="mex_con">'+content1+'</span><div style="height:30px"><span mestype="'+mestype+'"  group-name="'+from_client_name+'" mes_id="'+from_uid_id+'" session_no="'+from_session_no+'" class="mes_chakan_close chat_people">查看</span></div><span class="mes_num">1</span><span session_no="'+from_session_no+'" mes_id="'+from_uid_id+'"  mestype="'+mestype+'" group-name="'+from_client_name+'" class="mes_close">X</span></div>');
-            // } else {
-            //   $(".mes_con").append('<div class="mes_box"><span class="mex_con">'+group_name+':'+content1+'</span><div style="height:30px"><span mestype="'+mestype+'" mesid = "'+session_no+'" group-name="'+group_name+'" group-all="'+to_uid_id+'" id="'+from_uid_id+'" class="mes_chakan_close session_no" session_no="'+from_session_no+'">查看</span></div><span session_no="'+from_session_no+'" mesid= "'+session_no+'" mestype="'+mestype+'" class="mes_close">X</span></div>');
-            // };
+            $(".mes_con").append('<div class="mes_box mes_chakan_close '+addClass+'" chat_mes_num="1"  mestype="'+mestype+'"  group-name="'+from_client_name+'" mes_id="'+from_uid_id+'" session_no="'+from_session_no+'"><div class= "mes_header"><img src="'+header_img_url+'" alt="'+from_client_name+'" /></div><span class="mex_con">'+from_client_name+'</span><div class="mes_content_list" style=""><span class="chat_mes_content">'+content1+'</span></div><span class="mes_num">1</span><span session_no="'+from_session_no+'" mes_id="'+from_uid_id+'"  mestype="'+mestype+'" group-name="'+from_client_name+'" class="mes_close">X</span></div>');
           }
           mesnum++;
+          // console.log(mesnum);
           $('.mes_radio').html(mesnum);
         };
 
       if (session_no == from_session_no) {
         $(".he_ov").append('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="name le">'+from_client_name+'<span style="padding: 0 0 0 20px">'+time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
+
           $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
-          if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+
+          if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {                         
             mes_num = parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
             mes_chakan_close(mestype, session_no, mes_num);
             // mes_close(mestype, session_no, session_no);

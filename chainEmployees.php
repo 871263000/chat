@@ -1,37 +1,14 @@
 <?php
-require_once('config.inc.php');
-require_once('lib/mesages.class.php');
-$uid = $_SESSION['staffid'];
-$oms_id = $_SESSION['oms_id'];
-$uid = 6;
-$oms_id = 2;
-$pageload = 10;//消息显示的条数
-$session_no = 0;//会话id
-$mesNum = 0;
-//消息类型
-$mes_type = 'message';
-//实例化消息
-$mes = new messageList($uid, $oms_id);
+require_once('header.php');
 //最近联系人
 if (isset($uid)) {
   	$recentContact = $mes->recentContact();
 }
-//提示消息列表
-if (isset($uid)) {
-  	$arrMes = $mes->mesAlertList();
-  	if (!empty($arrMes)) {
-	    foreach ($arrMes as $key => $value) {
-	      $mesNum  += $value['mes_num'];
-	    }
-  	}
+//最近联系人session_no集合;
+$ContactManSession = [];
+foreach ($recentContact as $key => $value) {
+	$ContactManSession[] = $value['session_no'];
 }
-// print_r($arrMes);
-//自己的信息
-$userinfo = $mes->userinfo();
-$name = $userinfo['name'];//自己名字
-$card_image = $userinfo['card_image'];//头像的url
-//群聊列表
-$arrGroup = $mes->groupChatList();
 ?>
 <!doctype html>
 <html lang="en">
@@ -80,30 +57,91 @@ $arrGroup = $mes->groupChatList();
     var document_url = "<?php echo DOCUMENT_URL?>";
     var groupId = 0;
     var header_img_url = "<?php echo $card_image?>";
+
+
+
+    nearestContact = new Object();
+    nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): json_encode([]);?>;
 </script>
 <body>
 	<div class="chainEmployees">
 		<div class="externalStaffTitle"><span class="staff-refresh">&#xe600;</span><span class="staff-close">&#xe601;</span></div>
-		<ul class="list-group">
-			<li>
-				<span class="externalStaffid-header-img"></span>员工1
-			</li>
-			<li>
-				<span class="externalStaffid-header-img"></span>员工2
-			</li>
-			<li>
-				<span class="externalStaffid-header-img"></span>员工3
-			</li>
-			<li>
-				<span class="externalStaffid-header-img"></span>员工3
-			</li>
-		</ul>
+		<ul class="list-group"></ul>
 	</div>
 	<div class="External-staffid" oms_id="2" style="width:100px; height: 100px;">
+	<span class="mes_title_con"></span>
 		点击
+		<input type="submit" id="submit">
 	</div>
 </body>
 <script type="text/javascript">
+// 外部选择人聊天
+$('.external_chat_people').live('click', function( e ){
+  	to_uid = $(this).attr('mes_id');
+  	to_uid_header_img = $(this).find('img').attr('src');
+  	//会话id的改变
+  	session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
+  	mes_type = "message";
+  	if (!$(e.target).is('.recent-action')) {
+    	if ($(window).width() < 700) {
+      		$('.chat-container').show();
+      		$('.details-list').hide();  
+    	};
+	  	//end
+	    // groupId = $(this).attr('groupId');
+	    // if (!$(e.target).is('.mes_chakan_close')) {
+	    $('.mes_title_con').html($(this).attr('group-name'));
+      	if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+         	var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
+         	mes_chakan_close('message', session_no, con_mes_num);
+      	};
+	    // };
+	    ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
+	    $('#mes_load').html(10);
+	    //消息向上滚动
+	    $('.he-ov-box').unbind('scroll');
+	    $('.he-ov-box').bind("scroll", function (){
+	      mesScroll();
+	    })
+  	} 
+})
+	//最近联系人增加与更新
+	var addContact = {};
+	//判断当前会话在最近联系人哪里有没有 
+	addContact.is =  function (session_id) {
+		for (var i in nearestContact) {
+			if ( nearestContact[i] == session_id) {
+				return true;
+			};
+		}
+		return false;
+	}
+	//增加最近联系人
+	addContact.Dom = function () {
+		var data = {
+		    "type": "addContact",
+		   	"mestype": 'message',
+		   	"session_no" : session_no,
+		   	"sender_name": name,
+		   	"accept_name": $('.mes_title_con').text(),
+		   	"mes_id": to_uid,
+		  	"to_uid_header_img": to_uid_header_img,
+		   	"timeStamp": new Date().getTime(),
+	  	};
+		nearestContact.push(session_no);
+	  	ws.send(JSON.stringify(data));
+
+	};
+	document.getElementById('submit').addEventListener('click', function () {
+		addContact.Dom();
+	})
+	//最近联系人更新
+	// addContact.upd = function (session_id) {
+	// 	if ($('.recent-hover[session_no="'+session_id+'"]').parent('li').index() !=0 ) {
+	//   		$('.con-tab-content .list-group').prepend($('span[session_no="'+session_id+'"]').parent('li'));
+	//   		ws.send('{"type": "updContact", "session_no": "'+session_id+'"}')
+	// 	};
+	// }
 	// $(function (){
 	// 	connect()
 	// })

@@ -198,7 +198,7 @@ class Event
                            $db1->query("UPDATE `oms_chat_message_ist` SET `mes_num` = `mes_num`+1, `mes_id`=$insert_id WHERE id=".$chat_res);
                            $insert_id = $chat_res;
                         } else {
-                            $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$message_data['to_uid_id'], 'session_no'=>$session_no, 'mes_id'=>$insert_id, 'oms_id'=>$room_id))->query();
+                            $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$message_data['to_uid_id'], 'session_no'=>$session_no, 'mes_id'=>$insert_id, 'chat_header_img'=>$header_img_url, 'oms_id'=>$room_id))->query();
                         }
                     }
                     // $new_message['insert_id'] = $insert_id;
@@ -312,15 +312,12 @@ class Event
                 // if (!in_array($uid, $arrYanzhng)) {
                 //     return ;
                 // }
-                $group_mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`,a.`session_no`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`= b.staffid WHERE a.`delState` = 0 AND a.`session_no`= '".$message_data['session_no']."' ORDER BY a.create_time desc limit 0, 10");
-                if (empty($group_mes_list)) {
-                    return ;
-                }
-                $yanzheng = $db1->select('group_participants')->from('oms_group_chat')->where('id= :id')->bindValues(array('id'=>$group_mes_list[0]['session_no']))->row();
-                if (!in_array($uid, explode(',', $yanzheng['group_participants']) ) ) {
+                $yanzheng = $db1->select('staffid')->from('oms_groups_people')->where('pid= :pid')->bindValues(array('pid'=>$message_data['session_no']))->column();
+                if (!in_array($uid, $yanzheng) ) {
                     Gateway::sendToClient($client_id, json_encode(array('type'=>'mes_chat')));
                     return;
                 }
+                $group_mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`,a.`session_no`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`= b.staffid WHERE a.`delState` = 0 AND a.`session_no`= '".$message_data['session_no']."' ORDER BY a.create_time desc limit 0, 10");
                 if (!empty($group_mes_list)) {
                     foreach ($group_mes_list as $key => $value) {
                             $group_mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -418,11 +415,10 @@ class Event
             case 'delContact':
                 $db1 = Db::instance('oms');
                 $uid = $_SESSION['uid'];
-                echo $message_data['mestype'];
                 if ($message_data['mestype'] != 'message' ) {
                     $db1->query('UPDATE `oms_groups_people` SET `contacts_id`=1 WHERE `staffid`='.$uid.' AND  `pid`="'.$message_data['session_no'].'"');
                 } else {
-                    $db1->query('DELETE FROM `oms_nearest_contact` WHERE `id`="'.$message_data['id'].'"');
+                    $db1->query('DELETE FROM `oms_nearest_contact` WHERE `pid` ='.$uid.' AND `id`="'.$message_data['id'].'"');
                 }
                 break;
             //更新联系人
