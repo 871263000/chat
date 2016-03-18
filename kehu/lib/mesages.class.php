@@ -100,21 +100,21 @@ class messageList
 		$sql = "SELECT a.*,b.group_founder FROM `oms_groups_people` a LEFT JOIN  `oms_group_chat` b ON a.pid = b.id  WHERE a.`state`= 0 AND a.`staffid`=".$this->uid;
 		//群聊参加人
 		$arr_group_num = $this->d->findAll($sql);
-		// $sql = "SELECT a.*, b.name,b.card_image FROM `oms_groups_people` a LEFT JOIN `oms_hr` b ON a.`staffid` = b.staffid WHERE a.`state` = 0 AND a.`pid` in(SELECT `pid` FROM `oms_groups_people` WHERE `staffid`=".$this->uid.")";
-		// $arr_group_man = $this->d->findAll($sql);
-		// foreach ($arr_group_num as $key => $value) {
-		// 	foreach ($arr_group_man as $k => $val) {
-		// 		if ($value['pid'] == $val['pid']) {
-		// 			$arr_group_num[$key]['group_people'][] =$val;
-		// 		}
-		// 	}
-		// }
+		$sql = "SELECT a.*, b.name,b.card_image FROM `oms_groups_people` a LEFT JOIN `oms_hr` b ON a.`staffid` = b.staffid WHERE a.`state` = 0 AND a.`pid` in(SELECT `pid` FROM `oms_groups_people` WHERE `staffid`=".$this->uid.")";
+		$arr_group_man = $this->d->findAll($sql);
+		foreach ($arr_group_num as $key => $value) {
+			foreach ($arr_group_man as $k => $val) {
+				if ($value['pid'] == $val['pid']) {
+					$arr_group_num[$key]['group_people'][] =$val;
+				}
+			}
+		}
 		return $arr_group_num;
 	}
 	//最近联系人
 	public function recentContact()
 	{
-		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
+		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
 		return $this->d->findAll($sql);
 	}
 }

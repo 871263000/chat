@@ -36,7 +36,7 @@ class Event
         // 客户端传递的是json数据
         // $save_path = 'file/audio.mp3';
         // file_put_contents($save_path, $message);
-        $adminUid = 1;
+        $adminUid = 554;
         // return;
         $message = str_replace("script", "'script'" , $message);
         $message_data = json_decode($message, true);
@@ -398,16 +398,19 @@ class Event
                 } else {
                     $mes_id = $message_data['session_no'];
                 }
-                $conNum = $db1->column('SELECT id FROM `oms_nearest_contact` WHERE `session_no`='.$message_data['session_no']);
+                $conNum = $db1->column('SELECT id FROM `oms_nearest_contact` WHERE `session_no`="'.$message_data['session_no'].'"');
                 if ( $message_data['mestype'] == "message" ) {
                     $insert_id = $db1->insert('oms_nearest_contact')->cols(array('pid'=>$uid, 'mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'contacts_name'=>$message_data['accept_name'], 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
                     // $insert_id = $db1->insert('oms_nearest_contact')->cols(array('pid'=>$mes_id, 'mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'], 'contacts_name'=>$message_data['sender_name'], 'mes_id'=>$uid, 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
+                echo 1;
                 } else {
                     $db1->query('UPDATE `oms_groups_people` SET `contacts_id`=0 WHERE `pid`='.$message_data['session_no'].' AND `staffid`='.$uid);
+                    echo 2;
                     if (count($conNum) != 0) {
                         return;
                     }
                     $insert_id = $db1->insert('oms_nearest_contact')->cols(array('mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
+                    echo 3;
                 }
                 
                 break;
@@ -523,7 +526,7 @@ class Event
        // debug
        // echo "client:{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} gateway:{$_SERVER['GATEWAY_ADDR']}:{$_SERVER['GATEWAY_PORT']}  client_id:$client_id onClose:''\n";
        // 从房间的客户端列表中删除
-        $adminUid = 1;
+        $adminUid = 554;
        if(isset($_SESSION['room_id']))
        {
            $room_id = $_SESSION['room_id'];

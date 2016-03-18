@@ -1,0 +1,67 @@
+/*样式设置*/
+/*.spig {display:block;width:150px;height:190px;position:absolute;top: -200px;left: 160px;z-index:9999;}*/
+/*#message{color :#191919;border: 1px solid #c4c4c4;background:#ddd;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;min-height:1em;padding:5px;top:-30px;position:absolute;text-align:center;width:auto !important;z-index:10000;-moz-box-shadow:0 0 15px #eeeeee;-webkit-box-shadow:0 0 15px #eeeeee;border-color:#eeeeee;box-shadow:0 0 15px #eeeeee;outline:none;}*/
+/*.mumu{width:150px;height:190px;cursor: move;background:url(../images/spig.png) no-repeat;}*/
+*{ font-family: 'Microsoft YaHei', SimSun, sans-serif !important; }
+.mes_radio{ width: 21px; height: 21px; display: block; border-radius: 50%; background: #ed145b; text-align: center; line-height: 21px; margin: 9px 0 0 10px; cursor: pointer; color: #fff; text-align: center; line-height: 21px; }
+.online_man{/*overflow: auto !important;*/ text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
+.man_hid,.mes_fixed{ cursor: pointer; }
+.mes_fixed{ z-index: 999; width: 40px; position: absolute; bottom: 34%;left: -40px;height: 200px;background-color: #444851; }
+.mes_ico {height:50%; background: url(../images/message.png) no-repeat center; }
+.mes_ico_box{ height: 80px;width: auto; text-align: center;border-bottom: 1px solid #fff;}
+.mes_fixed_big{ position: fixed;top: 0; right: 0;z-index: 99999; width: 0;height: 100%;
+  -webkit-transition: width linear .4s;
+  -moz-transition: width linear .4s;
+  -ms-transition: width linear .4s;
+  transition: width linear .4s;
+  _position: fixed;
+  _bottom: auto;
+  _top: expression(documentElement.scrollTop+documentElement.clientHeight-this.offsetHeight-10);
+}
+.plus_icon { cursor: pointer;width: 50px;height: 50px; display: block;background-position: center; background-color: #fff ; background-image: url(../images/plus.png);background-repeat: no-repeat;}
+.online_man{ /*overflow: auto;*/ box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0; background: #fff; height: 100%; display: block; }
+.header_icon{ cursor: pointer; }
+.mes_con{ overflow: auto !important; box-shadow: 0 0 5px #999;position: absolute;width: 200px;left: 0px;top: 0;background: #fff;height: 100%;display: block; }
+.mes_tittle{
+  text-align: center;  
+	height: 38px;
+  line-height: 20px;
+  border-bottom: 1px solid #dedede;
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 auto;
+}
+.mex_con{padding: 0 5px; display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;line-height:25px;text-align:left;}
+.mes_chakan{ line-height:30px;text-align:center;cursor:pointer; }
+.mes_box{ height:55px;text-align: center;border-bottom: 1px solid #dedede;position:relative; }
+.mes_abs{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    /*-webkit-transition: right .3s ease-in-out 0s;*/
+    /*-moz-transition: right .3s ease-in-out 0s;*/
+    /*transition: right .3s ease-in-out 0s;*/
+}
+/* 加载动画 */
+.loader{display: none; width:100%;height:68px;box-sizing:border-box; display:flex;/*多轮布局*/ align-items:center;/*垂直*/ justify-content:center;/*水平*/}
+
+@-webkit-keyframes loading-3{
+  50%{ transform:scale(0.4); opacity:.4;}
+  100%{ transform:scale(1); opacity:1;}
+  }
+.loading-3 { position:relative;}
+.loading-3 i{ display:block; width:15px;height:15px;border-radius:50%; background-color:#333; position:absolute;}
+.loading-3 i:nth-child(1){top:25px;left:0;-webkit-animation:loading-3 1s ease 0s infinite;}
+.loading-3 i:nth-child(2){top:17px;left:17px;-webkit-animation:loading-3 1s ease -0.12s infinite;}
+.loading-3 i:nth-child(3){top:0px;left:25px;-webkit-animation:loading-3 1s ease -0.24s infinite;}
+.loading-3 i:nth-child(4){top:-17px;left:17px;-webkit-animation:loading-3 1s ease -0.36s infinite;}
+.loading-3 i:nth-child(5){top:-25px;left:0;-webkit-animation:loading-3 1s ease -0.48s infinite;}
+.loading-3 i:nth-child(6){top:-17px;left:-17px;-webkit-animation:loading-3 1s ease -0.6s infinite;}
+.loading-3 i:nth-child(7){top:0px;left:-25px;-webkit-animation:loading-3 1s ease -0.72s infinite;}
+.loading-3 i:nth-child(8){top:17px;left:-17px;-webkit-animation:loading-3 1s ease -0.84s infinite;}
+
+
+/* end */

@@ -1,5 +1,5 @@
 <?php 
-// require_once('config.inc.php');
+require_once('config.inc.php');
 /**
 * 作者 zdl 联系: 871263000@qq.com
 * 聊天的内容
@@ -10,7 +10,7 @@ class messageList
 	//发送人id
 	public $uid = 0;
 	//注册id
-	public $oms_id = 1;
+	public $oms_id = '1';
 	//聊天对方名字
 	public $accname = '请选择聊天对象';// 选择人的名字
 	public $name = '匿名';//自己的名字
@@ -33,10 +33,10 @@ class messageList
 	* $uid 发送人的id
 	* $staffid 聊天对方的id
 	*/
-	function __construct($uid =0, $oms_id = 0)
+	function __construct($uid =0, $staffid = 0)
 	{
 		$this->uid = $uid;
-		$this->oms_id = $oms_id;
+		$this->oms_id = $staffid;
 		$this->d = new database();
 
 	}
@@ -83,15 +83,15 @@ class messageList
 		 //右边的消息根据$_SESSION获取名字
 
 		//单聊消息
-		$sql = 'SELECT a.`mes_num`, a.`session_no`,a.`pid`, a.`chat_header_img`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`groupId` FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="'.$this->uid.'"';
+		$sql = 'SELECT a.`mes_num`, b.* FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="'.$this->uid.'"';
 		$arrMes = $this->d->findALL($sql);
 		//群聊消息
-		$sql = "SELECT a.`mes_num`, a.`id`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_state`=1 AND  a.`staffid`=$this->uid";
+		$sql = "SELECT b.* FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE  a.`staffid`=$this->uid";
   		$arrGroupMes = $this->d->findAll($sql);
   		foreach ($arrGroupMes as $key => $value) {
   			$arrMes[] = $value;
   		}
-
+		$this->mesNum = count($arrMes);//消息的个数
   		return $arrMes;
 	}
 	//群列表
@@ -100,21 +100,21 @@ class messageList
 		$sql = "SELECT a.*,b.group_founder FROM `oms_groups_people` a LEFT JOIN  `oms_group_chat` b ON a.pid = b.id  WHERE a.`state`= 0 AND a.`staffid`=".$this->uid;
 		//群聊参加人
 		$arr_group_num = $this->d->findAll($sql);
-		// $sql = "SELECT a.*, b.name,b.card_image FROM `oms_groups_people` a LEFT JOIN `oms_hr` b ON a.`staffid` = b.staffid WHERE a.`state` = 0 AND a.`pid` in(SELECT `pid` FROM `oms_groups_people` WHERE `staffid`=".$this->uid.")";
-		// $arr_group_man = $this->d->findAll($sql);
-		// foreach ($arr_group_num as $key => $value) {
-		// 	foreach ($arr_group_man as $k => $val) {
-		// 		if ($value['pid'] == $val['pid']) {
-		// 			$arr_group_num[$key]['group_people'][] =$val;
-		// 		}
-		// 	}
-		// }
+		$sql = "SELECT a.*, b.name,b.card_image FROM `oms_groups_people` a LEFT JOIN `oms_hr` b ON a.`staffid` = b.staffid WHERE a.`state` = 0 AND a.`pid` in(SELECT `pid` FROM `oms_groups_people` WHERE `staffid`=".$this->uid.")";
+		$arr_group_man = $this->d->findAll($sql);
+		foreach ($arr_group_num as $key => $value) {
+			foreach ($arr_group_man as $k => $val) {
+				if ($value['pid'] == $val['pid']) {
+					$arr_group_num[$key]['group_people'][] =$val;
+				}
+			}
+		}
 		return $arr_group_num;
 	}
 	//最近联系人
 	public function recentContact()
 	{
-		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
+		$sql = "SELECT * FROM `oms_nearest_contact` WHERE `mes_id`=".$this->uid." or `pid`=".$this->uid." ORDER BY timeStamp desc";
 		return $this->d->findAll($sql);
 	}
 }

@@ -24,6 +24,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     {
         // 登录
       var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+name+'","room_id":"'+room_id+'"}';
+      console.log(login_data);
       ws.send(login_data);
     }
 
@@ -76,6 +77,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               break;
             case 'chain_staff_list':
               var staff_list = data['staff_list'];
+              console.log(staff_list);
               $('.chainEmployees ul.list-group').html('');
               for ( var i in staff_list) {
                 $('.chainEmployees ul.list-group').append('<li class="external_chat_people" mes_id = '+i+' group-name = "'+staff_list[i].client_name+'"><span class="externalStaffid-header-img"><img src="'+staff_list[i].header_img_url+'" alt="'+staff_list[i].client_name+'" /></span>'+staff_list[i].client_name+'</li>');
@@ -199,7 +201,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     }
     // 刷新在线人数
     function flush_onlineman_list(){
-      var onlineman_ul = $(".online_man ul.list-group");
+      var onlineman_ul = $(".online_man ul");
       var online_ren = 0;
       onlineman_ul.empty();
       for(var p in client_list){
