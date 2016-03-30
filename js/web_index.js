@@ -1,3 +1,36 @@
+//通知消息点击
+$(document).on('click', '.chat_notice', function () {
+    var session_id = $(this).attr('session_no');
+    var sender_id = $(this).attr('mes_id');
+    $('.chat_notice_container').show();
+    ws.send('{"type": "chat_notice", "sender_id": '+session_id+'}');
+    var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_id+"']").attr('chat_mes_num'));
+    mes_notice_close('message', session_id, con_mes_num);
+    nearestContact.push(session_id);
+})
+//通知消息同意不同意
+$(document).on('click', '.chat_notice_sel', function () {
+    var dataParm = $(this).attr('data-parm');
+    var senderId = $(this).attr('sender-id');
+    var noticeHtml = $(this).html();
+    $('.alert').hide();
+    ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'"}');
+})
+//通知消息关闭
+var mes_notice_close = function (mestype, session_id, mes_num){
+    ws.send('{"type":"mes_notice_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+    mesnum = mesnum - parseInt(mes_num);
+    $('.mes_radio').html(mesnum);
+    $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
+    arrMessageList.remove(session_id);
+}
+//删除指定数组元素
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
 //在线人员滚动条滚动
 var _move = false;
 var ismove = false; //移动标记

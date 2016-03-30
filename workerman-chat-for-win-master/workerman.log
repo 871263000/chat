@@ -3427,3 +3427,523 @@ Stack trace:
 #11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
 #12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
 #13 {main}
+2016-03-19 06:04:29 client_id:7f00000108fc0000001b	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ': oms_id' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT followid...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(489): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-19 06:05:49 client_id:7f00000108fc00000005	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ': oms_id' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT followid...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(489): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-19 06:16:29 client_id:7f00000108fc00000006	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ': oms_id' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT followid...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(489): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:39 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:40 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:41 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:42 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:44 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:45 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:17:46 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 06:22:24 client_id:7f00000108fc00000006	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ' followid= ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT followid...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(490): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-19 06:42:48 client_id:7f00000108fc0000000b	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ' followid= ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT followid...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(491): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-19 07:36:07 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:07 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:36:08 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-03-19 07:39:38 client_id:7f00000108fc0000000b	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':create_time', '1458369538')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT followid...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(492): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type" : "comp...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-21 10:02:31 client_id:7f00000108fc00000004	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(': acceptid', '4')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT id FROM ...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(511): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-21 10:03:53 client_id:7f00000108fc0000000c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(': acceptid', '4')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT id FROM ...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(511): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-21 10:04:34 client_id:7f00000108fc0000000c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(': acceptid', '4')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT id FROM ...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(511): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-22 06:01:29 client_id:7f00000108fc0000000d	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `id` FRO...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1799): GatewayWorker\Lib\DbConnection->execute('SELECT `id` FRO...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(547): GatewayWorker\Lib\DbConnection->single('SELECT `id` FRO...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-22 06:51:47 client_id:7f00000108fc0000000f	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de ':)' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('INSERT INTO `om...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('INSERT INTO `om...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(556): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-23 07:49:07 client_id:7f00000108fc0000000e	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':state', '0')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT id FROM ...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(538): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-23 07:50:19 client_id:7f00000108fc00000006	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':state', '0')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT id FROM ...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(538): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-23 08:34:58 client_id:7f00000108fc0000000c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':staffid', '4')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT * FROM `...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(257): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_no...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-23 09:34:23 client_id:7f00000108fc0000003b	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(256): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_no...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-24 04:29:53 client_id:7f00000108fc00000003	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1611
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1611): PDOStatement->execute()
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(557): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-24 04:31:50 client_id:7f00000108fc00000007	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1611
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1611): PDOStatement->execute()
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(557): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-24 09:14:13 client_id:7f00000108fc00000003	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `group_p...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('SELECT `group_p...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(172): GatewayWorker\Lib\DbConnection->query('SELECT `group_p...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "say_u...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-24 10:13:00 client_id:7f00000108fc0000004e	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':pid', '6')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('INSERT INTO `om...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(215): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"say_ui...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-24 10:13:07 client_id:7f00000108fc0000004e	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[HY093]: Invalid parameter number: parameter was not defined' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1608
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1608): PDOStatement->bindParam(':pid', '6')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('INSERT INTO `om...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(215): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"say_ui...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-25 04:18:47 client_id:7f00000108fc00000003	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'insert_id' inconnu dans field list' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('INSERT INTO `om...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('INSERT INTO `om...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(653): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-25 04:59:48 client_id:7f00000108fc00000006	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '"4-6' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `id` FRO...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1799): GatewayWorker\Lib\DbConnection->execute('SELECT `id` FRO...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(229): GatewayWorker\Lib\DbConnection->single('SELECT `id` FRO...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"say_ui...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-25 06:01:07 client_id:7f00000108fc0000000a	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '"4-6' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `id` FRO...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1799): GatewayWorker\Lib\DbConnection->execute('SELECT `id` FRO...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(229): GatewayWorker\Lib\DbConnection->single('SELECT `id` FRO...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"say_ui...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-03-25 06:01:16 client_id:7f00000108fc0000000a	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de '"4-6' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `id` FRO...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1799): GatewayWorker\Lib\DbConnection->execute('SELECT `id` FRO...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(229): GatewayWorker\Lib\DbConnection->single('SELECT `id` FRO...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"say_ui...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}

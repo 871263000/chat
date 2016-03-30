@@ -1,9 +1,9 @@
 <?php 
 require_once('config.inc.php');
 require_once('lib/mesages.class.php');
-$uid = $_SESSION['staffid'];
+$uid = $_SESSION['staffid'] = 6;
 $oms_id = $_SESSION['oms_id'] = 1;
-$uid = 4;
+$uid = 6;
 $oms_id = 1;
 $pageload = 10;//消息显示的条数
 $session_no = 0;//会话id

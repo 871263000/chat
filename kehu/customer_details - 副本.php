@@ -5,7 +5,7 @@ require_once('header.php');
 $tabName='oms_customer';
 $idName='customer_id';
 $id=$_GET['customer_id'];
-$uid = $_SESSION['staffid'];
+
 $oms_id = $_SESSION['oms_id'];
 $d=new database();
 
@@ -71,12 +71,6 @@ $ne=$row['name'];
 $yt=$row['business_license_image'];
 $zt=$row['organizational_structure_code_image'];
 $st=$row['tax_registration_certificates_image'];
-//自己公司的名字
-if ( !empty($oms_id )) {
-	$sql = "SELECT org_name FROM `oms_general_admin_user` WHERE `oms_id` = ".$oms_id;
-	$arrOrg_name = $d->find($sql);
-}
-$org_name = !empty($arrOrg_name['org_name']) ? $arrOrg_name['org_name'] : '公司名字去哪了';//公司名字
 //获取客户的oms_id
 if (!empty($row['name'])) {
 
@@ -87,12 +81,24 @@ if (!empty($row['name'])) {
 //客户聊天信息
 $customer = [];
 $customer['oms_id']  = !empty($arrChain_oms_id['oms_id']) ? $arrChain_oms_id['oms_id'] : 0;
-if ( !empty($customer['oms_id']) ) {
-	$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE a.`additional_Information`= '".$row['name']."' AND a.`state` = 2 AND a.`pid`=".$uid;
-	$arrFriendList = $d->findAll($sql);
-}
 
+$sql = 'SELECT `statu` FROM `oms_company_follow` WHERE `followid` ='.$customer['oms_id'].' AND `oms_id` = '.$oms_id;
+$arrFollow = $d-> find($sql);
+//关注状态
+$arrNewFollow = ['还没有关注', '还未同意', '取消关注'];
+if ( !empty($arrFollow) ) {
+	echo $arrFollow['statu'];
+	if ( $arrFollow['statu'] == 0 ) {
+		$customer['followStatus'] = 1;
+	} else {
+		$customer['followStatus'] = 2;
+	}
+} else {
+	$customer['followStatus'] = 0;
+}
+$jsobj = json_encode($arrNewFollow);
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -145,19 +151,16 @@ if ( !empty($customer['oms_id']) ) {
 				<div style="clear:both;"></div>
 			</ul>
 		</div>
-		<div class="chain_chat_con chat_friend_current">
+		<div class="chain_chat_con">
 			<ul class="list-group chat_on_all"></ul>
 		</div>
 		<div class="chain_chat_con">
-			<ul class="list-group">
-				<?php foreach ($arrFriendList as $key => $value) : ?>
-					<?= '<li mes_id= "'.$value['staffid'].'" group-name="'.$value['name'].'" class="externalStaffid-header-img external_chat_people"><img src="'.$value['card_image'].'" alt="">'.$value['name'].'</li>' ?> 
-				<?php endforeach; ?>
-			</ul>
+			<ul class="list-group"></ul>
 		</div>
 	</div>
+	<input type="submit" id="submit">
 
-<input type="submit" id="submit">
+
 <div class="container">
 	<h1 style="text-align: center;">客户详情</h1>
 	<a href="admin/customerlist_input.php" target='_blank' class='btn btn-info'>跳转到 "客户详情录入"</a>
@@ -167,7 +170,7 @@ if ( !empty($customer['oms_id']) ) {
 			<td width="30%" style="">
 			<div></div>
 				<?php echo $row['name']?><span oms_id = "<?php echo $customer['oms_id'];?>" class="chat_chain External-staffid">&#xe603;</span>
-				
+				<span class= "customer_followed" oms_id = "<?= $customer['oms_id']?>"></span><span style ="margin-left: 10px;vertical-align: 3px;" calss= "customer_followed_text"><?php echo $arrNewFollow[$customer['followStatus']]; ?></span>
 
 			</td>
 			<td width="20%">
@@ -515,51 +518,25 @@ if ( !empty($customer['oms_id']) ) {
 </html>
 <script>
 /**************  联系客户   **********************/
+
+//公司的状态 数字
+var customerStatu = <?php echo $customer['followStatus']; ?>;
+//公司的状态 问文本
+var customerStatutext = new Object();
+customerStatutext = '<?php echo $jsobj; ?>';
 // 外部选择人聊天
-
-//好友集合
-var friendList = new Array();
-
-friendList = <?= !empty($arrFriendList) ? json_encode($arrFriendList) : json_encode([]);?>;
-
-$(document).on('click', '.chain_friend_all', function ( e ) {
-	if ($(e.target).is('.apply_session')) {
-		return;
-	};
-	var chain_friend_all = $(this).attr('tagfriend');
-	if ( chain_friend_all == "0") {
-		alert('你们还没有关注不能对话！可以点右边的图标申请对话！');
-	};
-})
 //拖动
 var _move = false;
 
-//联系外公司tab
-var chainTab  =  $('.chat_tab_list');
-
 //申请会话
-var $org_name = "<?= $org_name ?>";
+var companyName = "<?php echo $row['name']?>";
 $(document).on('click', '.apply_session' , function () {
 	var mes_id = $(this).attr('mes_id');
 	var chainName = $(this).attr('name');
-	var tagfriend = $(this).attr('tagfriend');
-	ws.send('{"type": "addFriends", "uid": "'+mes_id+'", "accept_name": "'+chainName+'", "companyName": "'+$org_name+'"}');
-	if ( tagfriend == 1 ) {
-		alert('你们已经关注了！');
-		return;
-	};
+	ws.send('{"type": "addFriends", "uid": "'+mes_id+'", "accept_name": "'+chainName+'", "companyName": "'+companyName+'"}');
+
 	alertMes('已发送请求！');
 	return;
-})
-
-chainTab.click(function () {
-	var _this = $(this);
-	var _index = $(this).index();
-	$('.chat_tab_list').removeClass('current');
-	_this.addClass('current');
-	$('.chain_chat_con').removeClass('chat_friend_current');
-	$('.chain_chat_con').eq(_index).addClass('chat_friend_current');
-
 })
 /****提示**************/
 
@@ -584,6 +561,9 @@ $('.close').click(function () {
 // },2000);
 
 /************* 关注 **************/
+$(function () {
+	$('.customer_followed').css("background-image", "url('/chat/images/follow"+customerStatu+".png')");
+})
 
 //拖动
 jQuery(document).ready(function ($) {
@@ -671,6 +651,20 @@ var getExternal = {};
 
 getExternalObj = $('.External-staffid, .staff-refresh');
 
+$('.customer_followed').click(function () {
+	var chainOmsId = $(this).attr('oms_id');
+	var newCustomerStatu = parseInt(customerStatu) + 1;
+	if ( customerStatu != 1 ) {
+		console.log(customerStatutext);
+		$('.customer_followed_text').html(customerStatutext[newCustomerStatu]);
+		console.log(customerStatutext[newCustomerStatu]);
+		$('.customer_followed').css("background-image", "url('/chat/images/follow"+newCustomerStatu+".png')");
+		ws.send('{"type" : "companyFollow", "chinaOms_id": '+chainOmsId +', "customerStatu": "'+customerStatu+'"}');
+	} else {
+		alert('请稍等~~~');
+	}
+	
+})
 //点击联系外来人员的事件；
 getExternalObj.click(function () {
 	// if ( customerStatu != 2 ) {

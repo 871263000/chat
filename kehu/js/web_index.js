@@ -1,3 +1,43 @@
+
+
+//通知消息同意不同意
+$(document).on('click', '.chat_notice_sel', function () {
+    var dataParm = $(this).attr('data-parm');
+    var senderId = $(this).attr('sender-id');
+    var noticeHtml = $(this).html();
+    $('.alert').hide();
+    ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'"}');
+})
+//通知消息关闭
+var mes_notice_close = function (mestype, session_id, mes_num){
+    ws.send('{"type":"mes_notice_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+    mesnum = mesnum - parseInt(mes_num);
+    $('.mes_radio').html(mesnum);
+    $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
+    arrMessageList.remove(session_id);
+}
+//删除指定数组元素
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
+//通知消息点击
+$(document).on('click', '.chat_notice', function () {
+  var session_id = $(this).attr('session_no');
+  var sender_id = $(this).attr('mes_id');
+  $('.chat_notice_container').show();
+  ws.send('{"type": "chat_notice", "sender_id": '+session_id+'}');
+  var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_id+"']").attr('chat_mes_num'));
+  mes_notice_close('message', session_id, con_mes_num);
+  nearestContact.push(session_id);
+})
+/*******************   消息列表session集合   *********************/
+
+var arrMessageList = new Array();
+arrMessageList = <?php echo !empty($messageSessionList) ? json_encode($messageSessionList) : json_encode([]);?>;
+
 //在线人员滚动条滚动
 var _move = false;
 var ismove = false; //移动标记
@@ -246,10 +286,11 @@ $('.chat_people').live('click', function( e ){
       // groupId = $(this).attr('groupId');
       // if (!$(e.target).is('.mes_chakan_close')) {
       $('.mes_title_con').html($(this).attr('group-name'));
-        if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
-          var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
-          mes_chakan_close('message', session_no, con_mes_num);
-        };
+        if ($.inArray(session_no, arrMessageList) != -1) {
+            var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
+            mes_chakan_close('message', session_no, con_mes_num);
+
+          };
       // };
       ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
       $('#mes_load').html(10);
@@ -451,13 +492,15 @@ $('.mes_ico_box').hover(function (){
       $(this).css('background-color', '#fff')
       $(this).find('.mes_close').hide()
     });
-  //打个消息的关闭
-  var mes_chakan_close = function (mestype, session_no, mes_num){
-      ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
-      mesnum = parseInt(mesnum) - parseInt(mes_num);
-      $('.mes_radio').html(mesnum);
-      $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
-  }
+
+//打个消息的关闭
+var mes_chakan_close = function (mestype, session_no, mes_num){
+    ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
+    mesnum = mesnum - parseInt(mes_num);
+    $('.mes_radio').html(mesnum);
+    $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
+    arrMessageList.remove(session_no);
+}
   //单个消息关闭
   // $('.mes_chakan_close').live('click', function (){
   //   var mestype = $(this).attr('mestype');

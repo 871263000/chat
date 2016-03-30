@@ -28,6 +28,7 @@ class Event
     * @param int $client_id
     * @param string $message
     */
+
    public static function onMessage($client_id, $message)
    {
         // debug
@@ -82,7 +83,15 @@ class Event
                     throw new \Exception("\$message_data['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']} \$message:$message");
                 }
                 // 获取房间内所有用户列表 
+                
+                $new_clients_list = [];
+                $clients_list = [];
                 $clients_list = Gateway::getClientInfoByGroup($room_id);
+                if (empty( $logined )) {
+                    $clients_list[$client_id]['uid'] = $uid;
+                    $clients_list[$client_id]['header_img_url'] = $header_img_url;
+                    $clients_list[$client_id]['client_name'] = htmlspecialchars($client_name);
+                };
                 if (!empty($clients_list)) {
                     foreach($clients_list as $tmp_client_id=>$item)
                     {
@@ -100,8 +109,8 @@ class Event
                         $adminlogin = ['type'=>'adminLoginNum'];
                         Gateway::sendToUid( $adminUid, json_encode($adminlogin));
                     }
-                    $new_clients_list[$uid]['client_name'] = htmlspecialchars($client_name);
-                    $new_clients_list[$uid]['header_img_url'] = $header_img_url;
+                    // $new_clients_list[$uid]['client_name'] = htmlspecialchars($client_name);
+                    // $new_clients_list[$uid]['header_img_url'] = $header_img_url;
                     $new_message['client_list'] = $new_clients_list;
                     Gateway::sendToGroup($room_id, json_encode($new_message));
                     // 给当前用户发送用户列表 
@@ -117,20 +126,21 @@ class Event
                 Gateway::joinGroup($client_id, $room_id);   
                 return;
             // 客户端发言 message: {type:say_uid, to_client_id:xx, content:xx}
-            case 'say_uid':
-                $db1 = Db::instance('oms');
+            case 'sayUid':
                 // 非法请求
                 if(!isset($_SESSION['room_id']))
                 {
                     throw new \Exception("\$_SESSION['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']}");
                 }
+
+                $db1 = Db::instance('oms');
                 $room_id = $_SESSION['room_id'];
                 $client_name = $_SESSION['client_name'];
                 $uid = $_SESSION['uid'];
                 $header_img_url = $_SESSION['header_img_url'];
-                // 私聊
+                 
                 $message_content = $message_data['content'];
-                if($message_data['to_uid_id'] !== 'all')
+                if( $message_data['to_uid_id'] !== 'all')
                 {
                     $new_message = array(
                         'type'=>'say_uid',
@@ -144,9 +154,26 @@ class Event
                         'time'=>date('Y-m-d H:i:s'),
                     );
                     if ($message_data['message_type'] == "message") {
+                        // 私聊
+                        //验证是不是在同一个房间
+                        $oms_idYanZheng = array();
+                        if ( isset($message_data['to_uid_id']) ) {
+                            $oms_idYanZheng  = $db1->select('oms_id')->from('oms_hr')->where('staffid= :staffid')->bindValues(array('staffid'=>$message_data['to_uid_id']))->row();
+                        }
+                        if ($oms_idYanZheng['oms_id'] != $room_id) {
+                            if ( isset($message_data['to_uid_id']) ) {
+                                $selectyz = $db1->select('id')->from('oms_friend_list')->where('pid = :pid AND staffid= :staffid AND state= :state')->bindValues(array('pid'=> $uid, 'staffid'=>$message_data['to_uid_id'], 'state'=> 2))->row();
+                            }
+                            if ( empty($selectyz) ) {
+                               return;
+                            }
+                        }
+                        // $uidInfo = Gateway::getClientIdByUid($message_data['to_uid_id']);
+
                         $session_no = $uid > $message_data['to_uid_id'] ? $message_data['to_uid_id']."-".$uid : $uid."-".$message_data['to_uid_id'];
                         $new_message['mestype'] = "message";
                         $to_uid = $message_data['to_uid_id'];
+
                     } else {
                         //验证是否在群聊
                         $va = $db1->query("SELECT `group_participants`, `group_name` FROM `oms_group_chat` WHERE `id`=".$message_data['session_no']);
@@ -166,6 +193,9 @@ class Event
                         }
                         $to_uid = $arrVa;
                     };
+
+                    /***************  发送的图片 **********************/
+
                     if ($message_data['mes_types'] == 'image') {
                         $pa = $message_content;
                         if (preg_match("/^(data:\s*image\/(\w+);base64,)/", $pa, $result)){
@@ -186,37 +216,39 @@ class Event
                             }
                         }
                     }
-                    $new_message['image'] = $message_data['mes_types'];
+                    $new_message['mes_types'] = $message_data['mes_types'];
+
+                    /***********************   聊天记录插入  ****************************/
+
                     $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$message_data['to_uid_id'], 'sender_name'=>$client_name, 'accept_name'=>$message_data['accept_name'],'message_type'=>$message_data['message_type'], 'mesages_types'=>$message_data['mes_types'], 'groupId'=>$message_data['groupId'], 'message_content'=>$message_content, 'session_no'=>$session_no, 'create_time'=>time(), 'update_time'=>time()))->query();
+
                     $new_message['insert_id'] = $insert_id;
                     $new_message['session_no'] = $session_no;
+
+                /******************************   消息列表插入  ***********************************/
+
                     if ($message_data['message_type'] == "groupMessage") {
+
                         $db1->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != $uid AND `pid`=".$message_data['session_no']);
+
                     } else if ($message_data['message_type'] == "message") {
-                        $chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `pid`='.$message_data['to_uid_id']);
+
+                        //$chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `session_no`="'.$session_no.'" AND `mews_types`="message"');
+                        $chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `session_no`="'.$session_no.'"');
                         if (!empty($chat_res)) {
+
                            $db1->query("UPDATE `oms_chat_message_ist` SET `mes_num` = `mes_num`+1, `mes_id`=$insert_id WHERE id=".$chat_res);
                            $insert_id = $chat_res;
+
                         } else {
+
                             $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$message_data['to_uid_id'], 'session_no'=>$session_no, 'mes_id'=>$insert_id, 'chat_header_img'=>$header_img_url, 'oms_id'=>$room_id))->query();
                         }
                     }
                     // $new_message['insert_id'] = $insert_id;
                     Gateway::sendToUid($to_uid, json_encode($new_message));
-                    return ;
                 }
-                // 组聊
-                $new_message = array(
-                    'type'=>'say_uid', 
-                    'from_client_id'=>$client_id,
-                    'from_client_name' =>$client_name,
-                    'to_client_id'=>'all',
-                    'content'=>"{$client_name}说: ".nl2br(htmlspecialchars($message_data['content'])),
-                    'time'=>date('Y-m-d H:i:s'),
-                );
-                $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$message_data['senderid'],'accept_id'=>0,'accept_name'=>$client_name ,'message_type'=>$message_data['message_type'], 'message_content'=>nl2br(htmlspecialchars($message_data['content'])), 'create_time'=>time(), 'update_time'=>time()))->query();
-                return Gateway::sendToGroup($room_id ,json_encode($new_message));
-            //数据操作消息的关闭
+                    return ;
             case 'mes_close':
                 $db1 = Db::instance('oms');
                 // 非法请求
@@ -233,18 +265,38 @@ class Event
                     $db1->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mes_num`=0 WHERE `staffid` = $uid AND `pid`='".$session_no."'");
                 }
                 return ;
-            // 选择人后聊天信息
-            case 'mes_chat':
-                $db1 = Db::instance('oms');
+            case 'mes_notice_close':
                 // 非法请求
                 if(!isset($_SESSION['room_id']))
                 {
                     throw new \Exception("\$_SESSION['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']}");
                 }
+                $db1 = Db::instance('oms');
+                $room_id = $_SESSION['room_id'];
+                $session_no = $message_data['session_no'];
+                $uid = $_SESSION['uid'];
+
+                $db1->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$session_no."'");
+
+                $db1->query("UPDATE `oms_friend_list` SET `state`=0 WHERE `staffid`= ".$uid);
+
+                $arrChat_notice = $db1->select('*')->from('oms_friend_list')->where('staffid= :staffid AND state= :state')->bindValues(array("staffid"=> $uid, "state"=> 0))->query();
+                
+                $arrChat_notice['type'] = 'mes_notice_close';
+                Gateway::sendToCurrentClient(json_encode($arrChat_notice));
+                return ;
+            // 选择人后聊天信息
+            case 'mes_chat':
+                // 非法请求
+                if(!isset($_SESSION['room_id']))
+                {
+                    throw new \Exception("\$_SESSION['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']}");
+                }
+                $db1 = Db::instance('oms');
                 $room_id = $_SESSION['room_id'];
                 $uid = $_SESSION['uid'];
                 $session_no = $uid < $message_data['mes_para'] ? $uid."-".$message_data['mes_para'] : $message_data['mes_para']."-".$uid;
-                $mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`delState` = 0 AND a.`session_no`= "."'{$session_no}' ORDER BY create_time desc limit 0, 10");
+                $mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND a.`session_no`= "."'{$session_no}' ORDER BY create_time desc limit 0, 10");
                 if (!empty($mes_list)) {
                     foreach ($mes_list as $key => $value) {
                             $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -283,7 +335,7 @@ class Event
                     $session_no = $message_data['session_no'];
                 }
                 if (!empty($message_data['mes_loadnum'])) {
-                    $onlode = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`delState` = 0 AND a.`session_no`= "."'{$session_no}' ORDER BY a.create_time desc limit ".$message_data['mes_loadnum'].", 10");
+                    $onlode = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`dialog` = 1 AND a.`session_no`= "."'{$session_no}' ORDER BY a.create_time desc limit ".$message_data['mes_loadnum'].", 10");
                     if (!empty($onlode)) {
                         foreach ($onlode as $key => $value) {
                                 $onlode[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -317,7 +369,7 @@ class Event
                     Gateway::sendToClient($client_id, json_encode(array('type'=>'mes_chat')));
                     return;
                 }
-                $group_mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`,a.`session_no`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`= b.staffid WHERE a.`delState` = 0 AND a.`session_no`= '".$message_data['session_no']."' ORDER BY a.create_time desc limit 0, 10");
+                $group_mes_list = $db1->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`,a.`session_no`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`= b.staffid WHERE a.`delState` = 0 AND a.`dialog` = 1 AND a.`session_no`= '".$message_data['session_no']."' ORDER BY a.create_time desc limit 0, 10");
                 if (!empty($group_mes_list)) {
                     foreach ($group_mes_list as $key => $value) {
                             $group_mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -402,15 +454,12 @@ class Event
                 if ( $message_data['mestype'] == "message" ) {
                     $insert_id = $db1->insert('oms_nearest_contact')->cols(array('pid'=>$uid, 'mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'contacts_name'=>$message_data['accept_name'], 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
                     // $insert_id = $db1->insert('oms_nearest_contact')->cols(array('pid'=>$mes_id, 'mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'], 'contacts_name'=>$message_data['sender_name'], 'mes_id'=>$uid, 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
-                echo 1;
                 } else {
                     $db1->query('UPDATE `oms_groups_people` SET `contacts_id`=0 WHERE `pid`='.$message_data['session_no'].' AND `staffid`='.$uid);
-                    echo 2;
                     if (count($conNum) != 0) {
                         return;
                     }
                     $insert_id = $db1->insert('oms_nearest_contact')->cols(array('mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
-                    echo 3;
                 }
                 
                 break;
@@ -478,6 +527,142 @@ class Event
                 }
                 $new_message_data = ['type'=>'chain_staff_list', 'staff_list'=>$new_staff_list];
                 Gateway::sendToCurrentClient(json_encode($new_message_data));
+                return;
+            case 'companyFollow':
+
+                $uid = $_SESSION['uid'];
+                $oms_id = $_SESSION['room_id'];
+                $followid = $message_data['chinaOms_id'];
+                $db1 = Db::instance('oms');
+                $newTime = time();
+                /**********************************/
+                if ( $message_data['customerStatu'] == 0 ) {
+                    $arrCompanyFollow = $db1->select('followid')->from('oms_company_follow')->where('oms_id = :oms_id AND followid= :followid')->bindValues(array('oms_id'=>$oms_id, 'followid'=>$followid))->row();
+                    if ( empty( $arrCompanyFollow ) ) {
+                        $db1->insert('oms_company_follow')->cols(array("oms_id"=> $oms_id, "followid"=> $followid, "create_time"=> $newTime, "update_time"=> $newTime))->query();
+                    }
+                // } else if ( $message_data['customerStatu'] == 1 ) {
+                //     $db1->update('oms_company_follow')->cols(array("statu"=> 1))->where('oms_id = :oms_id AND followid = :followid')->bindValues(array('oms_id'=> $oms_id, 'followid'=> $followid))->query();
+                // }
+                } else if ( $message_data['customerStatu'] == 2 ) {
+                    $db1->delete('oms_company_follow')->where('oms_id = :oms_id AND followid = :followid')->bindValues(array('oms_id'=> $oms_id, 'followid'=> $followid))->query();
+                }
+                // if ( $message_data['customerStatu'] == 0 ) {
+                //     $db1->insert('')
+                // }
+                // $db1->select('followid')->from('')
+                return;
+            case "addFriends":
+                //实例化数据
+                $db1 = Db::instance('oms');
+
+                $uid = $_SESSION['uid'];
+                $room_id = $_SESSION['room_id'];
+                $client_name = $_SESSION['client_name'];
+                $header_img_url = $_SESSION['header_img_url'];
+                $to_uid = $message_data['uid'];
+                $nowTime = time();
+                
+                /****************   验证是否存在   *******************/
+                $selectCol = $db1->select('state')->from('oms_friend_list')->where('pid= :pid AND  staffid= :staffid')->bindValues(array('pid' => $uid, 'staffid'=> $message_data['uid']))->limit(2)->column();
+                if ( !empty($selectCol) ) {
+
+                    if ( count($selectCol) == 1) {
+
+                         if ($selectCol[0] == 1) {
+
+                            return;
+                         } else if ( $selectCol[0] == 0 ) {
+
+                            $db1->update('oms_friend_list')->cols(array("state"))->where('pid= '.$uid.' AND  staffid= '.$message_data['uid'])->bindValue('state', 1)->query();
+                         } else if ( $selectCol[0] == 2 ) {
+                                return;
+                         }
+                    } else {
+
+                        return;
+                    }
+
+                } else {
+
+                    $db1->insert('oms_friend_list')->cols(array("pid"=> $uid, "staffid"=> $message_data['uid'], "pid_name"=>$client_name, "pid_header_url"=>$header_img_url, "additional_Information" =>$message_data['companyName'], "create_time"=> $nowTime, "update_time"=> $nowTime, "oms_id"=> $room_id))->query();
+
+                }
+
+                $session_no = $uid.'t';
+
+                $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$to_uid, 'sender_name'=>$client_name, 'accept_name'=>$message_data['accept_name'],'message_type'=> 'message', 'mesages_types'=> 'notice','dialog'=> 0, 'message_content'=>$message_data['companyName'], 'session_no'=>$session_no, 'create_time'=>time(), 'update_time'=>time()))->query();
+
+                    $new_message['insert_id'] = $insert_id;
+
+                /**********   向客户端发送数据  *****************/
+                $new_message = array(
+                        'type'=>'say_uid',
+                        'from_client_id'=>$client_id, 
+                        'from_client_name' =>$client_name,
+                        'from_uid_id'=>$uid,
+                        'header_img_url'=>$header_img_url,
+                        'mestype'=> 'message',
+                        'mes_types'=> 'notice',
+                        'session_no'=>$session_no,
+                        'insert_id'=> $insert_id,
+                        'content'=>$message_data['companyName'],
+                        'time'=>date('Y-m-d H:i:s'),
+                );
+                /******************************   消息列表插入  ***********************************/
+
+                $chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `pid`='.$message_data['uid'].' AND `mews_types`="notice"');
+
+                if (!empty($chat_res)) {
+
+                   $db1->query("UPDATE `oms_chat_message_ist` SET `mes_num` = `mes_num`+1, `mes_id`=$insert_id WHERE id=".$chat_res);
+                   $insert_id = $chat_res;
+
+                } else {
+
+                    $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$to_uid, 'session_no'=>$session_no, 'mes_id'=>$insert_id, 'chat_header_img'=>$header_img_url, 'oms_id'=>$room_id, 'mews_types'=>'notice'))->query();
+                }
+                    // $new_message['insert_id'] = $insert_id;
+                Gateway::sendToUid($to_uid, json_encode($new_message));
+                return;
+            case 'chat_notice_sel':
+                $uid = $_SESSION['uid'];
+                $room_id = $_SESSION['room_id'];
+                $client_name = $_SESSION['client_name'];
+                $header_img_url = $_SESSION['header_img_url'];
+                $db1 = Db::instance('oms');
+                $senderId = $message_data['senderId'];
+                $dataParm = $message_data['dataParm'];
+                
+                if ( !empty($senderId) ) {
+                    if ( $dataParm == "unagree" ) {
+                        $db1->delete('oms_friend_list')->where('pid = '.$senderId.' AND staffid='.$uid)->query();
+                    } else {
+
+                        $db1->query('UPDATE `oms_friend_list` SET `state` = 2 WHERE pid = '.$senderId.' AND staffid='.$uid);
+                         $insert_id1 = $db1->insert('oms_friend_list')->cols( array('pid'=>$uid,'pid_name'=>$client_name,'pid_header_url'=> $header_img_url,'additional_Information'=>'同意', 'staffid'=>$senderId,'state'=> 2,'oms_id'=>$room_id, 'create_time'=>time(), 'update_time'=>time()))->query();
+                        $session_no = $uid > $message_data['senderId'] ? $message_data['senderId']."-".$uid : $uid."-".$message_data['senderId'];
+
+                        $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$senderId, 'sender_name'=>$client_name,'message_type'=> 'message', 'mesages_types'=> 'notice_respond', 'message_content'=>'可以会话了', 'session_no'=>$session_no,'dialog'=> 0, 'create_time'=>time(), 'update_time'=>time()))->query();
+                        $new_message = array(
+                            'type'=>'say_uid',
+                            'from_client_id'=>$client_id, 
+                            'from_client_name' =>$client_name,
+                            'from_uid_id'=>$uid,
+                            'header_img_url'=>$header_img_url,
+                            'mestype'=> 'message',
+                            'mes_types'=> 'notice_respond',
+                            'session_no'=>$session_no,
+                            'insert_id'=>$insert_id,
+                            'content'=>'可以对话了',
+                            'time'=>date('Y-m-d H:i:s'),
+
+                        );
+                        $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$senderId, 'session_no'=>$session_no,'mes_id'=>$insert_id, 'chat_header_img'=>$header_img_url, 'oms_id'=>$room_id, 'mews_types'=>'notice_respond'))->query();
+                        echo 1;
+                        Gateway::sendToUid($senderId, json_encode($new_message));
+                    }
+                }
                 return;
             case 'active':
                 // 非法请求
