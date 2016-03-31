@@ -56,7 +56,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               // flush_onlineman_list();
               // console.log(data['client_name']+"登录成功");
               break;
-            case 'sayUid':
+            case 'say_uid':
                 sayUid(data['mes_types'], data['mestype'], data['header_img_url'],data['group_name'], data['insert_id'],  data['session_no'], data['from_uid_id'], data['to_uid_id'], data['from_client_id'], data['from_client_name'], data['content'], data['time']);
                 break;
             //审核消息
@@ -201,7 +201,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       ws.send('{"type":"sayUid","to_uid_id":"'+to_uid+'","senderid":"'+uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
       document.getElementById("mes_textarea").innerHTML = "";
       $("#mes_textarea").height(50);
-      $(".he-ov-box").css("bottom", "50px");
+      $(".he-ov-box").css("bottom", inputBottom);
       $('.emoticons').hide();
       document.getElementById("mes_textarea").focus();
     }
@@ -305,7 +305,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               arrMessageList.push(from_session_no);
           return;
         }
-
+        console.log(session_no);
         if (session_no != from_session_no) {
           if (mestype != "message") {
               from_client_name = group_name;
@@ -327,17 +327,26 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         };
 
       if (session_no == from_session_no) {
+        
         $(".he_ov").append('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="name le">'+from_client_name+'<span style="padding: 0 0 0 20px">'+time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
 
           $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 
           if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {                         
             mes_num = parseInt($(".mes_chakan_close[session_no='"+session_no+"']").parent().next('.mes_num').html());
-          // console.log($.inArray(session_no, arrMessageList));
-            mes_chakan_close(mestype, session_no, mes_num);
+            // console.log($.inArray(session_no, arrMessageList));
+            if (mestype != "message") {
+              mes_chakan_close(mestype, session_no, mes_num);
+            } else {
+              mes_chakan_close(mestype, from_uid_id, mes_num);
+            }
             // mes_close(mestype, session_no, session_no);
           } else {
-            mes_chakan_close(mestype, session_no, 0);
+            if (mestype != "message") {
+              mes_chakan_close(mestype, session_no, 0);
+            } else {
+              mes_chakan_close(mestype, from_uid_id, 0);
+            }
           }
       };
     }

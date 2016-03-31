@@ -22,15 +22,24 @@ var mes_notice_close = function (mestype, session_id, mes_num){
     mesnum = mesnum - parseInt(mes_num);
     $('.mes_radio').html(mesnum);
     $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
-    arrMessageList.remove(session_id);
+    arrMessageList= _chat_remove(session_id, arrMessageList);
+    //arrMessageList.remove(session_id);
 }
 //删除指定数组元素
+var _chat_remove = function (val, array) {
+    var index = array.indexOf(val);
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+    return array;
+}
+/*
 Array.prototype.remove = function(val) {
     var index = this.indexOf(val);
     if (index > -1) {
         this.splice(index, 1);
     }
-};
+};*/
 //在线人员滚动条滚动
 var _move = false;
 var ismove = false; //移动标记
@@ -486,10 +495,16 @@ $('.mes_ico_box').hover(function (){
     });
   //打个消息的关闭
   var mes_chakan_close = function (mestype, session_no, mes_num){
-      ws.send('{"type":"mes_close", "session_no":"'+session_no+'", "mestype":"'+mestype+'"}');
-      mesnum = parseInt(mesnum) - parseInt(mes_num);
-      $('.mes_radio').html(mesnum);
-      $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
+    if ( mestype == 'message' ) {
+      session_no = parseInt(uid) < parseInt( session_id ) ? uid+"-"+session_id : session_id+"-"+uid;
+    } else {
+      session_no = session_id;
+    }
+    ws.send('{"type":"mes_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+    mesnum = parseInt(mesnum) - parseInt(mes_num);
+    $('.mes_radio').html(mesnum);
+    $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
+    arrMessageList= _chat_remove(session_id, arrMessageList);
   }
   //单个消息关闭
   // $('.mes_chakan_close').live('click', function (){
@@ -528,7 +543,7 @@ $(function(){
     reader.readAsDataURL( blob );
   };
   document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
-  	e.preventDefault();
+    e.preventDefault();
     var clipboardData = e.clipboardData,
       i = 0,
       items, item, types;
@@ -546,7 +561,7 @@ $(function(){
         }
       }
       if (item && item.kind === 'string') {
-      	$('#mes_textarea').append(clipboardData.getData('text/plain'));
+        $('#mes_textarea').append(clipboardData.getData('text/plain'));
       };
       if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
         imgReader( item );

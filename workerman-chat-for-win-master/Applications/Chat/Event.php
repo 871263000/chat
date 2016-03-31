@@ -132,7 +132,6 @@ class Event
                 {
                     throw new \Exception("\$_SESSION['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']}");
                 }
-
                 $db1 = Db::instance('oms');
                 $room_id = $_SESSION['room_id'];
                 $client_name = $_SESSION['client_name'];
@@ -257,11 +256,12 @@ class Event
                     throw new \Exception("\$_SESSION['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']}");
                 }
                 $room_id = $_SESSION['room_id'];
-                $session_no = $message_data['session_no'];
                 $uid = $_SESSION['uid'];
                 if ($message_data['mestype'] == 'message') {
+                    $session_no =  $uid < $message_data['session_no'] ? $uid."-".$message_data['session_no'] : $message_data['session_no']."-".$uid;
                     $db1->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$session_no."'");
                 } else {
+                    $session_no = $message_data['session_no'];
                     $db1->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mes_num`=0 WHERE `staffid` = $uid AND `pid`='".$session_no."'");
                 }
                 return ;
@@ -659,7 +659,6 @@ class Event
 
                         );
                         $insert_id = $db1->insert('oms_chat_message_ist')->cols(array('pid'=>$senderId, 'session_no'=>$session_no,'mes_id'=>$insert_id, 'chat_header_img'=>$header_img_url, 'oms_id'=>$room_id, 'mews_types'=>'notice_respond'))->query();
-                        echo 1;
                         Gateway::sendToUid($senderId, json_encode($new_message));
                     }
                 }

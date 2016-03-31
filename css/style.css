@@ -1,12 +1,12 @@
 h2{margin-top: 0;}
 .say-btn{width: 85%;text-align:right;margin-top:12px;}
 .right{text-align: right;}
-.chat-container .container{position: relative;background: rgba(0,0,0,.5)!important;width: 100%;height: 100%;margin: 0 auto;padding: 0;}
+.chat-container .container{position: relative;background: rgba(0,0,0,.5) !important;width: 100%;height: 100%;margin: 0 auto;padding: 0;}
 .mes_input{background: #fff;/*padding: 3px 10px 5px 6px;*/-webkit-box-sizing: border-box;-moz-box-sizing: border-box;-ms-box-sizing: border-box;box-sizing: border-box;-webkit-box-orient: horizontal;-moz-box-orient: horizontal;-ms-box-orient: horizontal;box-orient: horizontal;display: -webkit-box;display: -moz-box;display: box;width: 100%;}
 .keydown_voice{cursor: pointer;display: block;text-align: center;box-sizing: border-box;color: #333;display: block;height: 50px;line-height: 50px;font-family: "微软雅黑";resize: none;word-spacing:8px;letter-spacing: 2.5px;white-space: pre-wrap;word-break: initial;-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}
 .textarea{font-size: 25px;display: block;background: 0;box-sizing: border-box;color: #333;background: #f9f9f9;-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);box-shadow: inset 0 1px 4px rgba(0,0,0,.2);display: block;height: 50px;line-height: 35px;font-family: "微软雅黑";resize: none;word-spacing:8px;letter-spacing: 2.5px;white-space: pre-wrap;word-break: initial;-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}
 .bagimg img{z-index: -1;display: block;position: absolute;width: 100%;height: 100%;top: 0;left: 0;-webkit-animation-name: fadeInOut;-webkit-animation-timing-function: ease-out;-webkit-animation-duration: 2s;-webkit-animation-direction: alternate;}
-.mes_footer{width: 100%;position: absolute;left: 0;bottom: 0;border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;}
+.mes_footer{display: none;width: 100%;position: absolute;left: 0;bottom: 0;border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;}
 .speech_item{color: #fff;}
 .mes_title{padding: 3px;border-bottom: 1px solid #fff;}
 .mes_title_con{text-align: center;color: #fff;}
@@ -133,13 +133,35 @@ h2{margin-top: 0;}
 
 
 @media (min-width: 600px){
+	/**************  输入框 ******************/
+	.pc_mes_tool_list{cursor: pointer;}
+	.he-ov-box{bottom: 180px;}
+	.pc_mes_input_box{ width: 100%; height: 180px;background: #fff;position: absolute;bottom: 0;border-top: 1px solid #ccc;}
+	.pc_he-ov-box .content-font{border: 1px solid #ccc;}
+	.pc_mes_input{padding: 10px;height: 100px;border: 0;outline: none;overflow: auto;}
+	.pc_mes_input_box .pc_mes_tool{width: 100%; height: 40px;padding: 5px;border-bottom: 1px solid #ccc;}
+	.pc_mes_tool ul li{float: left;width: 32px;padding: 5px;height: 32px;margin: 0 5px;}
+	.pc_mes_tool_emoji{background: url('/chat/images/biaoqing.png');}
+	.pc_mes_tool_img{background: url('/chat/images/chat_img.png');}
+	.pc_mes_tool_file{background: url('/chat/images/chat_file.png');}
+	.pc_mes_input_box .pc_mes_send{height: 40px;text-align: right;}
+	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 10px;}
+	/** 表情  */
+	.pc_emoji_box{ display: none; background: #fff; position: absolute; width: 350px; box-shadow: 0 0 10px #ccc;border-radius: 5px;max-height: 200px;min-height: 100px; overflow: auto;bottom: 100%;}
+	/******************  end  *****************************/
+	/*********************  聊天框  *************************/
+	.chat_initial{ background: url('/chat/images/chat_initial.png') center no-repeat;}	
+	.mes_title{padding: 3px;border-bottom: 1px solid #ccc;}
+	.mes_title_con{text-align: center;color: #848080;}
+	/*********************  end  *************************/
+	.mes_content .jian{border: 5px solid transparent; border-right-color: #3C3434; border-top-color: #3C3434;margin-top: 10px;}
     .chat_notice_container{padding: 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
     }
 .man_tittle{position: absolute;top: 0;z-index: 1111;}
 .online_man .list-group{top: 73px;position: absolute;width: 100%;}
 .mes_dclose{display: none;}
 .container-box{width: 1000px;margin: 0 auto;}
-.chat-container{box-shadow: 0 0 10px #000;position: relative;background: rgba(0,0,0,.5)!important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
+.chat-container{box-shadow: 0 0 10px #000;position: relative;background: #fff !important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
 .details-list{position: absolute;box-shadow: 0 0 10px #656e73;width: 260px;background-color: #fff;height: 100%;float: left;}
 .container-title{background: rgba(0,0,0,.5)!important;color: #fff;height: 64px;border-bottom: 1px solid #000;}
 .container-header{height: 64px;text-align: center;background: url(../images/herderbg.jpg) no-repeat;}
@@ -163,7 +185,12 @@ h2{margin-top: 0;}
 .img-box-act span{margin: 10px;width: 100px !important;}
 .sending-img-box{text-align: center;}
 .sending-img-box img{max-width: 500px;}}
-@media (max-width: 600px){.chat_notice_container{padding: 10px;overflow: auto !important;width: 100%;position: absolute;top: 0;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
+@media (max-width: 600px){
+	/*********************  输入框  **************************/
+	.mb_mes_footer{display: block;}
+	/*********************   end  **************************/
+	.pc_mes_input_box{display: none;}
+.chat_notice_container{padding: 10px;overflow: auto !important;width: 100%;position: absolute;top: 0;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
 .online_man{overflow: auto;}
 .mes_dclose{display: block;}
 .mes_title{cursor: pointer;}
