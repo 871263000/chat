@@ -1,7 +1,7 @@
 <?php 
 require_once("../config.inc.php");
 $d = new database();
-$SESSION['oms_id'] = 1;
+$SESSION['oms_id'] = 3;
 $r=isset($_POST['staffid'])?$d->find('SELECT  `staffid`,`mobile_phone`, `tel`, `tel_branch` FROM `oms_hr` WHERE oms_id='.$SESSION['oms_id'].' AND `staffid`='.$_POST['staffid']):
 $d->findAll('SELECT  `staffid`,`mobile_phone`, `tel`, `tel_branch` FROM `oms_hr` where oms_id='.$SESSION['oms_id']);
 if(!isset($_POST['staffid'])){

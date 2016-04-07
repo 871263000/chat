@@ -23,7 +23,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function onopen()
     {
         // 登录
-      var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+name+'","room_id":"'+room_id+'"}';
+      var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+name+'","room_id":"'+room_id+'"}';
       ws.send(login_data);
     }
 
@@ -153,11 +153,11 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     * auditUrl 审核的连接
     */
     //提交审核
-    function onAudit(to_uid,message_type, uid, oms_id, content, auditUrl) {
-      ws.send('{"type":"audit","oms_id":'+oms_id+', "to_uid_id":['+to_uid+'],"senderid":'+uid+', "message_type":"'+message_type+'","content":"'+content+'", "message_url":"'+auditUrl+'"}');
+    function onAudit(to_uid,message_type, chat_uid, oms_id, content, auditUrl) {
+      ws.send('{"type":"audit","oms_id":'+oms_id+', "to_uid_id":['+to_uid+'],"senderid":'+chat_uid+', "message_type":"'+message_type+'","content":"'+content+'", "message_url":"'+auditUrl+'"}');
     }    
     //  提交会话
-    function onSubmit(to_uid, uid, groupId, message_type, mes_types,from_session_no) {
+    function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types,from_session_no) {
       var nowTime = new Date().format('yyyy-MM-dd hh:mm:ss');
       var accept_name = $('.mes_title_con').text();
       var inputcur = "";
@@ -168,6 +168,8 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           input = document.getElementById("mes_textarea");
           inputValue = input.innerHTML.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
           inputcur = input.innerHTML.replace(/[\r\n]/g,"<br/>");
+          console.log(inputValue)
+          console.log(inputcur)
         break;
         case 'image':
           inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
@@ -182,7 +184,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           break;
         case 'voice':
         inputValue = $('.chat_voice_box').attr('voice_url');
-        ws.send('{"type":"sayUid","to_uid_id":"'+to_uid+'","senderid":"'+uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
+        ws.send('{"type":"sayUid","to_uid_id":"'+to_uid+'","senderid":"'+chat_uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
         $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
           return;
 
@@ -198,7 +200,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       // };
       $(".he_ov").append('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+nowTime+'</span>'+name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri">'+inputcur+'</span> </div></div></li>');
       $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
-      ws.send('{"type":"sayUid","to_uid_id":"'+to_uid+'","senderid":"'+uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
+      ws.send('{"type":"sayUid","to_uid_id":"'+to_uid+'","senderid":"'+chat_uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
       document.getElementById("mes_textarea").innerHTML = "";
       $("#mes_textarea").height(50);
       $(".he-ov-box").css("bottom", inputBottom);
@@ -208,7 +210,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     //显示群聊人
     function showGroupMan(data){
       var addClass = ''
-      if (data[0]['group_founder'] == uid) {
+      if (data[0]['group_founder'] == chat_uid) {
         addClass = 'group-people';
       };
       for(i in data) {
@@ -327,7 +329,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         };
 
       if (session_no == from_session_no) {
-        
+
         $(".he_ov").append('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="name le">'+from_client_name+'<span style="padding: 0 0 0 20px">'+time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
 
           $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
@@ -382,7 +384,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             case 'voice':
             var voiceArray = new Array();
             voiceArray = data[i].message_content.split('|');
-            if (data[i].sender_id == uid) {
+            if (data[i].sender_id == chat_uid) {
               content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+voiceArray[0]+'"></div>';
               content2 = '<span class="chat_duration_right">'+voiceArray[1]+'\"</span';
             } else {
@@ -395,7 +397,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             default:
                 break;
         }
-        if (data[i].sender_id == uid) {
+        if (data[i].sender_id == chat_uid) {
           $(".he_ov").prepend('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+mes_time+'</span>'+name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri '+addVoiceClass+'">'+content+'</span> '+content2+' </div></div></li>');
         } else {
           $(".he_ov").prepend('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
@@ -409,7 +411,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       var content2 = "";
       var addVoiceClass = "";
       if (data.save == 0) {
-        $(".he_ov").prepend("<div style='text-align: center;'><span style='color: #fff;padding: 5px 0;'>没有了！</span></div>");
+        $(".he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
           $('.loader').hide();
           $('.onload').remove();
           $('.he-ov-box').unbind('scroll');
@@ -440,7 +442,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             case 'voice':
             var voiceArray = new Array();
             voiceArray = data[i].message_content.split('|');
-            if (data[i].sender_id == uid) {
+            if (data[i].sender_id == chat_uid) {
               content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+voiceArray[0]+'"></div>';
               content2 = '<span class="chat_duration_right">'+voiceArray[1]+'\"</span';
             } else {
@@ -452,7 +454,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             default:
                 break;
         }
-        if (data[i].sender_id == uid) {
+        if (data[i].sender_id == chat_uid) {
           $(".he_ov").prepend('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="herder-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+mes_time+'</span>'+name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri '+addVoiceClass+'">'+content+'</span>'+content2+' </div></div></li>');
         } else {
           $(".he_ov").prepend('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"> <img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');

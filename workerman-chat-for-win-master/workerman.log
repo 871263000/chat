@@ -3947,3 +3947,137 @@ Stack trace:
 #11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
 #12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
 #13 {main}
+2016-04-06 10:12:06 client_id:7f00000108fc0000000d	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AS ``group_name`` FROM `oms_group_chat` WHERE id = ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `group_p...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT `group_p...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(129): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(120): models\chatMessageModel->isInGroupModel()
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(90): Controllers\chatMessageController->isInGroup()
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(35): Controllers\chatMessageController->mes_load()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(169): Controllers\chatMessageController->init('mes_load')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_lo...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}
+2016-04-06 10:12:06 client_id:7f00000108fc0000000d	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AS ``group_name`` FROM `oms_group_chat` WHERE id = ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `group_p...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT `group_p...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(129): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(120): models\chatMessageModel->isInGroupModel()
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(90): Controllers\chatMessageController->isInGroup()
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(35): Controllers\chatMessageController->mes_load()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(169): Controllers\chatMessageController->init('mes_load')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_lo...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}
+2016-04-06 10:15:07 client_id:7f00000108fc0000000c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AS ``group_name`` FROM `oms_group_chat` WHERE id = ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `group_p...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT `group_p...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(130): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(119): models\chatMessageModel->isInGroupModel()
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(89): Controllers\chatMessageController->isInGroup()
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(35): Controllers\chatMessageController->mes_load()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(169): Controllers\chatMessageController->init('mes_load')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_lo...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}
+2016-04-06 10:15:07 client_id:7f00000108fc0000000c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AS ``group_name`` FROM `oms_group_chat` WHERE id = ?' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('SELECT `group_p...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1774): GatewayWorker\Lib\DbConnection->execute('SELECT `group_p...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(130): GatewayWorker\Lib\DbConnection->row()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(119): models\chatMessageModel->isInGroupModel()
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(89): Controllers\chatMessageController->isInGroup()
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(35): Controllers\chatMessageController->mes_load()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(169): Controllers\chatMessageController->init('mes_load')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"mes_lo...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}
+2016-04-06 11:17:53 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 11:17:53 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 11:17:53 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 11:17:53 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 11:18:21 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 11:18:21 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 12:47:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 12:47:43 SendBufferToWorker fail. The connections between Gateway and BusinessWorker are not ready
+2016-04-06 14:31:09 client_id:7f00000108fc00000003	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'id=71' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_cha...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_cha...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(107): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_cha...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(136): models\chatMessageModel->noticeInsertModel('1697')
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(63): Controllers\chatMessageController->noticeInsert('1697')
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(39): Controllers\chatMessageController->sayUid()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(174): Controllers\chatMessageController->init('sayUid')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"sayUid...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}
+2016-04-06 14:32:10 client_id:7f00000108fc00000007	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'id=71' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_cha...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_cha...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\models\chatMessageModel.php(108): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_cha...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(136): models\chatMessageModel->noticeInsertModel('1698')
+#4 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(63): Controllers\chatMessageController->noticeInsert('1698')
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Controllers\chatMessageController.php(39): Controllers\chatMessageController->sayUid()
+#6 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(174): Controllers\chatMessageController->init('sayUid')
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type":"sayUid...')
+#8 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#10 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#13 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#14 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#17 {main}

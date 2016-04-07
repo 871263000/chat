@@ -1,3 +1,34 @@
+/***************  pc输入框  ********************/
+//文件发送
+$('.pc_mes_tool_file').click( function () {
+  trig($('#file_zdl'));
+})
+//图片发送
+$('.pc_mes_tool_img ').click( function () {
+   trig($('#send-upimg'));
+})
+/****************  end  *******************/
+//pc 提交
+$('.chat_btn').click(function () {
+  var inputValue = $('.pc_mes_input').html();
+  $('#mes_textarea').html(inputValue);
+  $("#submit").trigger("click");
+  $('.pc_mes_input').html('');
+  $('.pc_mes_input').focus();
+})
+//pc 输入框聚焦
+$('.pc_mes_input').focus( function () {
+  $(".pc_emoji_box").hide();
+  $(".he-ov-box").css("bottom", inputBottom);
+  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+})
+//pc inout 的高度
+var inputBottom = $('.he-ov-box').css('bottom');
+//pc 表情的显示
+$('.pc_mes_tool_emoji').click(function () {
+  $('.pc_emoji_box').show(500);
+  addempath("pc_emoji_box");
+})
 //通知消息点击
 $(document).on('click', '.chat_notice', function () {
     var session_id = $(this).attr('session_no');
@@ -33,98 +64,15 @@ var _chat_remove = function (val, array) {
     }
     return array;
 }
-/*
-Array.prototype.remove = function(val) {
-    var index = this.indexOf(val);
-    if (index > -1) {
-        this.splice(index, 1);
-    }
-};*/
-//在线人员滚动条滚动
-var _move = false;
-var ismove = false; //移动标记
-var _x, _y, __y; //鼠标离控件左上角的相对位置
-
-//在线人员滚动
-var ScrollDistance = 47;//每次滑动距离；
-var onlineTop = parseInt($(".online_man .list-group").css('top'));
-var maxScroll = docuHeight - onlineTop; //滚动条的最大高度；
-var onlineTopCh = onlineTop;
-var onlinesSroll = onlineTopCh;//滚动条top;
-var onlineScrollHeight = 0;//滚动条可以滚动的距离；
-var onlineHeight = 0; // 在线人数的高度; 
-var hideOnlineHeightPro = 0; // 在线人数隐藏的高度； 
-var onlineSeeHeight = docuHeight - onlineTop;//在线人数可视化的高度；
-var docuHeight = $(window).height();
-var proScroll =  0; //在线人数的高度和文档高度的比例；
-var mousewheelevt=(/Firefox/i.test(navigator.userAgent))?"DOMMouseScroll": "mousewheel"//FF doesn't recognize mousewheel as of FF3.x
-var mousedir=(/Firefox/i.test(navigator.userAgent))?"detail": "deltaY"//FF doesn't recognize mousewheel as of FF3.x
 //拖动
-$(document).on('mouseover', ".online_man", function (){
-  if (proScroll < 1) {
-    $(".onlinesSroll-box").css('display', 'block');
-  };
-})
-$(document).on('mouseout', ".online_man", function (){
-  $(".onlinesSroll-box").css('display', 'none');
-})
-jQuery(document).ready(function ($) {
-    $(".onlinesSroll-box").mousedown(function (e) {
-      console.log(onlineTop);
-        _move = true;
-        __y = e.pageY;
-        _y = e.pageY - parseInt($(".onlinesSroll-box").css("top"));
-     });
-    $(".onlinesSroll-box").mousemove(function (e) {
-        if (_move) {
-            var y = e.pageY - _y;
-            var my = e.pageY - __y;
-            // var wx = $(window).width() - $('#spig').width();
-            var dy = $(document).height() - $('.onlinesSroll-box').height();
-            if( y >= onlineTopCh && y < onlineTopCh + onlineScrollHeight ) {
-                onlineTop -= hideOnlineHeightPro * ((e.pageY -__y )/onlineScrollHeight);
-              onlinesSroll +=( e.pageY -__y);
-              $('.online_man .list-group').css('top',onlineTop );
-              $(".onlinesSroll-box").css({
-                top: onlinesSroll,
-              }); //控件新位置
-            ismove = true;
-            __y = e.pageY;
-            }
-        }
-    }).mouseup(function () {
-        _move = false;
-    });
-});
-$(document).on(mousewheelevt,".online_man",function (event){
-    e = event || window.event;
-    e.preventDefault();
-    var wheeldir = e.originalEvent.deltaY;
-    if (mousedir == "detail") {
-      var wheeldir = e.originalEvent.detail;
-
-    };
-    if(wheeldir > 0 && onlineTop+onlineHeight > docuHeight ){
-      onlinesSroll += onlineScrollHeight * ( ScrollDistance/hideOnlineHeightPro );
-      if ( 0 < onlineTop+onlineHeight - docuHeight &&  onlineTop+onlineHeight - docuHeight < ScrollDistance ) {
-          onlinesSroll += onlineScrollHeight * ( (onlineTop+onlineHeight - docuHeight)/hideOnlineHeightPro ) ;
-          onlineTop -= onlineTop+onlineHeight - docuHeight
-      } else {
-          onlineTop -=ScrollDistance;
-      }
-
-    } else if (wheeldir < 0 &&  onlineTop < onlineTopCh ) {
-      if (onlineTopCh - onlineTop < ScrollDistance ) {
-        onlinesSroll = onlineTopCh;
-        onlineTop = onlineTopCh;
-      } else {
-        onlinesSroll -= onlineScrollHeight * ( ScrollDistance/hideOnlineHeightPro );
-        onlineTop +=ScrollDistance;
-      }
-    }
-    $('.online_man .list-group').css('top',onlineTop );
-    $('.onlinesSroll-box').css('top',onlinesSroll );
-});
+// $(document).on('mouseover', ".online_man", function (){
+//   if (proScroll < 1) {
+//     $(".onlinesSroll-box").css('display', 'block');
+//   };
+// })
+// $(document).on('mouseout', ".online_man", function (){
+//   $(".onlinesSroll-box").css('display', 'none');
+// })
 //人员信息
 var staffInfo = {
     tel:null,
@@ -169,13 +117,23 @@ var ajaxGetStaffInfo = function (staffid, direction, height){
 
 // }
 //消息滑过
+$(function (){
+  var winHeight = $(window).height();
+  var onlineManHeight = winHeight - parseInt($('.online_man .list-group').css('top'));
+  $('.oms_onlineNum').css('height', onlineManHeight);
+})
 $(document).on('mouseenter' , '.staff-info',function(){
     var obj = $(this);
+    var _index = obj.index();
+    var onlineManTop = $('.oms_onlineNum').css('top');
     var staffid = obj.attr('mes_id');
-    obj.addClass('infoCurrent');
+    $('.online_man').addClass('infoCurrent');
     var direction = obj.attr('data-placement');
-    var height = obj.height();
-    ajaxGetStaffInfo(staffid, direction, height);
+    var height = obj.outerHeight();
+    console.log(height)
+    var offtop = _index * height + height/2 + 38 - $('.oms_onlineNum').scrollTop();
+    // var offtop = height/2-85/2;
+    ajaxGetStaffInfo(staffid, direction, { top: offtop});
 });
 $(document).on('mouseleave', '.staff-info', function (){
     var obj = $(this);
@@ -246,12 +204,15 @@ $(".plus_icon").click( function (){
 });
 //shift+enter 换行
 //enter 提交
-$(".mes_footer").keydown(function(e){
+$(".mes_footer, .pc_mes_input").keydown(function(e){
     var e = e || event,
         keycode = e.which || e.keyCode;
-    if(event.shiftKey && (event.keyCode==13)){
+    if(e.shiftKey && (e.keyCode==13)){
         $('#mes_textarea').append('<br/>')
     } else  if (keycode==13) {
+        var inputValue = $('.pc_mes_input').html();
+        $('#mes_textarea').html(inputValue);
+        $('.pc_mes_input').html('');
         $("#submit").trigger("click");
     }
 });
@@ -280,7 +241,7 @@ $('.chat_people').live('click', function( e ){
     to_uid = $(this).attr('mes_id');
     to_uid_header_img = $(this).find('img').attr('src');
     //会话id的改变
-    session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
+    session_no = to_uid < chat_uid ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
     mes_type = "message";
     if (!$(e.target).is('.recent-action')) {
         $('.chat-container').show();
@@ -288,9 +249,10 @@ $('.chat_people').live('click', function( e ){
       // groupId = $(this).attr('groupId');
       // if (!$(e.target).is('.mes_chakan_close')) {
       $('.mes_title_con').html($(this).attr('group-name'));
-        if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+        if ($.inArray(session_no, arrMessageList) != -1) {
           var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
-          mes_chakan_close('message', session_no, con_mes_num);
+          mes_chakan_close('message', to_uid, con_mes_num);
+
         };
       // };
       ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
@@ -330,22 +292,25 @@ $('.session_no').live('click', function ( event ){
     $('#mes_load').html(10);
   } 
 })
+
 //表情的添加
-function addempath() {
-  var emPath = "/chat/emoticons/images/";//表情路径
-  var total = 134;//表情的个数
-  var newTotal = 14;//新增表情的个数
-  for(var i=0; i < newTotal ; i++) {
-    $('.emoticons').append('<div class="em_gif"><img width="24px" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
-  }
-  for(var i=0; i < total ; i++) {
-    $('.emoticons').append('<div class="em_gif"><img class="cli_em" src="'+emPath+i+'.gif"></div>');
-  }
+function addempath(className) {
+    var emPath = "/chat/emoticons/images/";//表情路径
+    var total = 134;//表情的个数
+    var newTotal = 14;//新增表情的个数
+    $('.'+className).html('');
+    for(var i=0; i < newTotal ; i++) {
+        $('.'+className).append('<div class="em_gif"><img width="24px" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
+    }
+    for(var i=0; i < total ; i++) {
+        $('.'+className).append('<div class="em_gif"><img class="cli_em" src="'+emPath+i+'.gif"></div>');
+    }
 }
 //表情的点击事件
-$(".emoticons .cli_em").live('click',function (){
+$(".emoticons .cli_em, .pc_emoji_box .cli_em").live('click',function (){
     $(this).clone().append().appendTo('.textarea');
-    $('textarea').val($('.textarea').html())
+    $(this).clone().append().appendTo('.pc_mes_input');
+    // $('textarea').val($('.textarea').html())
 })
 //表情的显示
 $('.header_icon').click(function () {
@@ -414,8 +379,8 @@ $(document).keyup(function(event){
     };
 })(jQuery);
 $("#mes_textarea").autoTextarea({
-   maxHeight:260,
-   minHeight:50
+    maxHeight:260,
+    minHeight:inputBottom
 });
 //右边图标点击事件
 $('.mes_ico_box').swipe( {
@@ -476,6 +441,9 @@ $(document).click(function (event){
         duration: 500
       })
   }
+  if (!$(event.target).is('.pc_mes_tool_emoji')) {
+      $('.pc_emoji_box').hide();
+  };
 })
 //右边图标
 $('.mes_ico_box').hover(function (){
@@ -494,17 +462,17 @@ $('.mes_ico_box').hover(function (){
       $(this).find('.mes_close').hide()
     });
   //打个消息的关闭
-  var mes_chakan_close = function (mestype, session_no, mes_num){
-    if ( mestype == 'message' ) {
-      session_no = parseInt(uid) < parseInt( session_id ) ? uid+"-"+session_id : session_id+"-"+uid;
-    } else {
-      session_no = session_id;
-    }
-    ws.send('{"type":"mes_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
-    mesnum = parseInt(mesnum) - parseInt(mes_num);
-    $('.mes_radio').html(mesnum);
-    $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
-    arrMessageList= _chat_remove(session_id, arrMessageList);
+  var mes_chakan_close = function (mestype, session_id, mes_num){
+      if ( mestype == 'message' ) {
+        session_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
+      } else {
+        session_no = session_id;
+      }
+      ws.send('{"type":"mes_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+      mesnum = parseInt(mesnum) - parseInt(mes_num);
+      $('.mes_radio').html(mesnum);
+      $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
+      arrMessageList= _chat_remove(session_id, arrMessageList);
   }
   //单个消息关闭
   // $('.mes_chakan_close').live('click', function (){
@@ -639,7 +607,7 @@ document.getElementById('submit').onclick = function (){
     if (!mesParam.mes_obj() || !mesParam.mes_empty()) {
         return false;
     };
-    onSubmit(to_uid, uid, groupId, mes_type, 'text',session_no);
+    onSubmit(to_uid, chat_uid, groupId, mes_type, 'text',session_no);
 };
 //消息提交
 document.getElementsByClassName('send-clipboard-img')[0].onclick = function (){
@@ -647,7 +615,7 @@ document.getElementsByClassName('send-clipboard-img')[0].onclick = function (){
     if (!mesParam.mes_obj()) {
         return false;
     };
-    onSubmit(to_uid, uid, groupId, mes_type, 'image',session_no);
+    onSubmit(to_uid, chat_uid, groupId, mes_type, 'image',session_no);
 };
 //消息提交
 var Qiniu_UploadUrl = "http://up.qiniu.com";
@@ -674,7 +642,7 @@ $('#file_zdl').on('change', function (){
     };
     $key = $file.value.split(/(\\|\/)/g).pop();
     document.getElementById('filename').value = $key;
-    $key ='file/'+uid+'/'+to_uid+'/'+nowTime+'/'+$key;
+    $key ='file/'+chat_uid+'/'+to_uid+'/'+nowTime+'/'+$key;
     document.getElementById('key').value = $key;
     //普通上传
     var Qiniu_upload = function(f, token, key) {
@@ -709,12 +677,12 @@ $('#file_zdl').on('change', function (){
         xhr.onreadystatechange = function(response) {
             if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
                 var blkRet = JSON.parse(xhr.responseText);
-                onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
+                onSubmit(to_uid, chat_uid, groupId, mes_type, 'file',session_no);
                 // console && console.log(blkRet);
                 // $("#dialog").html(xhr.responseText).dialog();
             } else if (xhr.status != 200 && xhr.responseText) {
                 var blkRet = JSON.parse(xhr.responseText);
-                onSubmit(to_uid, uid, groupId, mes_type, 'file',session_no);
+                onSubmit(to_uid, chat_uid, groupId, mes_type, 'file',session_no);
             }
         };
         startDate = new Date().getTime();

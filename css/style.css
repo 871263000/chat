@@ -131,7 +131,7 @@ h2{margin-top: 0;}
 
 .chat_friend_current{display: block !important;}
 
-
+.chat_mes_content img{ width: 24px !important; }
 @media (min-width: 600px){
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}
@@ -141,15 +141,16 @@ h2{margin-top: 0;}
 	.pc_mes_input{padding: 10px;height: 100px;border: 0;outline: none;overflow: auto;}
 	.pc_mes_input_box .pc_mes_tool{width: 100%; height: 40px;padding: 5px;border-bottom: 1px solid #ccc;}
 	.pc_mes_tool ul li{float: left;width: 32px;padding: 5px;height: 32px;margin: 0 5px;}
-	.pc_mes_tool_emoji{background: url('/chat/images/biaoqing.png');}
-	.pc_mes_tool_img{background: url('/chat/images/chat_img.png');}
-	.pc_mes_tool_file{background: url('/chat/images/chat_file.png');}
+	.pc_mes_tool_emoji{background: url('/chat/images/biaoqing.png') center no-repeat;}
+	.pc_mes_tool_img{background: url('/chat/images/chat_img.png') center no-repeat;}
+	.pc_mes_tool_file{background: url('/chat/images/chat_file.png') center no-repeat;}
 	.pc_mes_input_box .pc_mes_send{height: 40px;text-align: right;}
 	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 10px;}
 	/** 表情  */
-	.pc_emoji_box{ display: none; background: #fff; position: absolute; width: 350px; box-shadow: 0 0 10px #ccc;border-radius: 5px;max-height: 200px;min-height: 100px; overflow: auto;bottom: 100%;}
+	.pc_emoji_box{ display: none; background: #fff; position: absolute; width: 350px; box-shadow: 0 0 10px #ccc;border-radius: 5px;max-height: 200px;min-height: 100px; overflow: auto !important;bottom: 100%;}
 	/******************  end  *****************************/
 	/*********************  聊天框  *************************/
+	.pc_he-ov-box .seeMore{ color: #000; }
 	.chat_initial{ background: url('/chat/images/chat_initial.png') center no-repeat;}	
 	.mes_title{padding: 3px;border-bottom: 1px solid #ccc;}
 	.mes_title_con{text-align: center;color: #848080;}
@@ -158,8 +159,8 @@ h2{margin-top: 0;}
     .chat_notice_container{padding: 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
     }
 .man_tittle{position: absolute;top: 0;z-index: 1111;}
-.online_man .list-group{top: 73px;position: absolute;width: 100%;}
-.mes_dclose{display: none;}
+.online_man .list-group{top: 73px;position: absolute;width: 100%;overflow: auto;}
+.mes_dclose{display: none;color: #000}
 .container-box{width: 1000px;margin: 0 auto;}
 .chat-container{box-shadow: 0 0 10px #000;position: relative;background: #fff !important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
 .details-list{position: absolute;box-shadow: 0 0 10px #656e73;width: 260px;background-color: #fff;height: 100%;float: left;}
