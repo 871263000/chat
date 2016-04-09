@@ -3,15 +3,16 @@ require_once('config.inc.php');
 require_once('lib/mesages.class.php');
 $uid = $_SESSION['staffid'] = 6;
 $oms_id = $_SESSION['oms_id'] = 1;
-$uid = 6;
-$oms_id = 1;
 $pageload = 10;//消息显示的条数
 $session_no = 0;//会话id
 $mesNum = 0;
+
 //消息类型
 $mes_type = 'message';
+
 //实例化消息
 $mes = new messageList($uid, $oms_id);
+
 //最近联系人
 if (isset($uid)) {
   	$recentContact = $mes->recentContact();
@@ -21,6 +22,7 @@ if (isset($uid)) {
 $userinfo = $mes->userinfo();
 $name = $userinfo['name'];//自己名字
 $card_image = $userinfo['card_image'];//头像的url
+
  ?>
 <!doctype html>
 <html lang="en">
@@ -32,14 +34,14 @@ $card_image = $userinfo['card_image'];//头像的url
     <link rel="stylesheet" href="/chat/css/style.css">
 </head>
 <script>
-	 var uid;
+	 var chat_uid;
     $(function (){
         connect();
     })
     var custom = 1;//客服id
     var mes_online = 1;
     var oms_id = "<?php echo $oms_id;?>";
-    uid = "<?php echo $uid;?>"; // 发送人id
+    chat_uid = "<?php echo $uid;?>"; // 发送人id
     var name = "<?php echo $name;?>";// 发送人name
     var accept_name ="<?php echo $accname?>";//接收人名字
     var room_id = "<?php echo isset($oms_id) ? $oms_id : 1?>";//房间id

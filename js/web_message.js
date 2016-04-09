@@ -47,8 +47,11 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               {
                   client_list[data['uid']] = data['client_name']; 
               }
+                onlineManInfo = data['client_list'];
+
               var online = 0;
               for (var i in data['client_list']) {
+                //添加人员名字到在线人员名字
                 online++;
               }
               $('.online_ren').html(online);
@@ -108,6 +111,9 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
                 delete client_list[data['from_uid_id']];
                 flush_onlineman_list();
                 break;
+            default:
+            return;
+
         }
     }
     // 提交消息
@@ -168,8 +174,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           input = document.getElementById("mes_textarea");
           inputValue = input.innerHTML.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
           inputcur = input.innerHTML.replace(/[\r\n]/g,"<br/>");
-          console.log(inputValue)
-          console.log(inputcur)
         break;
         case 'image':
           inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
@@ -231,11 +235,11 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           onlineman_ul.append('<li mes_id="'+p+'" data-placement="left" class="staff-info chat_people db_chat_people" group-name="'+client_list[p].client_name+'"><span class="header-img"><img src="'+client_list[p].header_img_url+'" alt="'+client_list[p].client_name+'"></span>'+client_list[p].client_name+'</li>');
       }
       $('.online_ren').html(online_ren);
-      onlineHeight = $(".online_man .list-group").height();
-      proScroll = ( docuHeight - onlineTop )/onlineHeight;
-      hideOnlineHeightPro = onlineHeight - (docuHeight - onlineTop);
-      onlineScrollHeight = (docuHeight - onlineTop) * ( 1- proScroll );
-      $('.onlinesSroll-box').css('height', (docuHeight - onlineTop) * proScroll);
+      // onlineHeight = $(".online_man .list-group").height();
+      // proScroll = ( docuHeight - onlineTop )/onlineHeight;
+      // hideOnlineHeightPro = onlineHeight - (docuHeight - onlineTop);
+      // onlineScrollHeight = (docuHeight - onlineTop) * ( 1- proScroll );
+      // $('.onlinesSroll-box').css('height', (docuHeight - onlineTop) * proScroll);
     }
     //发言2
     function sayUid(image, mestype, header_img_url,group_name,insert_id, from_session_no, from_uid_id, to_uid_id, from_client_id, from_client_name, content, time){
@@ -307,13 +311,15 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               arrMessageList.push(from_session_no);
           return;
         }
-        console.log(session_no);
         if (session_no != from_session_no) {
           if (mestype != "message") {
               from_client_name = group_name;
               addClass = "session_no";
               header_img_url = '/chat/images/rens.png';
           }
+          // console.log(arrMessageList);
+          // console.log(from_session_no);
+          // console.log($.inArray(from_session_no, arrMessageList));
           if ($.inArray(from_session_no, arrMessageList) != -1) {
             var curmesnum = parseInt($(".mes_chakan_close[session_no='"+from_session_no+"']").find('.mes_num').html()) + 1;
             $(".mes_chakan_close[session_no='"+from_session_no+"']").attr('chat_mes_num', curmesnum).find('.mex_con').html(from_client_name)

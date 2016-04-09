@@ -49,7 +49,7 @@ h2{margin-top: 0;}
 .header-img img{width: 60px;}
 .session_no img{border-radius: 5px;margin-right: 5px;width: 40px;}
 .chat_people img{border-radius: 5px;margin-right: 5px;width: 40px;}
-.online_man ul li, .group_pep li{line-height: 47px;text-align: left;list-style: none;border-bottom: 1px solid #dedede;height: 47px;padding: 2px 0;cursor: pointer;}
+.online_man ul li, .group_pep li{line-height: 40px;text-align: left;list-style: none;border-bottom: 1px solid #dedede;height: 47px;padding: 2px 0;cursor: pointer;}
 .com-close, .com-close{font-size: 32px;color: #fff;padding-right: 10px;position: absolute;right: 0;cursor: pointer;}
 .plus_menu{border-radius: 5px;height: 50px;background-color: #fff;}
 .plus_menu_box{display: none;position: absolute;bottom: 100%;height: 60px;}
@@ -110,7 +110,8 @@ h2{margin-top: 0;}
 .search_box{width: 140px;margin-top: 37px;text-align: right;padding: 5px 5px 0 5px;border-bottom: 1px solid #ccc;position: relative;padding: 0 0 0 32px;}
 .search_box input{height: 35px;color: #9f9fb1;border: 0;outline: none;display: block;font-family: "Microsoft YaHei";width: 100%;}
 .search_staff{position: absolute;top: 3px;left: 0px;background: url('/chat/images/search.png') center no-repeat;width: 32px;height: 32px;line-height: 32px;display: inline-block;}
-.search_result{position: absolute;background: #fff;position: absolute;width: 100px;top: 36px;left: 0;z-index: 9;width: 100%;}
+.search_result{background: #fff;position: absolute;width: 100px;top: 100%;left: 0;z-index: 99999;width: 100%; display: none; margin-top: 1px;}
+.search_result span{float: left;text-align: center;line-height: 40px; height: 40px;display: inline-block;overflow: hidden;}
 .customer_followed{cursor: pointer;height: 16px;display: inline-block;width: 16px;padding: 0 5px;background-image: url('/chat/images/follow0.png');background-position: center;background-repeat: no-repeat;}
 .chain_chat_tab{width: 100%;height: 40px ;}
 .chain_chat_tab ul{padding: 0;}

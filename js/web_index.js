@@ -1,3 +1,38 @@
+
+/***********  搜索人员   **************/
+//人员的搜索
+//在线人员信息
+
+var onlineManInfo  = new Array(); 
+$('#search_in').keyup(function () {
+  var inValue = $.trim($(this).val().toString());//去掉两头空格
+  if ( inValue == '') {
+      $('.search_result').hide();
+      return;
+  };
+  var resSearch = search_in(inValue, onlineManInfo);
+  $('.search_result').html('');
+  for (var p in resSearch ) {
+        $('.search_result').append('<li mes_id="'+p+'" data-placement="left" class="staff-info chat_people db_chat_people" group-name="'+resSearch[p].client_name+'"><span class="header-img"><img src="'+client_list[p].header_img_url+'" alt="'+resSearch[p].client_name+'"></span><span style = "color: red">'+resSearch[p].client_name+'</span></li>');
+  }
+  $('.search_result').show();
+})
+//搜索在线人数返回 搜索结果
+var  search_in = function ( inValue, array) {
+  //在线的人的名字
+  var clientName = '';
+  //返回的数组
+  var resData = {};
+  for (var i in array ) {
+    clientName = array[i].client_name;
+    console.log(clientName.indexOf(inValue));
+    if ( clientName.indexOf(inValue) != -1 ) {
+      resData[i] = array[i];
+    };
+  }
+  return resData;
+}
+/************** end   ****************/
 /***************  pc输入框  ********************/
 //文件发送
 $('.pc_mes_tool_file').click( function () {
@@ -86,29 +121,28 @@ var getStaffInfo = function (data){
     staffInfo.mobile_phone = data.mobile_phone;
 }
 //请求人员信息
-var ajaxGetStaffInfo = function (staffid, direction, height){
+var ajaxGetStaffInfo = function (staffid, direction, css){
     var arrDirectionCg =new Object();
     arrDirectionCg = { 'left': 'right','right':'left', 'up': 'bottom', 'down': 'top' };
     var directionChang = arrDirectionCg[direction];
     var margin ="margin-"+directionChang;
     $.ajax({
-        url:"/getStaffTels.php",
-        type:"post",
-        data:"staffid="+staffid,
-        success: function ( data ){
-            var data = $.parseJSON(data);
-            getStaffInfo(data);
-            // var index = parseInt($(".infoCurrent").index());
-            $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>手机：'+data.mobile_phone+'</li><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li></ul></div>');
-            var offtop = height/2-85/2;
-            $('.staff-info-box').css('top', "-50%");
-            $('.staff-info-box').css(directionChang, "100%");
-            $('.staff-info-box').css(margin, "6");
-            $('.staff-info-box .arrow').css('border-'+direction,"8px solid #fff");
-            $('.staff-info-box .arrow').css(direction,"100%");
+      url:"getStaffTels.php",
+      type:"post",
+      data:"staffid="+staffid,
+      success: function ( data ){
+          var data = $.parseJSON(data);
+          getStaffInfo(data);
+          // var index = parseInt($(".infoCurrent").index());
+          $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li></ul></div>');
+          $('.staff-info-box').css(css);
+          $('.staff-info-box').css(directionChang, "100%");
+          $('.staff-info-box').css(margin, "6");
+          $('.staff-info-box .arrow').css('border-'+direction,"8px solid #fff");
+          $('.staff-info-box .arrow').css(direction,"100%");
 
-            // $('.staff-info-box').css();
-        }
+          // $('.staff-info-box').css();
+      }
     })
 }
 //人员信息弹框
@@ -120,18 +154,18 @@ var ajaxGetStaffInfo = function (staffid, direction, height){
 $(function (){
   var winHeight = $(window).height();
   var onlineManHeight = winHeight - parseInt($('.online_man .list-group').css('top'));
-  $('.oms_onlineNum').css('height', onlineManHeight);
+  $('.online_man .list-group').css('height', onlineManHeight);
+  $('.search_result').css('height', onlineManHeight);
 })
 $(document).on('mouseenter' , '.staff-info',function(){
     var obj = $(this);
     var _index = obj.index();
-    var onlineManTop = $('.oms_onlineNum').css('top');
+    var onlineManTop = $('.online_man .list-group').css('top');
     var staffid = obj.attr('mes_id');
     $('.online_man').addClass('infoCurrent');
     var direction = obj.attr('data-placement');
     var height = obj.outerHeight();
-    console.log(height)
-    var offtop = _index * height + height/2 + 38 - $('.oms_onlineNum').scrollTop();
+    var offtop = _index * height + height/2 + 38 - $('.online_man .list-group').scrollTop();
     // var offtop = height/2-85/2;
     ajaxGetStaffInfo(staffid, direction, { top: offtop});
 });
@@ -346,7 +380,7 @@ $(document).keyup(function(event){
     if(event.which=='27'){
       $('.cd-popup').removeClass('is-visible');
     }
-  });
+});
 //textare 自适应高度
 (function($){
     $.fn.autoTextarea = function(options) {
@@ -472,7 +506,7 @@ $('.mes_ico_box').hover(function (){
       mesnum = parseInt(mesnum) - parseInt(mes_num);
       $('.mes_radio').html(mesnum);
       $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
-      arrMessageList= _chat_remove(session_id, arrMessageList);
+      arrMessageList= _chat_remove(session_no, arrMessageList);
   }
   //单个消息关闭
   // $('.mes_chakan_close').live('click', function (){
@@ -497,45 +531,57 @@ $('.mes_ico_box').hover(function (){
       duration: 500
     })
   })
-    //粘贴图片
+//粘贴图片
 $(function(){
-  var imgReader = function( item ){
-    var blob = item.getAsFile(),
-      reader = new FileReader();
-    reader.onload = function( e ){
-      var img = new Image();
-      img.src = e.target.result;
-      console.log(img);
-      document.getElementById( 'mes_textarea' ).appendChild( img );
-    };
-    reader.readAsDataURL( blob );
-  };
-  document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
-    e.preventDefault();
-    var clipboardData = e.clipboardData,
-      i = 0,
-      items, item, types;
-    if( clipboardData ){
-      items = clipboardData.items;
-      if( !items ){
-        return;
-      }
-      item = items[0];
-      types = clipboardData.types || [];
-      for( ; i < types.length; i++ ){
-        if( types[i] === 'Files' ){
-          item = items[i];
-          break;
-        }
-      }
-      if (item && item.kind === 'string') {
-        $('#mes_textarea').append(clipboardData.getData('text/plain'));
+    var imgReader = function( item ){
+      var blob = item.getAsFile(),
+        reader = new FileReader();
+      reader.onload = function( e ){
+          var img = new Image();
+          img.src = e.target.result;
+          img.className = "send-img";
+          $('.sending-img-box').html('');
+          $('.sending-img-box').append( img );
+          $('.img-box').show();
       };
-      if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
-        imgReader( item );
+      reader.readAsDataURL( blob );
+    };
+    // $('.pc_mes_input').bind('paste', function ( e ) {
+    //   $('#mes_textarea').trigger('paste');
+    // })
+  var pasteEvnet = function ( e ) {
+    var clipboardData = e.clipboardData,
+        i = 0,
+        items, item, types;
+      // console.log(window.clipboardData.getData("Text"));
+      if( clipboardData ){
+          items = clipboardData.items;
+          if( !items ){
+            return;
+          }
+          item = items[0];
+          types = clipboardData.types || [];
+          for( ; i < types.length; i++ ){
+            if( types[i] === 'Files' ){
+                item = items[i];
+                break;
+            }
+          }
+          if ( item && item.kind === 'string') {
+            $(this).append( clipboardData.getData('text/plain') );
+          };
+          if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
+            imgReader( item );
+          }
+          e.preventDefault();
       }
-    }
-  })
+  } 
+   document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
+      pasteEvnet( e );return;
+    }) 
+    document.getElementById( 'pc_mes_input' ).addEventListener( 'paste', function( e ){
+      pasteEvnet( e );return;
+    }) 
 });
 //聊天对话框img放大
 $('.he_ov .send-img').live( 'click', function (){

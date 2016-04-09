@@ -27,6 +27,7 @@ class chatMessageController
 		$this->selfInfo = $selfInfo;
 		$this->messageData = $messageData;
 	}
+
 	/******
 	*
 	* return $data 返回的数据
@@ -34,11 +35,13 @@ class chatMessageController
 	*
 	********/
 	public function init( $type )
+
 	{
 		$this->model = new \models\chatMessageModel($this->selfInfo, $this->messageData);
 		return $data = $this->$type();
 		
 	}
+
 	//发来的消息
 	public function sayUid()
 	{
@@ -61,7 +64,7 @@ class chatMessageController
 				$insert_id = $this->messageInsert();
 				//通知消息的插入 返回 一组发给客户端的数据
 				$sendData = $this->noticeInsert( $insert_id );
-				$sendData['to_uid_id'] = $this->selfInfo['to_uid_id'];
+				$sendData['to_uid_id'] = $this->messageData['to_uid_id'];
 				return $sendData;
 			} else if ($this->messageData['message_type'] == 'groupMessage' ) {
 				//是否在群聊里 如果在返回 群信息
@@ -84,6 +87,7 @@ class chatMessageController
 		return false;
 
 	}
+
 	//选择人聊天
 	public function mes_chat () 
 	{
@@ -115,16 +119,26 @@ class chatMessageController
 		}
 		return $this->model->mesLoadModel();
 	}
+
 	//消息的关闭
 	public function mes_close() 
+
 	{
-		return $this->model->messageCloseModel();
+		$this->model->messageCloseModel();
+		return array('type'=>'default');
 	}
 
 	//通知消息的关闭
 	public function mes_notice_close() 
 	{
-		$this->model->messageNoticeCloseModel();
+		return $this->model->messageNoticeCloseModel();
+	}
+	
+	//增加群聊
+	public function addGroupMan () 
+	{
+		$this->model->addGroupManModel();
+		return array('type'=>'default');
 	}
 	//验证是否在同一个房间
 	public function isSameRooom()

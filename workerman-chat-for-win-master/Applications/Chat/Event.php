@@ -51,7 +51,7 @@ class Event
             return;
         }
         //所有的控制器
-        $arrType = array('sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close');
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan' );
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -64,8 +64,6 @@ class Event
 
         //传来的type 是不是在数组里面
         if (in_array($type, $arrType)) {
-
-            //$selfInfo 自己的一些信息 $message_data 客户端发来的数据
             switch ( $type ) {
                 case 'mes_chat':
                     $session_id = $selfInfo['uid'] < $message_data['mes_para'] ? $selfInfo['uid']."-".$message_data['mes_para'] : $message_data['mes_para']."-".$selfInfo['uid'];
@@ -77,10 +75,13 @@ class Event
                         $message_data['session_id'] = $session_id;
 
                     } else {
+
                         $message_data['session_id'] = $message_data['session_no'];
                     }
                     break;
                 case 'mes_groupChat':
+                case 'addGroupMan':
+                case 'mes_notice_close':
                     $message_data['session_id'] = $message_data['session_no'];
                     break;
                 case 'mes_load':
@@ -102,7 +103,7 @@ class Event
                 default:
                     break;
             }
-
+            //$selfInfo 自己的一些信息 $message_data 客户端发来的数据
            $chatMessageData =new \Controllers\chatMessageController($selfInfo, $message_data);
 
             //根据客户端传来的类型调用相应的方法
@@ -192,30 +193,6 @@ class Event
                         Gateway::sendToCurrentClient(json_encode($new_message));
                     }
                     Gateway::joinGroup($client_id, $room_id);   
-                    return;
-                //增加群聊人
-                case 'addGroupMan':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    $arrAddGroupMan = $db1->query("SELECT `group_participants`,`group_name` FROM `oms_group_chat` WHERE id=".$message_data['session_no']);
-                    $arr = explode(",", $arrAddGroupMan[0]['group_participants']);
-                    if (!in_array($uid, $arr)) {
-                        return;
-                    }
-                    foreach ($message_data['sidList'] as $key => $value) {
-                        if (!in_array($value, $arr)) {
-                            $arr[] = $value;
-                            $addMan[] = $value;
-                        }
-                    }
-                    $sAddGroupMan = implode(",", $arr);
-                    foreach ($addMan as $k => $val) {
-                        $arrvalue[] = "('".$message_data['session_no']."', '".$val."', '".$arrAddGroupMan[0]['group_name']."', ".time()." ,".time().")";
-                    }
-                    $strvalue = implode(",", $arrvalue);
-                    $db1->query("INSERT INTO `oms_groups_people` (`pid`, `staffid`, `group_name`, `create_time`, `update_time`) value".$strvalue);
-                    $db1->query("UPDATE `oms_group_chat` SET `group_participants`='".$sAddGroupMan."' WHERE id=".$message_data['session_no']);
-                    $db1->query("UPDATE `oms_groups_people` SET `all_staffid`='".$sAddGroupMan."' WHERE `pid`=".$message_data['session_no']);
                     return;
                 //删除群聊里的人
                 case 'delgroupman':

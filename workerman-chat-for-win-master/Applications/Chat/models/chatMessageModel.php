@@ -129,8 +129,9 @@ class chatMessageModel
 	//通知消息的录入
 	public function messageNoticeCloseModel() 
 	{
-		if (!isset($this->messageData['session_no'])) {
-			$this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_no']."'");
+		if ( isset($this->messageData['session_id'])) {
+			
+			$this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
 			
 		}
         $this->db->query("UPDATE `oms_friend_list` SET `state`=0 WHERE `staffid`= ".$this->selfInfo['uid']);
@@ -181,6 +182,7 @@ class chatMessageModel
 	    }
 	    return false;
 	}
+	//图片64 转 文件
 	public function image64tofile( $string ) {
 		$pa = $string;
         if (preg_match("/^(data:\s*image\/(\w+);base64,)/", $pa, $result)){
@@ -209,6 +211,27 @@ class chatMessageModel
         } else {
             $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
         }
+	}
+	//增加群聊
+	public function addGroupManModel () 
+	{
+		//如果在群聊里 返回 群聊信息
+		$resData = $this->isInGroupModel();
+
+        foreach ($this->messageData['sidList'] as $key => $value) {
+            if (!in_array($value, $arr)) {
+                $arr[] = $value;
+                $addMan[] = $value;
+            }
+        }
+        $sAddGroupMan = implode(",", $arr);
+        foreach ($addMan as $k => $val) {
+            $arrvalue[] = "('".$message_data['session_no']."', '".$val."', '".$resData['group_name']."', ".time()." ,".time().")";
+        }
+        $strvalue = implode(",", $arrvalue);
+        $this->db->query("INSERT INTO `oms_groups_people` (`pid`, `staffid`, `group_name`, `create_time`, `update_time`) value".$strvalue);
+        $this->db->query("UPDATE `oms_group_chat` SET `group_participants`='".$sAddGroupMan."' WHERE id=".$this->messageData['session_id']);
+        $this->db->query("UPDATE `oms_groups_people` SET `all_staffid`='".$sAddGroupMan."' WHERE `pid`=".$this->messageData['session_id']);
 	}
 }
  ?>

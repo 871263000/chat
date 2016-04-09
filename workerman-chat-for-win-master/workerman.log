@@ -4081,3 +4081,156 @@ Stack trace:
 #15 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
 #16 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
 #17 {main}
+2016-04-08 06:27:14 client_id:7f00000108fc0000000b	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:27:22 client_id:7f00000108fc00000028	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AND  staffid= 4' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(380): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:27:59 client_id:7f00000108fc00000028	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 Erreur de syntaxe près de 'AND  staffid= 4' à la ligne 1' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', Array)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(380): GatewayWorker\Lib\DbConnection->query()
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "addFr...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:40:59 client_id:7f00000108fc00000042	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:41:06 client_id:7f00000108fc00000047	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:41:14 client_id:7f00000108fc0000004c	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:41:25 client_id:7f00000108fc00000051	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 't' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_nea...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_nea...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(287): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_nea...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "updCo...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:43:58 client_id:7f00000108fc00000060	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}
+2016-04-08 06:44:04 client_id:7f00000108fc00000065	client_ip:2130706433
+exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Champ 'undefined' inconnu dans where clause' in D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php:1602
+Stack trace:
+#0 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1602): PDO->prepare('UPDATE `oms_fri...')
+#1 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\Lib\DbConnection.php(1701): GatewayWorker\Lib\DbConnection->execute('UPDATE `oms_fri...', NULL)
+#2 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\Event.php(445): GatewayWorker\Lib\DbConnection->query('UPDATE `oms_fri...')
+#3 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(216): Event::onMessage('7f00000108fc000...', '{"type": "chat_...')
+#4 [internal function]: GatewayWorker\BusinessWorker->onGatewayMessage(Object(Workerman\Connection\AsyncTcpConnection), Array)
+#5 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Connection\TcpConnection.php(471): call_user_func(Array, Object(Workerman\Connection\AsyncTcpConnection), Array)
+#6 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #23)
+#7 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Events\Select.php(253): call_user_func_array(Array, Array)
+#8 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(734): Workerman\Events\Select->loop()
+#9 D:\wamp\www\chat\workerman-chat-for-win-master\GatewayWorker\BusinessWorker.php(96): Workerman\Worker->run()
+#10 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(422): GatewayWorker\BusinessWorker->run()
+#11 D:\wamp\www\chat\workerman-chat-for-win-master\Workerman\Worker.php(339): Workerman\Worker::runAllWorkers()
+#12 D:\wamp\www\chat\workerman-chat-for-win-master\Applications\Chat\start_businessworker.php(36): Workerman\Worker::runAll()
+#13 {main}

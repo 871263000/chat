@@ -927,7 +927,7 @@ $(function(){
     };
     reader.readAsDataURL( blob );
   };
-  document.getElementById( 'textarea' ).addEventListener( 'paste', function( e ){
+  document.getElementById( 'mes_textarea' ).addEventListener( 'paste', function( e ){
     var clipboardData = e.clipboardData,
       i = 0,
       items, item, types;

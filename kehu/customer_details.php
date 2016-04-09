@@ -84,14 +84,13 @@ if (!empty($row['name'])) {
 	$arrChain_oms_id = $d->find($sql);
 
 }
-//客户聊天信息
+//客户信息
 $customer = [];
 $customer['oms_id']  = !empty($arrChain_oms_id['oms_id']) ? $arrChain_oms_id['oms_id'] : 0;
 if ( !empty($customer['oms_id']) ) {
-	$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE a.`additional_Information`= '".$row['name']."' AND a.`state` = 2 AND a.`pid`=".$uid;
+	$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE a.`state` = 2 AND a.`pid`=".$uid;
 	$arrFriendList = $d->findAll($sql);
 }
-
 ?>
 <!doctype html>
 <html lang="en">
