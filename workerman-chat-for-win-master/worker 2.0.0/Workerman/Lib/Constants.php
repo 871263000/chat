@@ -12,24 +12,15 @@
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-// Date.timezone
-if (!ini_get('date.timezone')) {
+// 如果ini没设置时区，则设置一个默认的
+if(!ini_get('date.timezone') )
+{
     date_default_timezone_set('Asia/Shanghai');
 }
-// Display errors.
+// 显示错误到终端
 ini_set('display_errors', 'on');
-// Reporting all.
-error_reporting(E_ALL);
 
-// For onError callback.
+// 连接失败
 define('WORKERMAN_CONNECT_FAIL', 1);
-// For onError callback.
+// 发送失败
 define('WORKERMAN_SEND_FAIL', 2);
-
-// Compatible with php7
-if(!class_exists('Error'))
-{
-    class Error extends Exception
-    {
-    }
-}

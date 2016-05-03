@@ -50,6 +50,7 @@
     //         }
     //     }
     // }
+    //点击播放声音
     $(document).on('click', '.web_voice', function (){
         var web_voiceDur = $(this).attr('web_voice_data');
         var web_voiceDuring = $('.web_voice_playing').attr('web_voice_data');
@@ -64,6 +65,7 @@
         document.querySelector('audio').play();
         
     })
+    //音频播放完成
     audio.onended = function() {
         var web_voiceDuring = $('.web_voice_playing').attr('web_voice_data');
         $('.web_voice_playing').addClass('web_chat_voice_'+web_voiceDuring+'_play');

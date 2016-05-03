@@ -21,7 +21,7 @@ use \GatewayWorker\Lib\Store;
 use \GatewayWorker\Lib\Db;
 use \Controllers\chatMessageController;
 
-class Event
+class Events
 {
    
    /**
