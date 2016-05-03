@@ -26,8 +26,8 @@ li{list-style: none}
 /*.Chat_le{padding:10px 20px;}*/
 .pc_he-ov-box .Chat_le .name{font-size: 12px;padding:0px 10px; float: none !important;display: block; height: 30px;line-height: 30px;color: #000}
 .user{height: auto;overflow: hidden;width: 100%;}
-.mes_content .jian{border: 5px solid transparent; border-right-color: #3C3434; border-top-color: #3C3434;margin-top: 10px;}
-.content-font{background-color: #fff;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
+.mes_content .jian{border: 5px solid transparent; border-right-color: #70C259; border-top-color: #70C259;margin-top: 10px;}
+.content-font{background-color: #70C259;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
 .Chat{background-color: rgba(255, 255, 255, 0.44);padding: 10px 0px;}
 .web_chat_voice{padding: 0px 5px 0 0  !important}
 /*滚动条*/

@@ -100,7 +100,7 @@ h2{margin-top: 0;}
 .chat_input_key{cursor: pointer;width: 50px;height: 50px;display: block;background-position: center;background-color: #fff;background-image: url(/chat/images/input_key.png);background-repeat: no-repeat;}
 /*.chat_input_text{-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}*/.chat_voice_input{display: none;}
 .chainEmployees{display: none;position: absolute;top:20px;left: 20px;width: 200px;box-shadow: 0 0 10px #ccc;height: 600px;overflow: auto;border-radius: 10px;padding: 5px;background-color: #fff;}
-.chainEmployees ul.list-group li{list-style: none;transition: border 1s;-moz-transition: border 1s;/* Firefox 4*/-webkit-transition: border 1s;/* Safari 和 Chrome*/-o-transition: border 1s;/* Opera*/border-bottom: 1px solid #ccc;}
+.chainEmployees ul.list-group li{ cursor: pointer; list-style: none;transition: border 1s;-moz-transition: border 1s;/* Firefox 4*/-webkit-transition: border 1s;/* Safari 和 Chrome*/-o-transition: border 1s;/* Opera*/border-bottom: 1px solid #ccc;}
 .externalStaffid-header-img img{width: 40px;height: 40px;padding: 3px;border-radius: 5px;margin-right: 5px;}
 .staff-close{text-align: right;cursor: pointer;text-align: right;cursor: pointer;height: 13px;line-height: 15px}
 .externalStaffTitle{text-align: right;cursor: move;}
@@ -118,6 +118,8 @@ h2{margin-top: 0;}
 .chain_chat_tab .current{background-color: #46b8da;}
 .chain_chat_tab ul li{cursor: pointer;width: 50%;height: 40px ;line-height: 40px;float: left;list-style: none;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc}
 .chat_notice_close{text-align: right;font-size: 20px;width: 100%;height: 20px;line-height: 8px;padding: 5px}
+.chat_notice_container{padding: 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
+}
 .chat_notice_container ul li{width: 400px;height: 50px;box-shadow: 0 0 5px #6F6A6A;margin: 20px auto;display: -webkit-box;display: -moz-box;display: box;}
 .chat_notice_container ul li img{text-align: left;width: 50px;height: 50px;}
 .chat_notice_container ul div{height: 50px;}
@@ -133,6 +135,23 @@ h2{margin-top: 0;}
 .chat_friend_current{display: block !important;}
 
 .chat_mes_content img{ width: 24px !important; }
+.man_tittle{position: absolute;top: 0;z-index: 1111;}
+.dropdown-menu{color: #000;}
+/*************  消息提示  *********************/
+/*.mesNoticeSet{ background-image: url('/chat/images/mesNotice.png');background-position: left; background-repeat: no-repeat;  }*/
+.mesNoticeContainer{  position: absolute; bottom: 0; right: 0;z-index: 999999;width: 320px; margin-right: 10px;}
+.mesNoticeSet{ height: 40px; }
+.clear{clear: both;}
+.mesNotice{ width: 320px; height: 70px; background: #fff; box-shadow: 0 0 10px #ccc;position: relative; padding: 10px; bottom: 0;}
+.mesNoticeClose { position: absolute; top: 0; right: 0; padding: 5px; font-size: 18px;cursor: pointer; }
+.mesNoticeTittle, .mesNoticeCon{    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;height: 50%;float: left; width: 240px;padding-left: 10px;overflow: hidden;}
+.mesNoticeImg{ width: 50px; height: 100%;background: #000; overflow: hidden;float: left;}
+.mesNoticeImg img{width: 50px;}
+/***************** end  *****************/
+i.voiceOff{ display: inline-block; background: url('/chat/images/voiceOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
+i.voiceOn{ display: inline-block; background: url('/chat/images/voiceOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
+i.deskOff{display: inline-block; background: url('/chat/images/deskOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
+i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 @media (min-width: 600px){
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}
@@ -145,6 +164,7 @@ h2{margin-top: 0;}
 	.pc_mes_tool_emoji{background: url('/chat/images/biaoqing.png') center no-repeat;}
 	.pc_mes_tool_img{background: url('/chat/images/chat_img.png') center no-repeat;}
 	.pc_mes_tool_file{background: url('/chat/images/chat_file.png') center no-repeat;}
+	.pc_mes_tool_audio{background: url('/chat/images/iconfont-yuyin.png') center no-repeat;}
 	.pc_mes_input_box .pc_mes_send{height: 40px;text-align: right;}
 	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 10px;}
 	/** 表情  */
@@ -157,9 +177,7 @@ h2{margin-top: 0;}
 	.mes_title_con{text-align: center;color: #848080;}
 	/*********************  end  *************************/
 	.mes_content .jian{border: 5px solid transparent; border-right-color: #3C3434; border-top-color: #3C3434;margin-top: 10px;}
-    .chat_notice_container{padding: 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
-    }
-.man_tittle{position: absolute;top: 0;z-index: 1111;}
+
 .online_man .list-group{top: 73px;position: absolute;width: 100%;overflow: auto;}
 .mes_dclose{display: none;color: #000}
 .container-box{width: 1000px;margin: 0 auto;}
@@ -181,7 +199,7 @@ h2{margin-top: 0;}
 .send-img-box{z-index: 9999999;position: absolute;width: 800px;height: 100%;top: 0;left: 50%;margin-left: -400px;background-color: rgba(0,0,0, 0.5);display: none;text-align: center;vertical-align:middle;}
 .send-img-box img{position: absolute;top: 50%;left: 50%;max-width: 800px;max-height: 100%;}
 .he_ov .send-img{max-width: 200px;}
-.img-box{display: none;width: 500px;min-height: 100px;position: absolute;top: 100px;left: 50%;margin-left: -250px;background-color: #fff;box-shadow: 0 5px 15px rgba(0,0,0,.5);-webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);-moz-box-shadow: 0 5px 15px rgba(0,0,0,.5);}
+.img-box{display: none;width: 500px;min-height: 100px;position: absolute;top: 100px;left: 50%;margin-left: -250px;background-color: #fff;box-shadow: 0 5px 15px rgba(0,0,0,.5);-webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);-moz-box-shadow: 0 5px 15px rgba(0,0,0,.5); z-index: 9999999;}
 .img-box-title{height: 40px;text-align: center;font-size: 18px;}
 .img-box-act{text-align: center;}
 .img-box-act span{margin: 10px;width: 100px !important;}

@@ -36,8 +36,6 @@ class Event
         // echo "client:{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} gateway:{$_SERVER['GATEWAY_ADDR']}:{$_SERVER['GATEWAY_PORT']}  client_id:$client_id session:".json_encode($_SESSION)." onMessage:".$message."\n";
 
         // 客户端传递的是json数据
-        // $save_path = 'file/audio.mp3';
-        // file_put_contents($save_path, $message);
         $adminUid = 554;
         // return;
         $message = str_replace("script", "'script'" , $message);
@@ -51,7 +49,7 @@ class Event
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan' );
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut' );
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -66,35 +64,23 @@ class Event
         if (in_array($type, $arrType)) {
             switch ( $type ) {
                 case 'mes_chat':
-                    $session_id = $selfInfo['uid'] < $message_data['mes_para'] ? $selfInfo['uid']."-".$message_data['mes_para'] : $message_data['mes_para']."-".$selfInfo['uid'];
+                    $session_id = $selfInfo['uid'] < $message_data['to_uid'] ? $selfInfo['uid']."-".$message_data['to_uid'] : $message_data['to_uid']."-".$selfInfo['uid'];
                     $message_data['session_id'] = $session_id;
                     break;
-                case 'sayUid':
-                    if ($message_data['mes_types'] == 'message') {
-                        $session_id = $selfInfo['uid'] > $message_data['to_uid_id'] ? $message_data['to_uid_id']."-".$selfInfo['uid'] : $selfInfo['uid']."-".$message_data['to_uid_id'];
-                        $message_data['session_id'] = $session_id;
-
-                    } else {
-
-                        $message_data['session_id'] = $message_data['session_no'];
-                    }
-                    break;
+                case 'mes_notice_close':
+                    $message_data['session_id'] = $message_data['to_uid'].'t';
+                break;
                 case 'mes_groupChat':
                 case 'addGroupMan':
-                case 'mes_notice_close':
+                case 'signOut':
                     $message_data['session_id'] = $message_data['session_no'];
                     break;
+                case 'sayUid':
                 case 'mes_load':
+                case 'mes_close':
+                case 'updContact':
                     if ( $message_data['message_type']  == 'message') {
                         $session_no = $selfInfo['uid'] > $message_data['to_uid'] ? $message_data['to_uid']."-".$selfInfo['uid'] : $selfInfo['uid']."-".$message_data['to_uid'];
-                        $message_data['session_id'] = $session_no;
-                    } else {
-                        $message_data['session_id'] = $message_data['session_no'];
-                    }
-                    break;
-                case 'mes_close':
-                    if ( $message_data['mestype'] == 'message' ) {
-                        $session_no = $selfInfo['uid'] > $message_data['session_no'] ? $message_data['session_no']."-".$selfInfo['uid'] : $selfInfo['uid']."-".$message_data['session_no'];
                         $message_data['session_id'] = $session_no;
                     } else {
                         $message_data['session_id'] = $message_data['session_no'];
@@ -103,17 +89,16 @@ class Event
                 default:
                     break;
             }
+
             //$selfInfo 自己的一些信息 $message_data 客户端发来的数据
            $chatMessageData =new \Controllers\chatMessageController($selfInfo, $message_data);
 
             //根据客户端传来的类型调用相应的方法
            $resMessageData = $chatMessageData->init($type);
            if ($type == 'sayUid') {
-
-                Gateway::sendToUid($resMessageData['to_uid_id'], json_encode($resMessageData));
+                Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
 
            } else {
-
                 Gateway::sendToClient($client_id, json_encode($resMessageData));
 
            }
@@ -132,6 +117,7 @@ class Event
                         $client_name = $_SESSION['client_name'];
                         $header_img_url = $_SESSION['header_img_url'];
                         $exist = (bool)false;
+                        
                     } else {
                         // 把房间号昵称放到session中
                         $room_id = $message_data['room_id'];
@@ -173,8 +159,9 @@ class Event
                     if (empty($logined)) {
                         //未登录
                         //管理员在线发送login次数加一；
-                        $adminOnline = Gateway::getClientIdByUid( 1 );
+                        $adminOnline = Gateway::getClientIdByUid( $adminUid );
                         if (!empty($adminOnline)) {
+                            
                             $adminlogin = ['type'=>'adminLoginNum'];
                             Gateway::sendToUid( $adminUid, json_encode($adminlogin));
                         }
@@ -187,6 +174,7 @@ class Event
                         Gateway::joinGroup($client_id, $room_id);
                         //管理员获取所有人的在线人数
                     } else {
+                        
                         //已登陆
                         // 给当前用户发送用户列表 
                         $new_message['client_list'] = $new_clients_list;
@@ -194,85 +182,6 @@ class Event
                     }
                     Gateway::joinGroup($client_id, $room_id);   
                     return;
-                //删除群聊里的人
-                case 'delgroupman':
-                    $uid =  $_SESSION['uid'];
-                    $id = $message_data['id'];
-                    $groupid = $message_data['groupid'];
-                    $db1 = Db::instance('oms');
-                    $arrgrouppeople = $db1->select('*')->from('oms_group_chat')->where('id= :id')->bindValues(array('id'=>$groupid))->row();
-                    // $arrgrouppeople = $db1->row("SELECT * FROM `oms_groups_people` WHERE `id`=".$uid);
-                    $arrjoinGroup = explode(',', $arrgrouppeople['group_participants']);
-                    if ($uid == $arrgrouppeople['group_founder']) {
-                        foreach ($arrjoinGroup as $key => $value) {
-                            if ($value == $id) {
-                                unset($arrjoinGroup[$key]);
-                                break;
-                            }
-                        }
-                        $unarrjoinGroup = $arrjoinGroup;
-                        $unstrgroupman = implode(",", $unarrjoinGroup);
-                            $db1->query("UPDATE `oms_groups_people` SET `all_staffid`= '".$unstrgroupman."' WHERE `pid`=".$arrgrouppeople['id']);
-                            $db1->query("DELETE FROM `oms_groups_people` WHERE `staffid`= $id AND `pid`=".$arrgrouppeople['id']);
-                            $db1->query("UPDATE `oms_group_chat` SET `group_participants`= '".$unstrgroupman."' WHERE `id`=".$arrgrouppeople['id']);
-                    }
-                    return ;
-                case 'dissolve_group':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    $groupId = $message_data['groupId'];
-                    $dissolve_group = $db1->select('*')->from('oms_group_chat')->where('id= :id')->bindValues(array('id'=>$groupId))->row();
-                    if ($uid == $dissolve_group['group_founder']) {
-                        $row_count = $db1->delete('oms_group_chat')->where('id='.$groupId)->query();
-                        $row_count = $db1->delete('oms_groups_people')->where('pid='.$groupId)->query();
-                    }
-                    break;
-                //增加最近联系人
-                case 'addContact':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    if ($message_data['mestype'] == "message") {
-                        $mes_id = $message_data['mes_id'];
-                    } else {
-                        $mes_id = $message_data['session_no'];
-                    }
-                    $conNum = $db1->column('SELECT id FROM `oms_nearest_contact` WHERE `session_no`="'.$message_data['session_no'].'"');
-                    if ( $message_data['mestype'] == "message" ) {
-                        $insert_id = $db1->insert('oms_nearest_contact')->cols(array('pid'=>$uid, 'mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'contacts_name'=>$message_data['accept_name'], 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
-                    } else {
-                        $db1->query('UPDATE `oms_groups_people` SET `contacts_id`=0 WHERE `pid`='.$message_data['session_no'].' AND `staffid`='.$uid);
-                        if (count($conNum) != 0) {
-                            return;
-                        }
-                        $insert_id = $db1->insert('oms_nearest_contact')->cols(array('mestype'=>$message_data['mestype'],'session_no'=>$message_data['session_no'], 'sender_name'=>$message_data['sender_name'], 'accept_name'=>$message_data['accept_name'] ,'mes_id'=>$mes_id, 'to_uid_header_img'=>$message_data['to_uid_header_img'], 'timeStamp'=>time()))->query();
-                    }
-                    
-                    break;
-                //删除最近联系人
-                case 'delContact':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    if ($message_data['mestype'] != 'message' ) {
-                        $db1->query('UPDATE `oms_groups_people` SET `contacts_id`=1 WHERE `staffid`='.$uid.' AND  `pid`="'.$message_data['session_no'].'"');
-                    } else {
-                        $db1->query('DELETE FROM `oms_nearest_contact` WHERE `pid` ='.$uid.' AND `id`="'.$message_data['id'].'"');
-                    }
-                    break;
-                //更新联系人
-                case 'updContact':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    $db1->query('UPDATE `oms_nearest_contact` SET `timeStamp`='.time().' WHERE `session_no`='.$message_data['session_no']);
-                    break;
-                //群聊人显示
-                case 'groupManShow':
-                    $db1 = Db::instance('oms');
-                    $uid = $_SESSION['uid'];
-                    $groupShowManId = $message_data['session_no'];
-                    $arrGroupMan = $db1->query('SELECT a.*,b.`group_founder`,c.name,c.card_image FROM `oms_groups_people` a LEFT join `oms_group_chat` b ON a.`pid` = b.`id` LEFT join  `oms_hr` c ON a.`staffid` = c.`staffid` WHERE a.`state` = 0 AND a.`pid`='.$groupShowManId);
-                    $arrGroupMan['type'] = 'showGroupMan';
-                    Gateway::sendToClient($client_id, json_encode($arrGroupMan));
-                    break;
                 case 'allOnlineNum':
                     $uid = $_SESSION['uid'];
                     // echo $adminUid;
@@ -310,7 +219,6 @@ class Event
                     Gateway::sendToCurrentClient(json_encode($new_message_data));
                     return;
                 case 'companyFollow':
-
                     $uid = $_SESSION['uid'];
                     $oms_id = $_SESSION['room_id'];
                     $followid = $message_data['chinaOms_id'];
@@ -318,6 +226,7 @@ class Event
                     $newTime = time();
                     /**********************************/
                     if ( $message_data['customerStatu'] == 0 ) {
+
                         $arrCompanyFollow = $db1->select('followid')->from('oms_company_follow')->where('oms_id = :oms_id AND followid= :followid')->bindValues(array('oms_id'=>$oms_id, 'followid'=>$followid))->row();
                         if ( empty( $arrCompanyFollow ) ) {
                             $db1->insert('oms_company_follow')->cols(array("oms_id"=> $oms_id, "followid"=> $followid, "create_time"=> $newTime, "update_time"=> $newTime))->query();
@@ -366,7 +275,7 @@ class Event
 
                     } else {
 
-                        $db1->insert('oms_friend_list')->cols(array("pid"=> $uid, "staffid"=> $message_data['uid'], "pid_name"=>$client_name, "pid_header_url"=>$header_img_url, "additional_Information" =>$message_data['companyName'], "create_time"=> $nowTime, "update_time"=> $nowTime, "oms_id"=> $room_id))->query();
+                        $db1->insert('oms_friend_list')->cols(array("pid"=> $uid, "staffid"=> $message_data['uid'], "pid_name"=>$client_name, "pid_header_url"=>$header_img_url, "additional_Information" =>$message_data['companyName'], "create_time"=> $nowTime, "update_time"=> $nowTime, "oms_id"=> $message_data['oms_id']))->query();
 
                     }
 
@@ -386,10 +295,10 @@ class Event
                             'mestype'=> 'message',
                             'mes_types'=> 'notice',
                             'session_no'=>$session_no,
-                            'insert_id'=> $insert_id,
+                            'insert_id'=> $room_id,
                             'content'=>$message_data['companyName'],
                             'time'=>date('Y-m-d H:i:s'),
-                    );
+                        );
                     /******************************   消息列表插入  ***********************************/
 
                     $chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `pid`='.$message_data['uid'].' AND `mews_types`="notice"');
@@ -421,7 +330,7 @@ class Event
                         } else {
 
                             $db1->query('UPDATE `oms_friend_list` SET `state` = 2 WHERE pid = '.$senderId.' AND staffid='.$uid);
-                             $insert_id1 = $db1->insert('oms_friend_list')->cols( array('pid'=>$uid,'pid_name'=>$client_name,'pid_header_url'=> $header_img_url,'additional_Information'=>'同意', 'staffid'=>$senderId,'state'=> 2,'oms_id'=>$room_id, 'create_time'=>time(), 'update_time'=>time()))->query();
+                             $insert_id1 = $db1->insert('oms_friend_list')->cols( array('pid'=>$uid,'pid_name'=>$client_name,'pid_header_url'=> $header_img_url,'additional_Information'=>'同意', 'staffid'=>$senderId,'state'=> 2,'oms_id'=>$message_data['oms_id'], 'create_time'=>time(), 'update_time'=>time()))->query();
                             $session_no = $uid > $message_data['senderId'] ? $message_data['senderId']."-".$uid : $uid."-".$message_data['senderId'];
 
                             $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$senderId, 'sender_name'=>$client_name,'message_type'=> 'message', 'mesages_types'=> 'notice_respond', 'message_content'=>'可以会话了', 'session_no'=>$session_no,'dialog'=> 0, 'create_time'=>time(), 'update_time'=>time()))->query();

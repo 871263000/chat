@@ -114,7 +114,8 @@ class messageList
 	//最近联系人
 	public function recentContact()
 	{
-		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
+		// $sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
+		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." ORDER BY timeStamp desc";
 		return $this->d->findAll($sql);
 	}
 }

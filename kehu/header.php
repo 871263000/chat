@@ -30,7 +30,10 @@ $card_image = $userinfo['card_image'];//头像的url
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<script src='./js/jquery-1.8.2.min.js'></script>
+  <script src="js/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="css/jquery-ui.css">
     <script type="text/javascript" src = "/chat/js/web_message.js"></script>
+    <script type="text/javascript" src="js/touchSwipe.js?"></script>
     <link rel="stylesheet" href="/chat/css/style.css">
 </head>
 <script>
@@ -42,7 +45,7 @@ $card_image = $userinfo['card_image'];//头像的url
     var mes_online = 1;
     var oms_id = "<?php echo $oms_id;?>";
     chat_uid = "<?php echo $uid;?>"; // 发送人id
-    var name = "<?php echo $name;?>";// 发送人name
+    var chat_name  = "<?php echo $name;?>";// 发送人name
     var accept_name ="<?php echo $accname?>";//接收人名字
     var room_id = "<?php echo isset($oms_id) ? $oms_id : 1?>";//房间id
     var to_uid = <?php echo isset($_GET['staffid']) ? $_GET['staffid'] : 0;?>;// 接收人id
@@ -67,8 +70,99 @@ $card_image = $userinfo['card_image'];//头像的url
     .staff-refresh, .staff-close{
         font-family: 'iconfont';
     }
+    .chat-container{
+          display: none;
+    z-index: 999999;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    margin-left: -300px;
+    height: 100%;
+    }
 </style>
 <body>
-	
+<div class="chat-container">
+        <div class="mes_title">
+          <h2 class="mes_title_con">请选择人<i title="群聊添加人" class="add-groupMan"></i></h2><span aria-hidden="true" class="mes_dclose">&times;</span>
+        </div>
+        <div class="mes_con_box">
+          <div class="">
+                 <div class="he-ov-box mes-scroll pc_he-ov-box chat_initial">
+                     <div class="">
+                     <div class="loader">
+                        <div id="mes_load" style="display:none;"><?php echo $pageload;?></div>
+                        <div class="loading-3">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        </div>
+                      </div>
+                      <ul class="he_ov"></ul> 
+                     </div>
+                 </div>
+              <div class="pc_mes_input_box">
+                <div class="pc_emoji_box">
+                  
+                </div>
+                <div class="pc_mes_tool">
+                  <ul>
+                    <li class="pc_mes_tool_emoji pc_mes_tool_list"></li>
+                    <li class="pc_mes_tool_img pc_mes_tool_list"></li>
+                    <li class="pc_mes_tool_file pc_mes_tool_list"></li>
+                  </ul>
+                </div>
+
+                <div class="pc_mes_input" id="pc_mes_input" contenteditable="true"></div>
+                <div class="pc_mes_send">
+                <span style = "color: #aaa">按Shift + Enter 换行， Enter提交</span>
+                  <div class="chat_btn" id="chat_btn">发送</div>
+                </div>
+              </div>
+              <div class="mes_footer mb_mes_footer mb_mes_footer">
+              <div class="plus_menu_box">
+                <div class="plus_menu">
+                  <span class="header_icon plus-list"><img src="images/header_icon.png" alt=""></span><span class="plus-list"><img src="images/uploadimg1.png" id="upclick" alt=""><input style="display:none" type="file" multiple id="send-upimg"></span><span id="cli-upFile"><img src="images/uploadfile.png" alt=""></span><span class="plus-list" id="mesChat_audio"><img src="images/iconfont-yuyin.png" alt=""></span>
+                </div>
+                <i class="icon-caret-down"></i>
+              </div>
+                  <!-- <form onsubmit="onSubmit(); return false;"> -->
+                      <div class="mes_input">
+                        <i class="plus_icon"></i>
+                          <div class="mes_inout textarea chat_text_voice" id="mes_textarea" style="height:auto;" contenteditable="true"></div>
+                          <textarea style="display:none" class="mes_inout" ></textarea>
+                          <input type="submit" class="btn btn-primary chat_text_voice" id="submit" value="发送" />
+                          <div class="keydown_voice chat_voice_input">按下开始说话</div>
+                          <div class="chat_input_key chat_voice_input"></div>
+                        <div style="clear:both"></div>
+                      </div>
+                      <div class="emoticons"></div>
+                   <!-- </form> -->
+                <div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+<div class="img-box">
+  <div class="img-box-title"><span>发送的图片</span><span style="color: #000;" class="com-close com-close-act">&times;</span></div>
+  <div class="sending-img-box"></div>
+  <div class="img-box-act"><span class="btn btn-success com-close-act">取消</span><span class="btn btn-info send-clipboard-img">发送</span></div>
+</div>
+	<input type="submit" id="submit" >
+<div class="file-main">
+  <ul>
+      <li>
+          <input id="token" name="token" class="ipt" value="">
+      </li>
+      <li>
+          <input id="key" name="key" class="ipt" value="">
+      </li>
+      <li>
+          <input id="file" name="file" class="ipt" type="file" />
+      </li>
+      <li>
+          <input id="filename" type="text" value="">
+      </li>
+  </ul>
+</div>
 </body>
+    <script type="text/javascript" src = "/chat/js/web_index.js"></script>
 </html>

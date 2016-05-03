@@ -4,7 +4,7 @@ error_reporting(E_ALL ^ E_NOTICE^ E_DEPRECATED);
 if(!session_id()){session_start();}
 //路径配置
 define('DOCUMENT_ROOT', dirname(__FILE__));
-define('DOCUMENT_URL', 'http://'. $_SERVER['HTTP_HOST'] .'/');
+define('DOCUMENT_URL', 'http://'. $_SERVER['HTTP_HOST'] .'/chat/kehu/');
 
 //数据库配置
 define("DB_HOST","localhost");

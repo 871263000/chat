@@ -71,12 +71,16 @@ $ne=$row['name'];
 $yt=$row['business_license_image'];
 $zt=$row['organizational_structure_code_image'];
 $st=$row['tax_registration_certificates_image'];
+
+/********  聊天  ****************/
+
 //自己公司的名字
 if ( !empty($oms_id )) {
 	$sql = "SELECT org_name FROM `oms_general_admin_user` WHERE `oms_id` = ".$oms_id;
 	$arrOrg_name = $d->find($sql);
 }
 $org_name = !empty($arrOrg_name['org_name']) ? $arrOrg_name['org_name'] : '公司名字去哪了';//公司名字
+
 //获取客户的oms_id
 if (!empty($row['name'])) {
 
@@ -84,13 +88,14 @@ if (!empty($row['name'])) {
 	$arrChain_oms_id = $d->find($sql);
 
 }
-//客户信息
+//客户聊天信息
 $customer = [];
 $customer['oms_id']  = !empty($arrChain_oms_id['oms_id']) ? $arrChain_oms_id['oms_id'] : 0;
 if ( !empty($customer['oms_id']) ) {
-	$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE a.`state` = 2 AND a.`pid`=".$uid;
+	$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE a.`oms_id`= '".$arrChain_oms_id['oms_id']."' AND a.`state` = 2 AND a.`pid`=".$uid;
 	$arrFriendList = $d->findAll($sql);
 }
+/******** 聊天end  ***************/
 ?>
 <!doctype html>
 <html lang="en">
@@ -156,7 +161,6 @@ if ( !empty($customer['oms_id']) ) {
 		</div>
 	</div>
 
-<input type="submit" id="submit">
 <div class="container">
 	<h1 style="text-align: center;">客户详情</h1>
 	<a href="admin/customerlist_input.php" target='_blank' class='btn btn-info'>跳转到 "客户详情录入"</a>
@@ -187,19 +191,19 @@ if ( !empty($customer['oms_id']) ) {
 			</td>
 		</tr>
 		<tr>
-			<td>我方销售主管副总</td>
+			<td>我方销售主管(公司领导)</td>
 			<td colspan="3">
 				<?php echo $row['our_sales_team_VP']?>
 			</td>
 		</tr>
 		<tr>
-			<td>我方销售负责团队</td>
+			<td>我方销售团队负责人</td>
 			<td colspan="3">
 				<?php echo $row['our_sales_team']?>
 			</td>
 		</tr>
 		<tr>
-			<td>我方销售负责人员</td>
+			<td>我方销售负责人</td>
 			<td colspan="3">
 				<?php echo $row['our_sales']?>
 			</td>
@@ -495,7 +499,7 @@ if ( !empty($customer['oms_id']) ) {
 	    <a href="oms_statement_of_account_list.php?money_source_unit_person=<?php echo $row['name'] ?>" class='btn btn-info'>对账单汇总</a>
 	    <a href="oms_customer_borrowing_list.php?name=<?php echo $row['name'] ?>" class='btn btn-info'>试用/借用单汇总</a>
 	    <a href="oms_customer_deliver_the_goods_list.php?id=<?php echo $id ?>" class='btn btn-info'>交货数量汇总</a>
-	    <a href="oms_should_take_back_money_list.php?money_source_unit_person=<?php echo $row['name'] ?>" class='btn btn-info'>应收账款汇总</a><br/><br/>
+	    <a href="oms_should_take_back_money_list.php?search_s=<?php echo $row['name'] ?>" class='btn btn-info'>应收账款汇总</a><br/><br/>
 	    <a href="oms_customer_payment_for_goods_list.php?name=<?php echo $row['name'] ?>" class='btn btn-info'>货款回笼汇总</a>
 	    <a href="oms_customer_product_quality_issues_list.php?name=<?php echo $row['name'] ?>" class='btn btn-info'>质量投诉汇总</a>
 	    <a href="oms_customer_production_equipment_list.php?name=<?php echo $row['name'] ?>&hz=1" class='btn btn-info'>客户生产设备概况</a>
@@ -522,9 +526,6 @@ var friendList = new Array();
 friendList = <?= !empty($arrFriendList) ? json_encode($arrFriendList) : json_encode([]);?>;
 
 $(document).on('click', '.chain_friend_all', function ( e ) {
-	if ($(e.target).is('.apply_session')) {
-		return;
-	};
 	var chain_friend_all = $(this).attr('tagfriend');
 	if ( chain_friend_all == "0") {
 		alert('你们还没有关注不能对话！可以点右边的图标申请对话！');
@@ -538,11 +539,14 @@ var chainTab  =  $('.chat_tab_list');
 
 //申请会话
 var $org_name = "<?= $org_name ?>";
-$(document).on('click', '.apply_session' , function () {
+var $oms_id = "<?= $arrChain_oms_id['oms_id'] ?>";
+$(document).on('click', '.apply_session' , function ( e ) {
+    e.stopPropagation();
 	var mes_id = $(this).attr('mes_id');
 	var chainName = $(this).attr('name');
 	var tagfriend = $(this).attr('tagfriend');
-	ws.send('{"type": "addFriends", "uid": "'+mes_id+'", "accept_name": "'+chainName+'", "companyName": "'+$org_name+'"}');
+	console.log('{"type": "addFriends", "uid": "'+mes_id+'", "accept_name": "'+chainName+'", "companyName": "'+$org_name+'", "oms_id": '+$oms_id+'}');
+	ws.send('{"type": "addFriends", "uid": "'+mes_id+'", "accept_name": "'+chainName+'", "companyName": "'+$org_name+'", "oms_id": '+$oms_id+'}');
 	if ( tagfriend == 1 ) {
 		alert('你们已经关注了！');
 		return;
@@ -608,12 +612,21 @@ jQuery(document).ready(function ($) {
 	      	_move = false;
 	});
 });
+//滚动条滚动事件
+var mesScroll = function (){
+    if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
+      var mes_loadnum = $('#mes_load').html();
+      $('.loader').show()
+      mesHeight = $('.he_ov').height()
+      ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
+    };
+}
 //员工的点击事件
 $(document).on('click', '.external_chat_people', function( e ){
   	to_uid = $(this).attr('mes_id');
   	to_uid_header_img = $(this).find('img').attr('src');
   	//会话id的改变
-  	session_no = to_uid < uid ? to_uid+"-"+uid : uid+"-"+to_uid;
+  	session_no = to_uid < chat_uid ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
   	mes_type = "message";
     $('.chat-container').show();
   	//end
@@ -625,46 +638,17 @@ $(document).on('click', '.external_chat_people', function( e ){
      	mes_chakan_close('message', session_no, con_mes_num);
   	};
     // };
-    ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
+    ws.send('{"type":"mes_chat", "to_uid":"'+to_uid+'"}');
     $('#mes_load').html(10);
     //消息向上滚动
     $('.he-ov-box').unbind('scroll');
     $('.he-ov-box').bind("scroll", function (){
       mesScroll();
     })
-})
+});
 //最近联系人增加与更新
-var addContact = {};
+// var addContact = {};
 //判断当前会话在最近联系人哪里有没有 
-addContact.is =  function (session_id) {
-	for (var i in nearestContact) {
-		if ( nearestContact[i] == session_id) {
-			return true;
-		};
-	}
-	return false;
-}
-//增加最近联系人
-addContact.Dom = function () {
-	var data = {
-	    "type": "addContact",
-	   	"mestype": 'message',
-	   	"session_no" : session_no,
-	   	"sender_name": name,
-	   	"accept_name": $('.mes_title_con').text(),
-	   	"mes_id": to_uid,
-	  	"to_uid_header_img": to_uid_header_img,
-	   	"timeStamp": new Date().getTime(),
-  	};
-	nearestContact.push(session_no);
-  	ws.send(JSON.stringify(data));
-
-};
-document.getElementById('submit').addEventListener('click', function () {
-	if ( addContact.is( session_no ) == false ) {
-		addContact.Dom();
-	};
-})
 //储存外来员工的信息
 var getExternal = {};
 

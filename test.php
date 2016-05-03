@@ -1,92 +1,124 @@
+<?php 
+
+require_once('lib/AutoLoad.php');
+
+
+/**
+* test 链式操作
+*/
+class sql
+{
+  private $sql = array(
+    'from'=>'',
+    'where'=>''
+    );
+  public function from($tableName)
+  {
+    $this->sql['from'] = 'FROM '.$tableName;
+    return $this;
+  }
+}
+$db = new sql();
+
+ ?>
 
 <!DOCTYPE HTML>
-<html lang="en">
-    <head>
-        <meta charset = "utf-8"/>
-        <title>Chat by Web Sockets</title>
-        <script type="text/javascript" src="js/recorder.js"> </script>
-        <script type="text/javascript" src="js/jquery.min.js"> </script>
-         
-        <style type='text/css'>
-            
-        </style>
-    </head>
-    <body>
-        <audio controls autoplay src=""></audio>
-        
-       <input type="button" id="record" value="Record">
-       <input type="button" id="export" value="Export">
-       <div id="message"></div>
-    </body>
-     
-    <script type='text/javascript'>
-            var onFail = function(e) {
-                console.log('Rejected!', e);
-            };
-         
-            var onSuccess = function(s) {
-                var context = new webkitAudioContext();
-                var mediaStreamSource = context.createMediaStreamSource(s);
-                rec = new Recorder(mediaStreamSource);
-                //rec.record();
-         
-                // audio loopback
-                // mediaStreamSource.connect(context.destination);
-            }
-         
-            //window.URL = URL || window.URL || window.webkitURL;
-            navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-         
-            var rec;
-            var audio = document.querySelector('audio');
-         
-            function startRecording() {
-                if (navigator.getUserMedia) {
-                    navigator.getUserMedia({audio: true}, onSuccess, onFail);
-                } else {
-                    console.log('navigator.getUserMedia not present');
-                }
-            }
-            startRecording();
-            //--------------------      
-            $('#record').click(function() {
-                rec.record();
-//                var dd = ws.send("start");
-                $("#message").text("Click export to stop recording");
-     
-                // export a wav every second, so we can send it using websockets
-//                 intervalKey = setInterval(function() {
-
-//                 }, 3000);
-            });
-             
-            $('#export').click(function() {
-                // first send the stop command
-                rec.stop();
-                rec.exportWAV(function(blob) {
-                         
-//                         rec.clear();
-//                         ws.send(blob);
-					// console.log(blob);
-					audio.src = URL.createObjectURL(blob);
-                    });
-//                 clearInterval(intervalKey);
-                 
-//                 ws.send("analyze");
-                $("#message").text("");
-            });
-             
-            var ws = new WebSocket("ws://127.0.0.1:7272");
-            ws.onopen = function () {
-                console.log("Openened connection to websocket");
-            };
-            ws.onclose = function (){
-                 console.log("Close connection to websocket");
-            }
-//             ws.onmessage = function(e) {
-//                 audio.src = URL.createObjectURL(e.data);
-//             }
-             
-            
-        </script>
-</html>
+<html>
+ <head>
+  <meta charset="UTF-8" />
+  <title>表情</title>
+  <link rel="stylesheet" type="text/css" href="http://www.php1.cn/">   <script type="text/javascript" src="../resources/js/jquery-1.7.1.min.js"></script>
+  <script type="text/javascript" src="../resources/js/plugins/exp/exp.js"></script>
+  <style>
+  <!--
+   .holder-note{
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 10px;
+    border: 1px dotted #ccc;
+    background-color: #f1f1f1;
+   }
+   ul{
+    list-style:disc;
+    list-style-position:inside;
+    margin-left: 2em;
+   }
+  -->
+  </style>
+ </head>
+ <body>
+  <div class="exp-holder" style="margin: 0 auto; width: 500px; ">
+   <textarea id="J_t" style="width:100%;">点击"表情"添加</textarea>
+   <a class="exp-block-trigger" href="http://www.php1.cn/">    <button id="J_sbt" type="button">check</button>
+  </div>
+  <div id="J_resulte" style=" width: 500px; height: 200px; border:1px solid green; margin: 0 auto; "></div>
+  
+  <div class="holder-note">
+   <h2>说明</h2>
+   <p>此表情插件借助jquery实现，特色：</p>
+   <ul>
+    <li> 一次性初始化,</li>
+    <li>可以全局控制(打开，关闭),</li>
+    <li>可以远程调取表情数据,</li>
+    <li>提供对表情代号的转换.</li>
+    <p>
+    $.expBlock.initExp({</br>
+    expData:null</br>
+    holder: '.exp-holder',</br>
+    textarea : 'textarea',</br>
+    trigger : '.exp-block-trigger',</br>
+    grpNum : 5,</br>
+    posType : 'absolute',</br>
+    zIndex : '100'</br>
+    */
+   });
+     
+    </p>
+   <h3>note: 需要提供的相应css文件支持</h3>
+   </ul>
+  </div>
+  
+ </body>
+ <script type="text/javascript">
+  $(document).ready(function(){
+   $.expBlock.initExp({
+    /*
+    //用户表情结构数据
+    expData: [{name: '默认',icons:[{url:"../resources/js/plugins/exp/img/zz2_thumb.gif",title:"织"},{url:"../resources/js/plugins/exp/img/horse2_thumb.gif",title:"神马"}]}]
+    //包含textarea和表情触发的exp-holder
+    holder: '.exp-holder',
+    //exp-holder中的textarea输入dom，默认为textarea,
+    textarea : 'textarea',
+    //触发dom
+    trigger : '.exp-block-trigger',
+    //每页显示表情的组数
+    grpNum : 5,
+    //位置相对页面固定(absolute)||窗口固定(fixed)
+    posType : 'absolute',
+    //表情层数
+    zIndex : '100'
+    */
+   });
+   
+   //使表情失效
+   $.expBlock.disableExp();
+   //使表情重新启动
+   $.expBlock.enableExp();
+   
+   $('#J_sbt').click(function(){
+    var s, ta = $('#J_t'), val = ta.val();
+    //将字符串中如"[微笑]"类的表情代号替换为<img/>标签www.2cto.com
+    s = $.expBlock.textFormat(val);
+    //console.log(s);
+    $('#J_resulte').html(s);
+   })
+   
+   /*
+    * ajax远程获取表情,注意同源策略
+    * 要求返回的数据格式如:[{name: groupname,icons:[{url:'imgurl',title:"iconname"},{url:'imgurl',title:"iconname"}]},{name: groupname,icons:[{url:'imgurl',title:"iconname"},{url:'imgurl',title:"iconname"}]},...]
+    */
+   //$.expBlock.getRemoteExp(url);
+   
+  })
+ </script>
+</html> 

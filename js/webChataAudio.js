@@ -276,6 +276,6 @@
 
         $('.chat_voice_box').attr('voice_url', voice_urlDur);
         $('.he-ov-box .he_ov').append('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0"></span>'+name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri web_chat_voice"><div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+e+'"></div></span><span class="chat_duration_right">\"'+duration+'</span> </div></div></li>');
-        onSubmit(to_uid, uid, groupId, mes_type, 'voice',session_no);
+        onSubmit(to_uid, chat_uid, groupId, mes_type, 'voice',session_no);
         // audio.src = window.URL.createObjectURL(e);
     }

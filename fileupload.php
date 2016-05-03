@@ -16,7 +16,6 @@ $bucket = 'omso2o';
 
 // 生成上传 Token
 $token = $auth->uploadToken($bucket);
-echo $token;
  ?>
  <!DOCTYPE html>
  <html lang="en">

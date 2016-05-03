@@ -1,0 +1,45 @@
+<!-- camera.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="utf-8">
+    <title>实时猫访问摄像头 Demo</title>
+
+    <!-- 非必须，本例中使用 jQuery -->
+    <script src="//cdn.realtimecat.com/realtimecat/jquery.min.js"></script>
+
+    <!-- 实时猫 RealTimeCat JavaScript SDK -->
+    <script src="//cdn.realtimecat.com/realtimecat/realtimecat-0.2.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- 定义一个视频容器，命名为"localMediaContainer" -->
+    <div id="localMediaContainer"></div>
+
+    <script>
+        $(document).ready(function(){
+            // 创建本地视频流
+            var config = {audio: true, video: true};
+
+            // 定义本地视频流对象
+            var localStream = new RTCat.Stream(config);
+
+            // 监听已获得视频内容"access-accepted"事件
+            localStream.on("access-accepted", function () {
+                // 播放本地视频流到"localMediaContainer"
+                localStream.play("localMediaContainer");
+            });
+
+            // 初始化视频流
+            localStream.init();
+
+        })
+    </script>
+
+</body>
+
+</html>

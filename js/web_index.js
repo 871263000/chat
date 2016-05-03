@@ -1,10 +1,122 @@
 
+//输入框工具 滑过事件
+
+$('.pc_mes_tool_list').hover(function () {
+  $(this).css('opacity', 0.5 );
+}, function () {
+  $(this).css('opacity', 1 );
+})
+
+//声音提示
+!function($) {
+  var types = ['notice', 'warning', 'error', 'success'];
+  var audio;
+  
+  var settings = {
+    inEffect: {
+      opacity: 'show'
+    },
+    inEffectDuration: 100,
+    stay: 5000,
+    sticky: false,
+    type: 'notice',
+    position: 'top-right',
+    sound: '/chat/audio/notice.wav',
+  };
+  
+  function dataSetting(el, options, name) {
+    var data = el.data('notify-' + name);
+    if (data) options[name] = data;
+  };
+  
+  var Notify = function(el, options){
+    var el = $(el);
+    var $this = this;
+    var dataSettings = {};
+    
+    $.each(['type','stay','position'], function(k, v){
+      dataSetting(el, dataSettings, v);
+    });
+    
+    if (el.data('notify-sticky')) {
+      dataSettings['sticky'] = el.data('notify-sticky') == 'yes';
+    }
+    
+    this.opts = $.extend({}, settings, dataSettings, typeof options == 'object' && options);
+    
+    // 检查 type 配置里面是否有 sticky 值
+    if (this.opts.type.indexOf('sticky') > -1) {
+      this.opts.sticky = true;
+      this.opts.type = $.trim(this.opts.type.replace('sticky',''));
+    }
+    
+    // 检查 type 类型是否支持
+    if (types.indexOf(this.opts.type) == -1) {
+      this.opts.type = settings.type;
+    }
+    
+    var wrapAll =$('.mesNoticeContainer');
+    var itemOuter = $('<div></div>').addClass('notify-item-wrapper');
+    
+    this.itemInner = $('<div></div>').show().addClass('mesNotice').appendTo(wrapAll).animate(this.opts.inEffect, this.opts.inEffectDuration).wrap(itemOuter);
+    
+    $('<div>&times;</div>').addClass('mesNoticeClose').prependTo(this.itemInner).click(function(){$this.close()});
+    $('<div><img src = "'+options.imgUrl+'"></div>').addClass('mesNoticeImg').appendTo(this.itemInner);
+    $('<div>'+options.tittle+'</div>').addClass('mesNoticeTittle').appendTo(this.itemInner);
+    $('<div>'+options.content+'</div>').addClass('mesNoticeCon').appendTo(this.itemInner);
+        navigator.userAgent.match(/MSIE 6/i) && wrapAll.css({top: document.documentElement.scrollTop});
+    !this.opts.sticky && setTimeout(function(){$this.close()}, this.opts.stay);
+    var VoiceState = localStorage.getItem('VoiceState');
+    if ( VoiceState == '0' || VoiceState == null ) {
+      if (window.HTMLAudioElement) {
+        audio = new Audio();
+        audio.src = options['soundUrl'];
+        audio.play();
+      }
+    }
+  };
+  
+  Notify.prototype.close = function () {
+    var obj = this.itemInner;
+    obj.animate({opacity: '0'}, 600, function() {
+      obj.parent().animate({height: '0px'}, 300, function() {
+        obj.parent().remove();
+      });
+    });
+  };
+  
+  // $.notifySetup = function(options) {
+  //   $.extend(settings, options);
+  //   // console.log(options);
+  //   if (options['sound']) {
+  //     if (window.HTMLAudioElement) {
+  //       audio = new Audio();
+  //       audio.src = options['sound'];
+  //     }
+  //   }
+  // };
+  
+  $.fn.notify = function(options) {
+    return this.each(function () {
+      if (typeof options == 'string') {
+        return new Notify(this, {type: options});
+      }
+      return new Notify(this, options);
+    });
+  };
+
+}(window.jQuery);
+
 /***********  搜索人员   **************/
 //人员的搜索
+$('.search_staff').click(function () {
+  $('#search_in').trigger('input');
+})
+
 //在线人员信息
 
 var onlineManInfo  = new Array(); 
-$('#search_in').keyup(function () {
+$('#search_in').on('input', function () {
   var inValue = $.trim($(this).val().toString());//去掉两头空格
   if ( inValue == '') {
       $('.search_result').hide();
@@ -12,6 +124,7 @@ $('#search_in').keyup(function () {
   };
   var resSearch = search_in(inValue, onlineManInfo);
   $('.search_result').html('');
+  
   for (var p in resSearch ) {
         $('.search_result').append('<li mes_id="'+p+'" data-placement="left" class="staff-info chat_people db_chat_people" group-name="'+resSearch[p].client_name+'"><span class="header-img"><img src="'+client_list[p].header_img_url+'" alt="'+resSearch[p].client_name+'"></span><span style = "color: red">'+resSearch[p].client_name+'</span></li>');
   }
@@ -50,6 +163,7 @@ $('.chat_btn').click(function () {
   $("#submit").trigger("click");
   $('.pc_mes_input').html('');
   $('.pc_mes_input').focus();
+  
 })
 //pc 输入框聚焦
 $('.pc_mes_input').focus( function () {
@@ -65,14 +179,17 @@ $('.pc_mes_tool_emoji').click(function () {
   addempath("pc_emoji_box");
 })
 //通知消息点击
+//外来的oms_id 
+var ChainOmsId = '' ;
 $(document).on('click', '.chat_notice', function () {
-    var session_id = $(this).attr('session_no');
-    var sender_id = $(this).attr('mes_id');
-    $('.chat_notice_container').show();
-    ws.send('{"type": "chat_notice", "sender_id": '+session_id+'}');
-    var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_id+"']").attr('chat_mes_num'));
-    mes_notice_close('message', session_id, con_mes_num);
-    nearestContact.push(session_id);
+  var session_id = $(this).attr('session_no');
+  var sender_id = $(this).attr('mes_id');
+  ChainOmsId = $(this).attr('oms_id');
+  $('.chat_notice_container').show();
+  // ws.send('{"type": "chat_notice", "sender_id": '+session_id+'}');
+  var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_id+"']").attr('chat_mes_num'));
+  mes_notice_close('message', sender_id, con_mes_num);
+  nearestContact.push(session_id);
 })
 //通知消息同意不同意
 $(document).on('click', '.chat_notice_sel', function () {
@@ -80,13 +197,15 @@ $(document).on('click', '.chat_notice_sel', function () {
     var senderId = $(this).attr('sender-id');
     var noticeHtml = $(this).html();
     $('.alert').hide();
-    ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'"}');
+    console.log('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'" "oms_id": "'+ChainOmsId+'"}');
+    ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'", "oms_id": "'+ChainOmsId+'"}');
 })
 //通知消息关闭
 var mes_notice_close = function (mestype, session_id, mes_num){
-    ws.send('{"type":"mes_notice_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+    ws.send('{"type":"mes_notice_close", "to_uid":"'+session_id+'", "mestype":"'+mestype+'"}');
     mesnum = mesnum - parseInt(mes_num);
     $('.mes_radio').html(mesnum);
+    session_id = session_id + 't';
     $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
     arrMessageList= _chat_remove(session_id, arrMessageList);
     //arrMessageList.remove(session_id);
@@ -253,7 +372,7 @@ $(".mes_footer, .pc_mes_input").keydown(function(e){
 //对话框的高度
 var mesHeight = 0;
 //查看更多
-$('.onload').live("click", function(){
+$(document).on("click", ".onload", function(){
     $('.he-ov-box').trigger("scroll");
 })
 //对话框关闭
@@ -271,11 +390,11 @@ var mesScroll = function (){
     };
 }
 // 选择人聊天
-$('.chat_people').live('click', function( e ){
+$(document).on('click', '.chat_people', function( e ){
     to_uid = $(this).attr('mes_id');
     to_uid_header_img = $(this).find('img').attr('src');
     //会话id的改变
-    session_no = to_uid < chat_uid ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
+    session_no = parseInt(to_uid) < parseInt(chat_uid) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
     mes_type = "message";
     if (!$(e.target).is('.recent-action')) {
         $('.chat-container').show();
@@ -289,7 +408,7 @@ $('.chat_people').live('click', function( e ){
 
         };
       // };
-      ws.send('{"type":"mes_chat", "mes_para":"'+to_uid+'"}');
+      ws.send('{"type":"mes_chat", "to_uid":"'+to_uid+'"}');
       $('#mes_load').html(10);
       //消息向上滚动
       $('.he-ov-box').unbind('scroll');
@@ -300,7 +419,7 @@ $('.chat_people').live('click', function( e ){
 })
 
 //选择群列表显示对话内容
-$('.session_no').live('click', function ( event ){
+$(document).on('click', '.session_no', function ( event ){
     session_no = $(this).attr('session_no')//会话id
     mes_type = "groupMessage";//消息类型
     if (!$(event.target).is('.recent-action')) {
@@ -341,7 +460,7 @@ function addempath(className) {
     }
 }
 //表情的点击事件
-$(".emoticons .cli_em, .pc_emoji_box .cli_em").live('click',function (){
+$(document).on('click', '.emoticons .cli_em, .pc_emoji_box .cli_em', function (){
     $(this).clone().append().appendTo('.textarea');
     $(this).clone().append().appendTo('.pc_mes_input');
     // $('textarea').val($('.textarea').html())
@@ -379,6 +498,9 @@ $('.cd-popup').on('click', function(event){
 $(document).keyup(function(event){
     if(event.which=='27'){
       $('.cd-popup').removeClass('is-visible');
+      //session 改变
+      session_no = 0;
+      $('.chat-container').hide();
     }
 });
 //textare 自适应高度
@@ -495,32 +617,49 @@ $('.mes_ico_box').hover(function (){
       $(this).css('background-color', '#fff')
       $(this).find('.mes_close').hide()
     });
-  //打个消息的关闭
+  //单个消息的关闭
   var mes_chakan_close = function (mestype, session_id, mes_num){
+      console.log(44)
       if ( mestype == 'message' ) {
         session_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
       } else {
         session_no = session_id;
       }
-      ws.send('{"type":"mes_close", "session_no":"'+session_id+'", "mestype":"'+mestype+'"}');
+      ws.send('{"type":"mes_close", "to_uid":"'+session_id+'",  "session_no": "'+session_no+'", "message_type":"'+mestype+'"}');
       mesnum = parseInt(mesnum) - parseInt(mes_num);
       $('.mes_radio').html(mesnum);
+      console.log(session_no);
       $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
       arrMessageList= _chat_remove(session_no, arrMessageList);
   }
-  //单个消息关闭
-  // $('.mes_chakan_close').live('click', function (){
+  var mes_NoChakan_close = function (mestype, session_id, mes_num){
+      if ( mestype == 'message' ) {
+        session_close_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
+      } else {
+        session_close_no = session_id;
+      }
+      ws.send('{"type":"mes_close", "to_uid":"'+session_id+'",  "session_no": "'+session_close_no+'", "message_type":"'+mestype+'"}');
+      mesnum = parseInt(mesnum) - parseInt(mes_num);
+      $('.mes_radio').html(mesnum);
+      $('.mes_chakan_close[session_no="'+session_close_no+'"]').remove();
+      arrMessageList= _chat_remove(session_close_no, arrMessageList);
+  }
+  // $('.mes_chakan_close').<liv></liv>e('click', function (){
   //   var mestype = $(this).attr('mestype');
   //   var mes_num = $(this).parent().next('.mes_num').html();
   //   session_no = $(this).attr('session_no');
   //   mes_chakan_close(mestype, session_no, mes_num);
   // })
-  $('.mes_close').live('click', function (){
+//消息的关闭
+$(document).on('click', '.mes_close', function ( e ){
+    e = e || window.event;  
+     e.stopPropagation();  //阻止冒泡
     var mestype = $(this).attr('mestype');
     var mes_num = $(this).prev('.mes_num').html();
-    session_no = $(this).attr('session_no');
-    mes_chakan_close(mestype, session_no, mes_num);
-  })
+    // session_no = $(this).attr('session_no');
+    mes_id = $(this).attr('mes_id');
+    mes_NoChakan_close(mestype, mes_id, mes_num);
+});
   //消息关闭
   $('.close').click(function (){
       $('.mes_abs').animate({
@@ -584,7 +723,7 @@ $(function(){
     }) 
 });
 //聊天对话框img放大
-$('.he_ov .send-img').live( 'click', function (){
+$(document).on( 'click', '.he_ov .send-img',function (){
     $('.send-img-box img').remove();
     $('.send-img-box').show();
     $('.send-img-box').append($(this).clone().attr('id', 'rotimg'));
