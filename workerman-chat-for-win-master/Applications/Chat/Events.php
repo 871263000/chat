@@ -183,6 +183,7 @@ class Events
                     Gateway::joinGroup($client_id, $room_id);   
                     return;
                 case 'allOnlineNum':
+                echo 22244;
                     $uid = $_SESSION['uid'];
                     // echo $adminUid;
                     if ( $uid == $adminUid) {
