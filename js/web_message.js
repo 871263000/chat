@@ -18,7 +18,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           console.log("出现错误");
        };
     }
-
     // 连接建立时发送登录信息
     function onopen()
     {
@@ -166,14 +165,17 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types,from_session_no) {
       var nowTime = new Date().format('yyyy-MM-dd hh:mm:ss');
       var accept_name = $('.mes_title_con').text();
+      // 要 显示 的内容
       var inputcur = "";
+      //要发送的内容
       var inputValue = "";
       var input = "";
       switch(mes_types){
         case 'text':
           input = document.getElementById("mes_textarea");
-          inputValue = input.innerHTML.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
-          inputcur = input.innerHTML.replace(/[\r\n]/g,"<br/>");
+          inputValue = inputSave.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
+            innerHTML = input.innerHTML;
+          inputcur = innerHTML.replace(/[\r\n]/g,"<br/>");
         break;
         case 'image':
           inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
@@ -193,19 +195,11 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           return;
 
       }
-      // if (mes_types == 'text') {
-      //   var input = document.getElementById("mes_textarea");
-      //   var inputValue = input.innerHTML.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
-      //   var inputcur = input.innerHTML.replace(/[\r\n]/g,"<br/>");
-      // } else if (mes_types == 'image') {
-      //   var inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
-      //   var inputValue = $('.sending-img-box .send-img').attr('src');
-      //   $('.img-box').hide();
-      // };
       $(".he_ov").append('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+nowTime+'</span>'+chat_name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri">'+inputcur+'</span> </div></div></li>');
       $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
-        ws.send('{"type":"sayUid","to_uid":"'+to_uid+'","senderid":"'+chat_uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
+      ws.send('{"type":"sayUid","to_uid":"'+to_uid+'","senderid":"'+chat_uid+'", "groupId":"'+groupId+'", "accept_name":"'+accept_name+'","message_type":"'+message_type+'", "mes_types":"'+mes_types+'","session_no":"'+from_session_no+'","content":"'+inputValue+'"}');
       document.getElementById("mes_textarea").innerHTML = "";
+      inputSave = '';
       $("#mes_textarea").height(50);
       $(".he-ov-box").css("bottom", inputBottom);
       $('.emoticons').hide();
@@ -235,11 +229,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           onlineman_ul.append('<li mes_id="'+p+'" data-placement="left" class="staff-info chat_people db_chat_people" group-name="'+client_list[p].client_name+'"><span class="header-img"><img src="'+client_list[p].header_img_url+'" alt="'+client_list[p].client_name+'"></span>'+client_list[p].client_name+'</li>');
       }
       $('.online_ren').html(online_ren);
-      // onlineHeight = $(".online_man .list-group").height();
-      // proScroll = ( docuHeight - onlineTop )/onlineHeight;
-      // hideOnlineHeightPro = onlineHeight - (docuHeight - onlineTop);
-      // onlineScrollHeight = (docuHeight - onlineTop) * ( 1- proScroll );
-      // $('.onlinesSroll-box').css('height', (docuHeight - onlineTop) * proScroll);
     }
     //发言2
 
@@ -261,6 +250,8 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             content1 = '【图片】';
           break;
           case 'text':
+          content = content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+          content = content.replace(/\|\}/g, '.gif">');
             content1 = content.replace(/%5C/g,"\\").replace(/%6b/g," ");
             content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>");
           break;
@@ -405,7 +396,9 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         mes_time = data[i].create_time;
         switch (data[i].mesages_types) {
             case 'text':
-              content = data[i].message_content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
+              content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+              content = content.replace(/\|\}/g, '.gif">');
+              content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
                 break;
             case 'file':
               var fileArray = new Array();
@@ -463,7 +456,9 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         mes_time = data[i].create_time;
         switch (data[i].mesages_types) {
             case 'text':
-              content = data[i].message_content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
+              content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+              content = content.replace(/\|\}/g, '.gif">');
+              content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
                 break;
             case 'file':
               var fileArray = new Array();

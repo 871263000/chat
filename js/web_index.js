@@ -196,8 +196,7 @@ $(document).on('click', '.chat_notice_sel', function () {
     var dataParm = $(this).attr('data-parm');
     var senderId = $(this).attr('sender-id');
     var noticeHtml = $(this).html();
-    $('.alert').hide();
-    console.log('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'" "oms_id": "'+ChainOmsId+'"}');
+    $('.chat_notice_sel').hide();
     ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'", "oms_id": "'+ChainOmsId+'"}');
 })
 //通知消息关闭
@@ -453,16 +452,19 @@ function addempath(className) {
     var newTotal = 14;//新增表情的个数
     $('.'+className).html('');
     for(var i=0; i < newTotal ; i++) {
-        $('.'+className).append('<div class="em_gif"><img width="24px" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
+      $('.'+className).append('<div class="em_gif"><img width="24px" em_name="'+'f'+i+'" class="cli_em" src="'+emPath+'f'+i+'.gif"></div>');
     }
     for(var i=0; i < total ; i++) {
-        $('.'+className).append('<div class="em_gif"><img class="cli_em" src="'+emPath+i+'.gif"></div>');
+      $('.'+className).append('<div class="em_gif"><img class="cli_em" em_name="'+i+'" src="'+emPath+i+'.gif"></div>');
     }
 }
 //表情的点击事件
-$(document).on('click', '.emoticons .cli_em, .pc_emoji_box .cli_em', function (){
-    $(this).clone().append().appendTo('.textarea');
-    $(this).clone().append().appendTo('.pc_mes_input');
+$(document).on('click', ".emoticons .cli_em, .pc_emoji_box .cli_em", function (){
+    var em_name = $(this).attr('em_name');
+    inputSave = inputSave + "{|"+em_name+"|}";
+    var addThis = $(this).clone();
+    addThis.append().appendTo('.textarea');
+    addThis.append().appendTo('.pc_mes_input');
     // $('textarea').val($('.textarea').html())
 })
 //表情的显示
@@ -707,7 +709,8 @@ $(function(){
             }
           }
           if ( item && item.kind === 'string') {
-            $(this).append( clipboardData.getData('text/plain') );
+            $( '#pc_mes_input' ).append( clipboardData.getData('text/plain') );
+            inputSave += clipboardData.getData('text/plain');
           };
           if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
             imgReader( item );
@@ -772,6 +775,11 @@ window.onload = function() {
 
     $file = document.getElementById('file_zdl');
 };
+//input 的 改变
+$('#pc_mes_input, #mes_textarea').on('input', function () {
+  var val = $(this).html();
+  inputSave = val;
+})
 //消息提交
 var mesParam = {
     mes_obj: function (){

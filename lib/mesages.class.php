@@ -83,7 +83,7 @@ class messageList
 		 //右边的消息根据$_SESSION获取名字
 
 		//单聊消息
-		$sql = 'SELECT a.`mes_num`, a.`session_no`,a.`pid`, a.`chat_header_img`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`groupId` FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="'.$this->uid.'"';
+		$sql = 'SELECT a.`mes_num`, a.`mes_type`, a.`session_no`,a.`pid`, a.`chat_header_img`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`groupId` FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="'.$this->uid.'"';
 		$arrMes = $this->d->findALL($sql);
 		//群聊消息
 		$sql = "SELECT a.`mes_num`, a.`id`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_state`=1 AND  a.`staffid`=$this->uid";

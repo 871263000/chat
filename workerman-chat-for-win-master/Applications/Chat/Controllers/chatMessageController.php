@@ -171,6 +171,52 @@ class chatMessageController
 		$this->model->updContactModel();
 		return array('type'=>'default');
 	}
+	//统计 所有在线人数的 详情信息
+	public function allOnlineNum() {
+
+		$uid = $this->selfInfo['uid'];
+
+        $arrALlonlineInfo = []; //储存所有在线人信息 ps: 没有重复
+        
+        // $arrALlonlineMan = [];// 保留 所有的 uid  没有重复
+
+        $arrAllRoomId = [];  //储存所有的 房间信息
+		
+        $uniqueRoomId = [];//房间id去重 房间的id  和 数量
+
+        $roomInfo = []; //房间里的详情信息
+
+        //获取所有的 client_id  在线人的信息
+        $allClients_list = $this->messageData;
+        if (!empty($allClients_list)) {
+            foreach ($allClients_list as $key => $value) {
+                if ( isset( $arrALlonlineInfo[$value['uid']] ) ) {
+                    unset( $allClients_list[$key] );
+                } else {
+                    // $arrALlonlineMan[] = $value['uid'];
+                    $arrALlonlineInfo[$value['uid']] = $value['room_id'];
+                    if ( isset($roomInfo[$value['room_id']]) ) {
+                    	$uniqueRoomId[$value['room_id']] ++;
+                    } else {
+                    	$uniqueRoomId[$value['room_id']] = 1;
+                    }
+                    $roomInfo[$value['room_id']][] = $value['client_name'];
+                    // $arrAllRoomId[] = $value['room_id'];
+                }
+            }
+            $new_allOnlineNum['type'] = 'allOnlineNum'; // 发送客户端的类型
+            //所有的在线人的信息
+            $new_allOnlineNum['arrALlonlineInfo'] = $arrALlonlineInfo; 
+            //获取 房间的id 
+            $rooms = array_keys($uniqueRoomId);
+            //获取 公司的名字
+            $comInfo = $this->model->getCompanyName($rooms);
+            $new_allOnlineNum['comInfo'] = $comInfo;   //公司的名字
+            $new_allOnlineNum['roomInfo'] = $roomInfo;  //所有房间的 信息
+            $new_allOnlineNum['arrAllRoomId'] = $uniqueRoomId;   //所有的 房间信息
+            return $new_allOnlineNum;
+        }
+	}
 	//验证是否在同一个房间
 	public function isSameRooom()
 	{
@@ -183,11 +229,13 @@ class chatMessageController
 		return $resData = $this->model->isFriendsModel();
 
 	}
+	
 	//消息内容的插入
 	public function messageInsert () 
 	{
 		return $this->model->messageInsertModel();
 	}
+
 	//消息通知的记录插入
 	public function noticeInsert( $insert_id ) 
 	{

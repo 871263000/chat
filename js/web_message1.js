@@ -1,7 +1,7 @@
 if (typeof console == "undefined") {    this.console = { log: function (msg) {  } };}
     WEB_SOCKET_SWF_LOCATION = "/swf/WebSocketMain.swf";
     WEB_SOCKET_DEBUG = true;
-    var ws, client_list={};
+    var ws, allclient_list = client_list={};
     var message_type = '消息';
     // 连接服务端
     function connect() {
@@ -25,6 +25,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         // 登录
       var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+chat_name+'","room_id":"'+room_id+'"}';
       ws.send(login_data);
+      ws.send('{"type":"adminLogin","oms_id":"'+oms_id+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+chat_name+'","room_id":"'+room_id+'"}');
     }
 
     // 服务端发来消息时
@@ -39,7 +40,6 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
                 break;
             // 登录 更新用户列表
             case 'login':
-              ws.send('{"type":"allOnlineNum"}');
               if(data['client_list'])
               {
                   client_list = data['client_list'];
@@ -57,9 +57,17 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               // flush_onlineman_list();
               // console.log(data['client_name']+"登录成功");
                 break;
+              // 员工登录 发送管理员 
             case 'adminLoginNum':
-              var allOnlineNum = $('#allOnlineNum').html();
-              $('#allOnlineNum').html(parseInt(allOnlineNum)+1);
+              if ( data['client_num'].uid != 554 ) {
+                allclient_list['arrALlonlineInfo'][data['client_num'].uid] = data['client_num'].room_id;
+              };
+              flush_room_list();
+            break;
+            //管理员登录
+            case 'adminLogin':
+              ws.send('{"type": "allOnlineNum"}');
+              // addLoginNum();
             break;
             case 'say_uid':
                 say_uid(data['image'], data['mestype'], data['header_img_url'],data['group_name'], data['insert_id'],  data['session_no'], data['from_uid_id'], data['to_uid_id'], data['from_client_id'], data['from_client_name'], data['content'], data['time']);
@@ -85,17 +93,44 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
                 break;
             //所有的在线人数
             case 'allOnlineNum':
-              $('#allOnlineNum').html(data['allOnlineNum']);
+              allclient_list = data;
+              // console.log(data);
+              var allOnlineNum = 0;
+              for( var i in  data['arrALlonlineInfo'] ) {
+                allOnlineNum ++;
+              }
+              // var allOnlineNum = $('#allOnlineNum').html();
+              $('#allOnlineNum').html(allOnlineNum);
+              var num = 0;
+              var chatAllRoom = $('.chatAllRoom');
+              chatAllRoom.html('');
+              $.each( allclient_list['arrAllRoomId'], function (i, v) {
+                  num ++;
+                  var manNum = allclient_list.roomInfo[i].length
+                  // chatAllRoom.append('<tr><td>'+num+'</td><td>'+allclient_list['comInfo'][i]+'</td><td>'+v+'</td><td chat-roomId = "'+i+'" class="getAllChatName"><i class="AllChatName"></i></td></tr>')
+                  chatAllRoom.append('<div class="panel panel-default chat-drop-down" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+num+'" chat-roomId="'+i+'" aria-expanded="false" aria-controls="collapse'+num+'"><div class="panel-heading" role="tab" id="headingOne"><div class="row chat-drop"><div class="col-xs-2 col-md-2">'+num+'</div><div class="col-xs-8 col-md-8">'+allclient_list['comInfo'][i]+'</div><div class="col-xs-2 col-md-2">'+manNum+'</div></div></div><div id="collapse'+num+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"><div class="panel-body"><ul></ul></div></div></div>');
+              })
+              $('#myModal').modal('show');
             break;
             case 'loggoutTwo':
-              var allOnlineNum = $('#allOnlineNum').html();
-              $('#allOnlineNum').html(parseInt(allOnlineNum)-1);
+            // _chat_remove(data['from_uid'], allclient_list);
+            // allOnlineNum = allclient_list.length
+            delete allclient_list['arrALlonlineInfo'][data['from_uid']];
+            flush_room_list();
             break;
             default:
             return;
 
         }
     }
+    //删除指定数组元素
+    // var _chat_remove = function (val, array) {
+    //     var index = array.indexOf(val);
+    //     if (index > -1) {
+    //         array.splice(index, 1);
+    //     }
+    //     return array;
+    // }
     // 提交消息
     /* 
     * content  消息内容
@@ -204,6 +239,14 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         $('.groupAct').parents('.panel').find('.list-group').append('<li class="db_chat_people chat_people '+addClass+'" group-name="'+data[i]['name']+'" groupId="'+data[i]['pid']+'" mes_id="'+data[i]['staffid']+'"><span class="header-img"><img src="'+data[i]['card_image']+'" alt="'+data[i]['name']+'"></span><i>'+data[i]['name']+'</i><span class="delgroupman" groupId="'+data[i]['pid']+'" id="'+data[i]['staffid']+'">&times;</span></li>')
 
       };
+    }
+    // 刷新所有房间的信息
+    function flush_room_list(){
+      var allOnlineNum = 0;
+      for( var i in  allclient_list['arrALlonlineInfo'] ) {
+        allOnlineNum ++;
+      }
+      $('#allOnlineNum').html(allOnlineNum);
     }
     // 刷新在线人数
     function flush_onlineman_list(){

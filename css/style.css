@@ -17,10 +17,10 @@ h2{margin-top: 0;}
 .he-ov-box{position: absolute;left: 0;width: 100%;top: 50px;bottom: 50px;overflow: auto;}
 .he-ov-box li{margin: 10px 10px;}
 .he_ov{width: 100%;/*min-height: 100%;*/}
-/* 消息客服*/.kefu-icon{background: url('/chat/images/kefu.png') no-repeat center;height: 40px;}
-/*滚动条*/.emoticons::-webkit-scrollbar{width:100px ;display: block;}
-.emoticons::-webkit-scrollbar{width:10px;height:10px}
-.emoticons::-webkit-scrollbar-track{background:rgba(255,102,213,0)}
+/* 消息客服*/.kefu-icon{ background: url('/chat/images/kefu.png') no-repeat center;height: 40px;}
+/*滚动条*/.emoticons::-webkit-scrollbar{width:100px ;display: block; }
+.emoticons::-webkit-scrollbar{ width:10px;height:10px }
+.emoticons::-webkit-scrollbar-track{ background:rgba(255,102,213,0) }
 .emoticons::-webkit-scrollbar-thumb{background:rgba(226,226,226,.46);border-radius:10px}
 .emoticons::-webkit-scrollbar-corner{background:#82afff}
 .emoticons::-webkit-scrollbar-resizer{background:#ff0bee}
@@ -29,9 +29,9 @@ h2{margin-top: 0;}
 .group-list{box-shadow: 0 0 5px #ccc;cursor: move;display: none;z-index: 99;background: #fff;position: absolute;width: 200px;height: 500px;left: 50%;top: 50%;margin-left: -100px;margin-top: -250px;}
 .group-list ul{height: 400px;overflow: auto;}
 .session_no{cursor: pointer;background: #fff;}
-.panel{border: none;border-bottom: 1px dashed #ccc !important;}
-.panel-default>.panel-heading{background-color: #F7F3F3;}
-.panel-body{padding: 0;}
+/*.panel{border: none;border-bottom: 1px dashed #ccc !important;}*/
+/*.panel-default>.panel-heading{background-color: #F7F3F3;}*/
+/*.panel-body{padding: 0;}*/
 .list-group{margin-bottom: 0px;}
 .online_man{/*overflow: auto !important;*/text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
 .online_man{/*overflow: auto;*/box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0;background: #fff;height: 100%;display: block;}
@@ -152,6 +152,9 @@ i.voiceOff{ display: inline-block; background: url('/chat/images/voiceOn.png') c
 i.voiceOn{ display: inline-block; background: url('/chat/images/voiceOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 i.deskOff{display: inline-block; background: url('/chat/images/deskOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
+
+.chat_message_notice{ width: 350px; height: 150px; position: absolute; top: 50% ; left: 50%; margin-top: -200px; margin-left: -175px;background: #fff;z-index: 999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;  }
+.chat_close{ position: absolute; top: 0 ; right: 0; margin: 0 10px; cursor: pointer; }
 @media (min-width: 600px){
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}

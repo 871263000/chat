@@ -37,8 +37,12 @@ class Events
 
         // 客户端传递的是json数据
         $adminUid = 554;
+        // $pattern = "/[omsemoticons]/";
+
+        // $pattern = "/[^<img](.*)[>]$/";
+        // preg_replace($pattern, replacement, subject);
         // return;
-        $message = str_replace("script", "'script'" , $message);
+        $message = str_replace(['<', '>'], ["&lt;", "&gt;"] , $message);
         $message_data = json_decode($message, true);
         if(!$message_data)
         {
@@ -49,7 +53,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut' );
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' );
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -63,10 +67,22 @@ class Events
         //传来的type 是不是在数组里面
         if (in_array($type, $arrType)) {
             switch ( $type ) {
+                case 'allOnlineNum':
+                   //获取所有的 client_id  在线人的信息
+                    $allClients_list = Gateway::getALLClientInfo();
+                    if ($selfInfo['uid'] != $adminUid ) {
+                        return;
+                    }
+                    $message_data = $allClients_list;
+                    break;
                 case 'mes_chat':
                     $session_id = $selfInfo['uid'] < $message_data['to_uid'] ? $selfInfo['uid']."-".$message_data['to_uid'] : $message_data['to_uid']."-".$selfInfo['uid'];
                     $message_data['session_id'] = $session_id;
                     break;
+                 case 'sys_mes_close':
+                 	$message_data['session_id'] = $selfInfo['room_id'].'sn';
+                 	$type = 'mes_close';
+                 	break;
                 case 'mes_notice_close':
                     $message_data['session_id'] = $message_data['to_uid'].'t';
                 break;
@@ -100,7 +116,6 @@ class Events
 
            } else {
                 Gateway::sendToClient($client_id, json_encode($resMessageData));
-
            }
 
         } else {
@@ -129,6 +144,7 @@ class Events
                         $_SESSION['uid'] = $uid;
                         $_SESSION['header_img_url'] = $message_data['header_img_url'];
                     }
+                    //判断是否已经登录
                     $logined = Gateway::getClientIdByUid($uid);
                     //绑定uid
                     Gateway::bindUid($client_id, $uid);
@@ -142,6 +158,7 @@ class Events
                     $new_clients_list = [];
                     $clients_list = [];
                     $clients_list = Gateway::getClientInfoByGroup($room_id);
+                    //还没有登录
                     if (empty( $logined )) {
                         $clients_list[$client_id]['uid'] = $uid;
                         $clients_list[$client_id]['header_img_url'] = $header_img_url;
@@ -154,16 +171,22 @@ class Events
                             $new_clients_list[$item['uid']]['header_img_url'] = $item['header_img_url'];
                         }
                     }
-                    //判断是否已登陆
+                    //判断还没有登陆
                     $new_message = array('type'=>'login', 'client_list'=>$clients_list, 'time'=>date('Y-m-d H:i:s'));
                     if (empty($logined)) {
                         //未登录
-                        //管理员在线发送login次数加一；
+                        //管理员在线发送自己的信息；
                         $adminOnline = Gateway::getClientIdByUid( $adminUid );
                         if (!empty($adminOnline)) {
-                            
-                            $adminlogin = ['type'=>'adminLoginNum'];
+                            $selfInfo = array(
+                                'room_id'=>$_SESSION['room_id'],
+                                'client_name'=>$_SESSION['client_name'],
+                                'uid'=>$_SESSION['uid'],
+                                'header_img_url'=>$_SESSION['header_img_url'],
+                                );
+                            $adminlogin = ['type'=>'adminLoginNum', 'client_num'=>$selfInfo ];
                             Gateway::sendToUid( $adminUid, json_encode($adminlogin));
+
                         }
                         // $new_clients_list[$uid]['client_name'] = htmlspecialchars($client_name);
                         // $new_clients_list[$uid]['header_img_url'] = $header_img_url;
@@ -182,27 +205,55 @@ class Events
                     }
                     Gateway::joinGroup($client_id, $room_id);   
                     return;
-                case 'allOnlineNum':
-                echo 22244;
-                    $uid = $_SESSION['uid'];
-                    // echo $adminUid;
-                    if ( $uid == $adminUid) {
-                        //防止别人冒充
-                        $arrALlonlineMan = [];
-                        $allClients_list = Gateway::getALLClientInfo();
-                        foreach ($allClients_list as $key => $value) {
-                            if ( in_array( $value['uid'], $arrALlonlineMan ) ) {
-                                unset( $allClients_list[$key] );
-                            } else {
-                                $arrALlonlineMan[] = $value['uid'];
-                            }
-                        }
-                        $allOnlineNum = count($allClients_list);
-                        $new_allOnlineNum['type'] = 'allOnlineNum';
-                        $new_allOnlineNum['allOnlineNum'] = $allOnlineNum;
-                        Gateway::sendToCurrentClient(json_encode($new_allOnlineNum));
-                    }
+                //admin 登录 
+                case 'adminLogin':
+                    $res = ['type'=> 'adminLogin'];
+                    Gateway::sendToClient($client_id, json_encode($res));
                     return;
+                // case 'allOnlineNum':
+                //     $uid = $selfInfo['uid'];
+                //     $db1 = Db::instance('oms');
+                //     // echo $adminUid;
+                //     //防止别人冒充
+                //     if ( $uid == $adminUid) {
+
+                //         $arrALlonlineInfo = []; //储存所有在线人信息 ps: 没有重复
+                        
+                //         $arrALlonlineMan = [];// 保留 所有的 uid  没有重复
+
+                //         $arrAllRoomId = [];  //储存所有的 房间信息
+
+                //         //获取所有的 client_id  在线人的信息
+                //         $allClients_list = Gateway::getALLClientInfo();
+                //         if (!empty($allClients_list)) {
+                //             foreach ($allClients_list as $key => $value) {
+                //                 if ( in_array( $value['uid'], $arrALlonlineMan ) ) {
+                //                     unset( $allClients_list[$key] );
+                //                 } else {
+                //                     $arrALlonlineMan[] = $value['uid'];
+                //                     $arrALlonlineInfo[$value['uid']][] = $value['room_id'];
+                //                     $arrALlonlineInfo[$value['uid']][] = $value['client_name'];
+                //                     $arrAllRoomId[] = $value['room_id'];
+                //                 }
+                //             }
+                //             $new_allOnlineNum['type'] = 'allOnlineNum'; // 发送客户端的类型
+                //             //所有的在线人的信息
+                //             $new_allOnlineNum['arrALlonlineInfo'] = $arrALlonlineInfo; 
+                //             //房间id去重
+                //             $uniqueRoomId = [];
+                //             foreach ($arrAllRoomId as $key => $value) {
+                //                 if ( isset( $uniqueRoomId[$value] ) ) {
+                //                      $uniqueRoomId[$value] ++;
+                //                 } else {
+                //                     $uniqueRoomId[$value] = 1;
+                //                 }
+                //             }
+                //             $new_allOnlineNum['arrAllRoomId'] = $uniqueRoomId;   //所有的 房间信息
+                //             Gateway::sendToCurrentClient(json_encode($new_allOnlineNum));
+                //         }
+                        
+                //     }
+                //     return;
                 case 'getChainEmployees':
                     $Uid = $_SESSION['uid'];
                     // $oms_id = $_SESSION['oms_id'];
@@ -371,19 +422,24 @@ class Events
         $adminUid = 554;
        if(isset($_SESSION['room_id']))
        {
-           $room_id = $_SESSION['room_id'];
-           $uid = $_SESSION['uid'];
-           $logined = Gateway::getClientIdByUid($uid);
-           //uid 还在线
-           if (empty($logined)) {
-
+            $room_id = $_SESSION['room_id'];
+            $uid = $_SESSION['uid'];
+            $logined = Gateway::getClientIdByUid($uid);
+            //判断是否$uid 还在线
+            // $isOnline = Gateway::isUidOnline($uid);
+            //uid 不在线
+            if (empty($logined)) {
                 $new_message = array('type'=>'logout', 'from_uid_id'=>$uid, 'from_client_name'=>$_SESSION['client_name'], 'time'=>date('Y-m-d H:i:s'));
                 Gateway::sendToGroup($room_id, json_encode($new_message)); 
-                //发给管理员,要看所有的在线人数
-                $new_logout = ['type'=> 'loggoutTwo'];
-                Gateway::sendToUid( $adminUid, json_encode($new_logout) );
+                
+                $isAdminOnline =  Gateway::getClientIdByUid($adminUid);
+                if ( empty($logined) ) {
+                    //发给管理员,要看所有的在线人数
+                    $new_logout = ['type'=> 'loggoutTwo', 'from_uid'=>$uid ];
+                    Gateway::sendToUid( $adminUid, json_encode($new_logout) );
+                }
 
-           }
+            }
 
            
        }

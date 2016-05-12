@@ -4,7 +4,7 @@ require_once('lib/mesages.class.php');
 $chat_uid = $_SESSION['staffid'];
 $oms_id = $_SESSION['oms_id'];
 $chat_uid = 554;
-$oms_id = 3;
+$oms_id = 1;
 $pageload = 10;//消息显示的条数
 $session_no = 0;//会话id
 $mesNum = 0;
@@ -85,7 +85,57 @@ $arrGroup = $mes->groupChatList();
     nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): json_encode([]);?>;
 
   </script>
+  <style>
+	.chatDetale{    display: inline-block;background: url('/chat/images/chat_details.png') center no-repeat;width: 16px;height: 16px;padding: 10px;cursor: pointer;}
+	.AllChatName{display: inline-block;background: url('/chat/images/chat_details1.png') center no-repeat;width: 20px;height: 20px;padding: 10px;cursor: pointer;}
+	.panel-default>.panel-heading{background-color: #fff;}
+	.row{text-align: center;}
+	.chat-drop{ background: url('images/chat_drop.png') 20px 0px no-repeat;}
+  </style>
 <body>
-	<h3>实时在线人数：<span id="allOnlineNum">0</span>人</h3><br/>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">公司在线人数详情</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+        	<div class="col-xs-4 col-md-4">序号</div>
+        	<div class="col-xs-4 col-md-4">公司名字</div>
+        	<div class="col-xs-4 col-md-4">在线人数</div>
+        </div>
+        <div class="panel-group chatAllRoom" id="accordion" role="tablist" aria-multiselectable="true">
+        <!-- 在线人数详情  js 添加 -->
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<h3>实时在线人数：<span id="allOnlineNum">0</span>人<i class="chatDetale"   title="查看详情"></i></h3><br/>
+
 </body>
+<script>
+$('.chatDetale').click(function () {
+	ws.send('{"type": "allOnlineNum"}');
+	
+})
+//查看在线人的详情
+$(document).on('click', '.chat-drop-down' , function () {
+	var room_id = $(this).attr('chat-roomId');
+	var aria_controls = $(this).attr('aria-controls');
+	var obj = $('#'+aria_controls+" ul");
+	obj.html('');
+	for (var i = 0; i <= allclient_list.roomInfo[room_id].length - 1 ; i++ ) {
+		obj.append('<li>'+allclient_list.roomInfo[room_id][i]+'</li>');
+	};
+	
+})
+</script>
 </html>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0" />
 <title>事件</title>
-<script src='js/jquery.min.js'></script>
+<script src='js/jquery.js'></script>
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
 <style type="text/css">
 *{font-family: '微软雅黑' !important;}
@@ -25,7 +25,7 @@ html,body {
 	/*position: relative;*/
 	width: 100%;
 }
-#name_box{ position:absolute;background:#fff;display:none;width: 100%;margin-top:200px;z-index: 111;}
+#name_box{ position:fixed;background:#fff;display:none;width: 100%;margin-top:0px;z-index: 99999;}
 h2{margin:0;}
 .box_con {
 	/*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6699FF', endColorstr='#6699FF');  /* IE */*/
@@ -136,14 +136,14 @@ h2{margin:0;}
 <body>
 <div id="name_box">
         <?php
-        	include('fenlei2/OS.php');
+        	include('../fenlei2/OS.php');
         ?>
-        <div style="clear:both;width:100%;margin:50px 10px 0px 30%"><button style="width:60px;height:50px;font-size:18px" id="b_no" >取&nbsp;消</button><button style="margin-left:50px;width:60px;height:50px;font-size:18px" id="b_is">确&nbsp;定</button></div>
+        <div style="width:100%;"><button style="width:157px;height:30px;font-size:18px" id="b_no" >取&nbsp;消</button><button style="margin-top:17px;width:157px;height:30px;font-size:18px" id="b_is">确&nbsp;定</button></div>
         <script type="text/javascript">
           // console.log(sidList)
           //button确定
-          // var = 'to_uid';
           $('#b_is').click(function (){
+
             var jsonText = JSON.stringify(sidList);
             $('.group_pep').html('')
             to_uid = sidList.join(',');
@@ -199,7 +199,8 @@ h2{margin:0;}
 					</div>
 					<div class="form-group form-actions">
 						<div style="text-align: center;" class="">
-							<button type="submit" class="btn btn-sm btn-info"> 提交</button>
+							<a href="javascript:void(0)"  onclick="window.open('about:blank','_self'); window.close();"  class="btn btn-sm btn-info"> 取消</a>
+                            <button type="submit" class="btn btn-sm btn-info"> 提交</button>
 						</div>
 					</div>
 				</form>
@@ -213,6 +214,12 @@ h2{margin:0;}
 //选择人
 $('#s_man').click(function(){
   $('#name_box').show();
+})
+$('.btn').on('click',function(){
+	if ($("input[name='start']").val()=='') {
+		alert('起始时间不能为空!')
+		return false;
+	};
 })
 </script>
 </body>

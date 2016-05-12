@@ -336,5 +336,20 @@ class chatMessageModel
         $arrGroupMan['type'] = 'showGroupMan';
         return $arrGroupMan;
 	}
+	//根据roomid 获取 所有公司的名字
+	public function getCompanyName( $rooms ){
+		if (is_array( $rooms )) {
+			$strRoom = implode(',', $rooms);
+			$res = $this->db->query('SELECT `oms_id`, `org_name` FROM `oms_general_admin_user` WHERE oms_id in ('.$strRoom.')');
+			$comInfo = [];
+			if (!empty( $res )) {
+				foreach ($res as $key => $value) {
+					$comInfo[$value['oms_id']] = $value['org_name'];
+				}
+			}
+			return $comInfo;
+
+		}
+	}
 }
  ?>
