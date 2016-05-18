@@ -132,7 +132,11 @@ class chatMessageController
 	{
 		return $this->model->messageNoticeCloseModel();
 	}
-	
+	//系统消息的通知 
+	public function sysNotice() 
+	{
+		return $this->model->sysNotice();
+	}
 	//增加群聊
 	public function addGroupMan () 
 	{

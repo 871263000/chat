@@ -1,7 +1,7 @@
 if (typeof console == "undefined") {    this.console = { log: function (msg) {  } };}
     WEB_SOCKET_SWF_LOCATION = "/swf/WebSocketMain.swf";
     WEB_SOCKET_DEBUG = true;
-    var ws, allclient_list = client_list={};
+    var ws, allclient_list={}, client_list={};
     var message_type = '消息';
     // 连接服务端
     function connect() {
@@ -93,7 +93,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
                 break;
             //所有的在线人数
             case 'allOnlineNum':
-              allclient_list = data;
+                allclient_list = data;
               // console.log(data);
               var allOnlineNum = 0;
               for( var i in  data['arrALlonlineInfo'] ) {

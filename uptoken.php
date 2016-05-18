@@ -15,7 +15,7 @@ $auth = new Auth($accessKey, $secretKey);
 
 $policy = array(
     // 'returnUrl' => 'http://127.0.0.1/chat/qiniudocs-master/demo/simpleuploader/fileinfo.php',
-    'returnBody' => '{"fname": $(fname)}',
+    'returnBody' => '{"fname": $(fname),"key": $(key)}',
 );
 $upToken = $auth->uploadToken($bucket, null, 3600, $policy);
 

@@ -131,7 +131,7 @@ if ( !empty($customer['oms_id']) ) {
 </head>
 
 <body>
-<div class="alert alert-success" role="alert">
+<div class="chat_alert alert alert-success" role="alert">
     <button class="close"  data-dismiss="alert" type="button" >&times;</button>
     <p class="alertMesCon">恭喜您操作成功！</p>
 </div>
@@ -570,14 +570,14 @@ chainTab.click(function () {
 
 var alertMes = function ( con ) {
 	$('.alertMesCon').text(con);
-	$('.alert').show(500);
+	$('.chat_alert').show(500);
 	setTimeout(function(){
-		$('.alert').hide(500);
+		$('.chat_alert').hide(500);
 	},2000);
 }
 
 $('.close').click(function () {
-	$('.alert').hide(500);
+	$('.chat_alert').hide(500);
 });
 
 /********************************/

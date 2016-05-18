@@ -15,7 +15,7 @@ $_POST = [
 'mesages_types' =>'sysNotice', //固定的 不要改
 'message_content' => '收钱了',  // 消息的 内容  你要对他说的 东西
 'room_id'=> $oms_id, //插入oms_id
-'session_no' => $oms_id.'sn',  // 插入 oms_id 拼接 sn
+'session_no' => '4sn',  // 插入 oms_id 拼接 sn
 'dialog'=> 0, //固定的 不要改
 'oms_id'=> $oms_id, //  插入oms_id
 ];
@@ -35,5 +35,5 @@ unset($_POST);
 // ];
 
 
-$db->query('INSERT `oms_chat_message_ist`( `session_no`, `pid`, `mes_id`, `oms_id`) values("'.$oms_id.'sn", 4, '.$insertid.', '.$oms_id.')'); // 这条不要 用 create()  方法 就这样用
+$db->query('INSERT `oms_chat_message_ist`( `session_no`, `pid`, `mes_id`, `oms_id`) values("4sn", 4, '.$insertid.', '.$oms_id.')'); // 这条不要 用 create()  方法 就这样用
  ?>

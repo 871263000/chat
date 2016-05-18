@@ -54,6 +54,9 @@ class chatMessageModel
 	public function selectGroupChat () 
 	{
 		$yanzheng = $this->db->select('staffid')->from('oms_groups_people')->where('pid= :pid')->bindValues(array('pid'=>$this->messageData['session_id']))->column();
+		if (!is_array($yanzheng)) {
+			return array('type'=>'mes_chat');
+		}
         if (!in_array($this->selfInfo['uid'], $yanzheng) ) {
         	return array('type'=>'mes_chat');
         }
@@ -350,6 +353,18 @@ class chatMessageModel
 			return $comInfo;
 
 		}
+	}
+	//系统通知
+	public function sysNotice(){
+		$uid = $this->selfInfo['uid'];
+		$session_id = $uid.'sn';
+		$res = [];
+		//查询结果
+		if (!empty($uid)) {
+			$res = $this->db->select('id,sender_name,message_content')->from('oms_string_message')->where('session_no = :session_no')->orderByASC(array('id'), false)->bindValues(array('session_no'=> $session_id))->query();
+		}
+		$res['type'] = 'sysNotice';
+		return $res;
 	}
 }
  ?>

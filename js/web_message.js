@@ -106,6 +106,9 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
                 $('.chat_notice_list_box').append('<div class="chat_notice_list"><div class="chat_notice_img"><img src="'+data[i].pid_header_url+'" alt=""></div><div class="chat_notice_con"><span>'+data[i].pid_name+'【请求对话】</span><span>公司：'+data[i].additional_Information+'</span></div><div data-parm = "agree" sender-id = "'+data[i].pid+'" class="chat_notice_agree chat_notice_sel">同意</div><div data-parm = "unagree" class="chat_notice_unagree chat_notice_sel" sender-id = "'+data[i].pid+'">不同意</div></div>');
               }
               break;
+            case 'sysNotice':
+              sysNotice(data);
+              break;
             case 'logout':
                 delete client_list[data['from_uid_id']];
                 flush_onlineman_list();
@@ -173,13 +176,22 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       switch(mes_types){
         case 'text':
           input = document.getElementById("mes_textarea");
-          inputValue = inputSave.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
-            innerHTML = input.innerHTML;
-          inputcur = innerHTML.replace(/[\r\n]/g,"<br/>");
+          inputValue = input.innerHTML;
+          inputValue = inputValue.replace(/<img[(\s.*)]width="24px"[(\s.*)]class=\"cli_em\"[\s(.*)]em_name=\"/ig, '{|').replace(/\"[\s(.*)]src=\"(.*?)\"[>?]/ig, '|}').replace(/<br>/g, '&br&');
+          // inputValue = inputSave.replace(/[\\]/g,"%5C").replace(/[\r\n]/g,"%6b").replace(/["]/g,"'");
+          //   innerHTML = input.innerHTML;
+          // inputcur = innerHTML.replace(/[\r\n]/g,"<br/>");
+          inputcur =input.innerHTML;
         break;
         case 'image':
           inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
           inputValue = $('.sending-img-box .send-img').attr('src');
+          $('.img-box').hide();
+        break;
+        case 'images':
+          var ImgSrc = document.getElementById('key').value;
+          inputcur = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+ImgSrc+"' class='send-img'>";
+          inputValue = ImgSrc;
           $('.img-box').hide();
         break;
         case 'file':
@@ -205,6 +217,21 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       $('.emoticons').hide();
       document.getElementById("mes_textarea").focus();
     }
+    //显示系统消息
+    function sysNotice(data){
+      $('.chat_message_notice_con').remove();
+      $('.chat_message_notice').show(500);
+      var a = 0;
+        $.each(data, function (i, o){
+          if (typeof o == 'object' ) {
+              $('.chat_message_notice').append('<div class="chat_message_notice_con">'+o.sender_name+o.message_content+'</div>');
+              a = 1;
+          };
+        })
+        if ( a == 0 ) {
+          $('.chat_message_notice').append('<div class="chat_message_notice_con">没有系统通知！</div>');
+        };
+    }
     //显示群聊人
     function showGroupMan(data){
       var addClass = ''
@@ -224,6 +251,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       var onlineman_ul = $(".online_man ul.list-group");
       var online_ren = 0;
       onlineman_ul.empty();
+      onlineman_ul.append('<li class="chat_system_notice" data-placement="right" group-name=""><span class="header-img"><img src="/chat/images/chatNotice.png" alt=""></span>系统通知</li>');
       for(var p in client_list){
           online_ren ++;
           onlineman_ul.append('<li mes_id="'+p+'" data-placement="left" class="staff-info chat_people db_chat_people" group-name="'+client_list[p].client_name+'"><span class="header-img"><img src="'+client_list[p].header_img_url+'" alt="'+client_list[p].client_name+'"></span>'+client_list[p].client_name+'</li>');
@@ -249,11 +277,15 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
           case 'image':
             content1 = '【图片】';
           break;
+          case 'images':
+            content1 = '【图片】';
+            content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+content+"' class='send-img'>";
+          break;
           case 'text':
           content = content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
           content = content.replace(/\|\}/g, '.gif">');
-            content1 = content.replace(/%5C/g,"\\").replace(/%6b/g," ");
-            content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>");
+            content1 = content.replace(/%5C/g,"\\").replace(/\&b\r&/g," ");
+            content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br>");
           break;
           case 'file':
             content1 = '【文 件 】';
@@ -398,7 +430,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             case 'text':
               content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
               content = content.replace(/\|\}/g, '.gif">');
-              content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
+              content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br/>")
                 break;
             case 'file':
               var fileArray = new Array();
@@ -408,6 +440,9 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             case 'image':
                 content = data[i].message_content;
                 break;
+            case 'images':
+              content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
+            break;
             case 'voice':
             var voiceArray = new Array();
             voiceArray = data[i].message_content.split('|');
@@ -458,7 +493,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             case 'text':
               content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
               content = content.replace(/\|\}/g, '.gif">');
-              content = content.replace(/%5C/g,"\\").replace(/%6b/g,"<br/>")
+              content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br/>");
                 break;
             case 'file':
               var fileArray = new Array();

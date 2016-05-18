@@ -40,15 +40,14 @@ h2{margin-top: 0;}
 /*.man_tittle{position: absolute;top: 0;z-index: 11111;}*/.mes_dclose{cursor: pointer;display: none;position: absolute;top: 0;right: 0;color: #fff;font-size: 38px;padding: 0 10px 0 0;}
 .panel-title{display: inline-block;}
 .add-groupMan{display: none;cursor: pointer;position: absolute;left: 10px;top: 15px;background: url(../images/pulsGroupman.png) no-repeat;width: 32px;height: 32px;}
-.alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
+.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
 .panel-body ul{max-height: 300px;overflow: auto;}
 .delgroupman{display: none;color: #fff;position: absolute;width: 40px;height: 40px;cursor: pointer;text-align: center;right: 0;background-color: #ed145b;}
 .group-people{position: relative;}
 .list-group .header-img{margin-left: 5px;padding: 2px 0;border-radius: 5px;margin-right: 5px;width: 40px;height: 40px;display: inline-block;overflow: hidden;float: left;}
 .he_ov .header-img{border-radius: 60px;display: inline-block;height: 60px;width: 60px;overflow: hidden;}
 .header-img img{width: 60px;}
-.session_no img{border-radius: 5px;margin-right: 5px;width: 40px;}
-.chat_people img{border-radius: 5px;margin-right: 5px;width: 40px;}
+.session_no img, .chat_people img, .chat_system_notice img{border-radius: 5px;margin-right: 5px;width: 40px;}
 .online_man ul li, .group_pep li{line-height: 40px;text-align: left;list-style: none;border-bottom: 1px solid #dedede;height: 47px;padding: 2px 0;cursor: pointer;}
 .com-close, .com-close{font-size: 32px;color: #fff;padding-right: 10px;position: absolute;right: 0;cursor: pointer;}
 .plus_menu{border-radius: 5px;height: 50px;background-color: #fff;}
@@ -153,8 +152,9 @@ i.voiceOn{ display: inline-block; background: url('/chat/images/voiceOff.png') c
 i.deskOff{display: inline-block; background: url('/chat/images/deskOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 
-.chat_message_notice{ width: 350px; height: 150px; position: absolute; top: 50% ; left: 50%; margin-top: -200px; margin-left: -175px;background: #fff;z-index: 999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;  }
-.chat_close{ position: absolute; top: 0 ; right: 0; margin: 0 10px; cursor: pointer; }
+.chat_message_notice{ text-align: center; width: 350px;  position: absolute; top: 100px; left: 50%;  margin-left: -186px;background: #fff;z-index: 999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;z-index: 111;  max-height: 300px;overflow: auto;}
+.chat_message_notice_con{ margin: 10px 0;    height: 50px;padding: 10px;border: 1px solid #ccc;box-shadow: 0 0 3px #ccc;}
+.chat_close{    position: absolute;top: 0;right: 0;margin: 0px 5px;cursor: pointer;width: 20px;height: 20px;line-height: 20px;font-size: 20px;}
 @media (min-width: 600px){
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}
@@ -214,6 +214,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	/*********************   end  **************************/
 	.pc_mes_input_box{display: none;}
 .chat_notice_container{padding: 10px;overflow: auto !important;width: 100%;position: absolute;top: 0;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
+.chat_message_notice{width: 100%;left: 0;margin-left: 0;top: 150px;}
 .online_man{overflow: auto;}
 .mes_dclose{display: block;}
 .mes_title{cursor: pointer;}
@@ -233,7 +234,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .group-content{display: none;}
 .recent-contact{font-size: 16px;}
 .add-groupMan{display: none;cursor: pointer;position: absolute;left: 10px;top: 15px;background: url(../images/pulsGroupman.png) no-repeat;width: 32px;height: 32px;}
-.alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
+.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
 .com-close, .com-close{font-size: 32px;color: #fff;padding-right: 10px;position: absolute;right: 0;cursor: pointer;}
 .send-img-box{ z-index: 9999999; position: fixed;width: 100%;height: 100%;top: 0;left: 0;background-color: rgba(0,0,0, 0.5);display: none;text-align: center;vertical-align:middle;}
 .send-img-box img{position: absolute;top: 50%;left: 50%;max-width: 100%;max-height: 100%;}

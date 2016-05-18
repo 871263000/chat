@@ -9,7 +9,7 @@
  * @author walkor<walkor@workerman.net>
  * @copyright walkor<walkor@workerman.net>
  * @link http://www.workerman.net/
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License`
  */
 
 /**
@@ -53,7 +53,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' );
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -80,7 +80,7 @@ class Events
                     $message_data['session_id'] = $session_id;
                     break;
                  case 'sys_mes_close':
-                 	$message_data['session_id'] = $selfInfo['room_id'].'sn';
+                 	$message_data['session_id'] = $selfInfo['uid'].'sn';
                  	$type = 'mes_close';
                  	break;
                 case 'mes_notice_close':
@@ -124,6 +124,7 @@ class Events
                 // 客户端登录 message格式: {type:login, name:xx, room_id:1} ，添加到客户端，广播给所有客户端xx进入聊天室
                 case 'login':
                     //是否已登录
+                   
                     $exist = (bool)true;//未登录
                     //client_id 和 uid 绑定
                     if (isset($_SESSION['uid'])) {
@@ -144,15 +145,16 @@ class Events
                         $_SESSION['uid'] = $uid;
                         $_SESSION['header_img_url'] = $message_data['header_img_url'];
                     }
+                     // 判断是否有房间号
+                	if(!isset($room_id))
+                    {
+                        throw new \Exception("\$message_data['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']} \$message:$message");
+                    }
                     //判断是否已经登录
                     $logined = Gateway::getClientIdByUid($uid);
                     //绑定uid
                     Gateway::bindUid($client_id, $uid);
-                    // 判断是否有房间号
-                    if(!isset($room_id))
-                    {
-                        throw new \Exception("\$message_data['room_id'] not set. client_ip:{$_SERVER['REMOTE_ADDR']} \$message:$message");
-                    }
+                    
                     // 获取房间内所有用户列表 
                     
                     $new_clients_list = [];
@@ -188,8 +190,6 @@ class Events
                             Gateway::sendToUid( $adminUid, json_encode($adminlogin));
 
                         }
-                        // $new_clients_list[$uid]['client_name'] = htmlspecialchars($client_name);
-                        // $new_clients_list[$uid]['header_img_url'] = $header_img_url;
                         $new_message['client_list'] = $new_clients_list;
                         Gateway::sendToGroup($room_id, json_encode($new_message));
                         // 给当前用户发送用户列表 
@@ -207,53 +207,10 @@ class Events
                     return;
                 //admin 登录 
                 case 'adminLogin':
+
                     $res = ['type'=> 'adminLogin'];
                     Gateway::sendToClient($client_id, json_encode($res));
                     return;
-                // case 'allOnlineNum':
-                //     $uid = $selfInfo['uid'];
-                //     $db1 = Db::instance('oms');
-                //     // echo $adminUid;
-                //     //防止别人冒充
-                //     if ( $uid == $adminUid) {
-
-                //         $arrALlonlineInfo = []; //储存所有在线人信息 ps: 没有重复
-                        
-                //         $arrALlonlineMan = [];// 保留 所有的 uid  没有重复
-
-                //         $arrAllRoomId = [];  //储存所有的 房间信息
-
-                //         //获取所有的 client_id  在线人的信息
-                //         $allClients_list = Gateway::getALLClientInfo();
-                //         if (!empty($allClients_list)) {
-                //             foreach ($allClients_list as $key => $value) {
-                //                 if ( in_array( $value['uid'], $arrALlonlineMan ) ) {
-                //                     unset( $allClients_list[$key] );
-                //                 } else {
-                //                     $arrALlonlineMan[] = $value['uid'];
-                //                     $arrALlonlineInfo[$value['uid']][] = $value['room_id'];
-                //                     $arrALlonlineInfo[$value['uid']][] = $value['client_name'];
-                //                     $arrAllRoomId[] = $value['room_id'];
-                //                 }
-                //             }
-                //             $new_allOnlineNum['type'] = 'allOnlineNum'; // 发送客户端的类型
-                //             //所有的在线人的信息
-                //             $new_allOnlineNum['arrALlonlineInfo'] = $arrALlonlineInfo; 
-                //             //房间id去重
-                //             $uniqueRoomId = [];
-                //             foreach ($arrAllRoomId as $key => $value) {
-                //                 if ( isset( $uniqueRoomId[$value] ) ) {
-                //                      $uniqueRoomId[$value] ++;
-                //                 } else {
-                //                     $uniqueRoomId[$value] = 1;
-                //                 }
-                //             }
-                //             $new_allOnlineNum['arrAllRoomId'] = $uniqueRoomId;   //所有的 房间信息
-                //             Gateway::sendToCurrentClient(json_encode($new_allOnlineNum));
-                //         }
-                        
-                //     }
-                //     return;
                 case 'getChainEmployees':
                     $Uid = $_SESSION['uid'];
                     // $oms_id = $_SESSION['oms_id'];
