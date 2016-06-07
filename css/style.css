@@ -40,9 +40,9 @@ h2{margin-top: 0;}
 /*.man_tittle{position: absolute;top: 0;z-index: 11111;}*/.mes_dclose{cursor: pointer;display: none;position: absolute;top: 0;right: 0;color: #fff;font-size: 38px;padding: 0 10px 0 0;}
 .panel-title{display: inline-block;}
 .add-groupMan{display: none;cursor: pointer;position: absolute;left: 10px;top: 15px;background: url(../images/pulsGroupman.png) no-repeat;width: 32px;height: 32px;}
-.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
+.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;height: 30px;line-height: 30px; text-align: center;}
 .panel-body ul{max-height: 300px;overflow: auto;}
-.delgroupman{display: none;color: #fff;position: absolute;width: 40px;height: 40px;cursor: pointer;text-align: center;right: 0;background-color: #ed145b;}
+.delgroupman{display: none;color: #fff;position: absolute;width: 40px;height: 40px;cursor: pointer;text-align: center;right: 0;background-color: #ed145b; top: 0;}
 .group-people{position: relative;}
 .list-group .header-img{margin-left: 5px;padding: 2px 0;border-radius: 5px;margin-right: 5px;width: 40px;height: 40px;display: inline-block;overflow: hidden;float: left;}
 .he_ov .header-img{border-radius: 60px;display: inline-block;height: 60px;width: 60px;overflow: hidden;}
@@ -152,9 +152,19 @@ i.voiceOn{ display: inline-block; background: url('/chat/images/voiceOff.png') c
 i.deskOff{display: inline-block; background: url('/chat/images/deskOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 
-.chat_message_notice{ text-align: center; width: 350px;  position: absolute; top: 100px; left: 50%;  margin-left: -186px;background: #fff;z-index: 999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;z-index: 111;  max-height: 300px;overflow: auto;}
+.chat_message_notice{ text-align: center; width: 350px;  position: fixed; top: 100px; left: 50%;  margin-left: -186px;background: #fff;z-index: 999999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;z-index: 111;  max-height: 300px;overflow: auto;}
 .chat_message_notice_con{ margin: 10px 0;    height: 50px;padding: 10px;border: 1px solid #ccc;box-shadow: 0 0 3px #ccc;}
 .chat_close{    position: absolute;top: 0;right: 0;margin: 0px 5px;cursor: pointer;width: 20px;height: 20px;line-height: 20px;font-size: 20px;}
+/***********  表情的滑过  ***********/
+
+.cli_em:hover{ border:1px solid #000;  }
+
+/******  文件分享 **********/
+
+.chat-share{ width: 60px; height: 24px; display: inline-block; background: url('/chat/images/chat_share.png') center no-repeat; padding: 0 10px; cursor: pointer; }
+
+
+/***********  end  ***********/
 @media (min-width: 600px){
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}
@@ -199,7 +209,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .con-tab-content{display: block;}
 .group-content{display: none;}
 .recent-contact{font-size: 16px;}
-.send-img-box{z-index: 9999999;position: absolute;width: 800px;height: 100%;top: 0;left: 50%;margin-left: -400px;background-color: rgba(0,0,0, 0.5);display: none;text-align: center;vertical-align:middle;}
+.send-img-box{z-index: 9999999;position: absolute;width: 800px;height: 100%;top: 0;left: 50%;margin-left: -400px;background-color: rgba(0,0,0, 1);display: none;text-align: center;vertical-align:middle;}
 .send-img-box img{position: absolute;top: 50%;left: 50%;max-width: 800px;max-height: 100%;}
 .he_ov .send-img{max-width: 200px;}
 .img-box{display: none;width: 500px;min-height: 100px;position: absolute;top: 100px;left: 50%;margin-left: -250px;background-color: #fff;box-shadow: 0 5px 15px rgba(0,0,0,.5);-webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);-moz-box-shadow: 0 5px 15px rgba(0,0,0,.5); z-index: 9999999;}
@@ -234,9 +244,9 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .group-content{display: none;}
 .recent-contact{font-size: 16px;}
 .add-groupMan{display: none;cursor: pointer;position: absolute;left: 10px;top: 15px;background: url(../images/pulsGroupman.png) no-repeat;width: 32px;height: 32px;}
-.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;}
+.chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;height: 30px;line-height: 30px; text-align: center;}
 .com-close, .com-close{font-size: 32px;color: #fff;padding-right: 10px;position: absolute;right: 0;cursor: pointer;}
-.send-img-box{ z-index: 9999999; position: fixed;width: 100%;height: 100%;top: 0;left: 0;background-color: rgba(0,0,0, 0.5);display: none;text-align: center;vertical-align:middle;}
+.send-img-box{ z-index: 9999999; position: fixed;width: 100%;height: 100%;top: 0;left: 0;background-color: rgba(0,0,0, 1);display: none;text-align: center;vertical-align:middle;}
 .send-img-box img{position: absolute;top: 50%;left: 50%;max-width: 100%;max-height: 100%;}
 .he_ov .send-img{max-width: 150px;}
 .img-box{display: none;width: 500px;min-height: 100px;position: absolute;top: 100px;left: 50%;margin-left: -250px;background-color: #fff;box-shadow: 0 5px 15px rgba(0,0,0,.5);-webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);-moz-box-shadow: 0 5px 15px rgba(0,0,0,.5);}
@@ -266,13 +276,15 @@ Modules - reusable parts of our design
 --------------------------------*/.img-replace{/* replace text with an image*/display: inline-block;overflow: hidden;text-indent: 100%;color: transparent;white-space: nowrap;}
 /* --------------------------------
 Main components
---------------------------------*/.cd-popup-trigger{display: block;width: 170px;height: 50px;line-height: 50px;margin: 3em auto;text-align: center;color: #FFF;font-size: 14px;font-size: 0.875rem;font-weight: bold;text-transform: uppercase;border-radius: 50em;background: #35a785;box-shadow: 0 3px 0 rgba(0, 0, 0, 0.07);}
+--------------------------------*/
+.cd-popup-trigger{display: block;width: 170px;height: 50px;line-height: 50px;margin: 3em auto;text-align: center;color: #FFF;font-size: 14px;font-size: 0.875rem;font-weight: bold;text-transform: uppercase;border-radius: 50em;background: #35a785;box-shadow: 0 3px 0 rgba(0, 0, 0, 0.07);z-index: 99999999;}
 @media only screen and (min-width: 1170px){.cd-popup-trigger{margin: 6em auto;}}
 /* --------------------------------
 xpopup
---------------------------------*/.cd-popup{position: fixed;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(94, 110, 141, 0.9);opacity: 0;visibility: hidden;-webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;-moz-transition: opacity 0.3s 0s, visibility 0s 0.3s;transition: opacity 0.3s 0s, visibility 0s 0.3s;}
+--------------------------------*/
+.cd-popup{position: fixed;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(94, 110, 141, 0.9);opacity: 0;visibility: hidden;-webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;-moz-transition: opacity 0.3s 0s, visibility 0s 0.3s;transition: opacity 0.3s 0s, visibility 0s 0.3s;z-index: 999999}
 .cd-popup.is-visible{opacity: 1;visibility: visible;-webkit-transition: opacity 0.3s 0s, visibility 0s 0s;-moz-transition: opacity 0.3s 0s, visibility 0s 0s;transition: opacity 0.3s 0s, visibility 0s 0s;}
-.cd-popup-container{position: relative;width: 90%;max-width: 400px;margin: 4em auto;background: #FFF;border-radius: .25em .25em .4em .4em;text-align: center;box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);-webkit-transform: translateY(-40px);-moz-transform: translateY(-40px);-ms-transform: translateY(-40px);-o-transform: translateY(-40px);transform: translateY(-40px);/* Force Hardware Acceleration in WebKit*/-webkit-backface-visibility: hidden;-webkit-transition-property: -webkit-transform;-moz-transition-property: -moz-transform;transition-property: transform;-webkit-transition-duration: 0.3s;-moz-transition-duration: 0.3s;transition-duration: 0.3s;}
+.cd-popup-container{position: relative;width: 90%;max-width: 400px;margin: 4em auto;background: #FFF;border-radius: .25em .25em .4em .4em;text-align: center;box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);-webkit-transform: translateY(-40px);-moz-transform: translateY(-40px);-ms-transform: translateY(-40px);-o-transform: translateY(-40px);transform: translateY(-40px);/* Force Hardware Acceleration in WebKit*/-webkit-backface-visibility: hidden;-webkit-transition-property: -webkit-transform;-moz-transition-property: -moz-transform;transition-property: transform;-webkit-transition-duration: 0.3s;-moz-transition-duration: 0.3s;transition-duration: 0.3s; z-index: 99999999;}
 .cd-popup-container p{padding: 3em 1em;}
 .cd-popup-container .cd-buttons:after{content: "";display: table;clear: both;}
 .cd-popup-container .cd-buttons li{width: 20%;margin: 0 auto;}

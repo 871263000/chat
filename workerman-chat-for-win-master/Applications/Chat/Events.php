@@ -36,12 +36,9 @@ class Events
         // echo "client:{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} gateway:{$_SERVER['GATEWAY_ADDR']}:{$_SERVER['GATEWAY_PORT']}  client_id:$client_id session:".json_encode($_SESSION)." onMessage:".$message."\n";
 
         // 客户端传递的是json数据
+   		//管理员id
         $adminUid = 554;
-        // $pattern = "/[omsemoticons]/";
 
-        // $pattern = "/[^<img](.*)[>]$/";
-        // preg_replace($pattern, replacement, subject);
-        // return;
         $message = str_replace(['<', '>'], ["&lt;", "&gt;"] , $message);
         $message_data = json_decode($message, true);
         if(!$message_data)
@@ -70,7 +67,7 @@ class Events
                 case 'allOnlineNum':
                    //获取所有的 client_id  在线人的信息
                     $allClients_list = Gateway::getALLClientInfo();
-                    if ($selfInfo['uid'] != $adminUid ) {
+                    if ( $selfInfo['uid'] != $adminUid ) {
                         return;
                     }
                     $message_data = $allClients_list;

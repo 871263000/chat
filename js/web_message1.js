@@ -1,7 +1,7 @@
 if (typeof console == "undefined") {    this.console = { log: function (msg) {  } };}
     WEB_SOCKET_SWF_LOCATION = "/swf/WebSocketMain.swf";
     WEB_SOCKET_DEBUG = true;
-    var ws, allclient_list={}, client_list={};
+    var ws, allclient_list = client_list={};
     var message_type = '消息';
     // 连接服务端
     function connect() {
@@ -99,6 +99,8 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
               for( var i in  data['arrALlonlineInfo'] ) {
                 allOnlineNum ++;
               }
+               var hr_online_num = (allOnlineNum/$hr_total)*100;
+                $('.hr_percent').html(hr_online_num.toFixed(6)+'%');
               // var allOnlineNum = $('#allOnlineNum').html();
               $('#allOnlineNum').html(allOnlineNum);
               var num = 0;

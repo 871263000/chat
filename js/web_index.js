@@ -1,4 +1,60 @@
+// 当前的页面
+var webUrl = '';
+// 粘贴 插入
+function insertHtmlAtCaret(html) {
+    var sel, range;
+    if (window.getSelection) {
+        // IE9 and non-IE
+        sel = document.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            // Range.createContextualFragment() would be useful here but is
+            // non-standard and not supported in all browsers (IE9, for one)
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    } else if (document.selection && document.selection.type != "Control") {
+        // IE < 9
+        document.selection.createRange().pasteHTML(html);
+    }
+}
 
+// 消息通知 里的系统通知 点击
+$('.chat_customer_notice').on( 'click', function (){
+
+  var htmlCon = $(this).find('.chat_mes_content').html();
+  var mes_num = $(this).attr( 'chat_mes_num' );
+  chatCustomerNotice( mes_num );
+  $('.chat_message_notice .chat_message_notice_con').html('');
+  $('.chat_message_notice .chat_message_notice_con').html(htmlCon);
+  $('.chat_message_notice').show(500);
+
+})
+
+// 客户那里 消息关闭
+var chatCustomerNotice = function ( mes_num ) {
+
+  session_id = chat_uid+'sn';
+  ws.send('{"type":"sys_mes_close", "message_type":"message"}');
+  mesnum = mesnum - parseInt(mes_num);
+  $('.mes_radio').html(mesnum);
+  $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
+
+};
 //系统 通知消息
 
 $(document).on('click', '.chat_system_notice', function () {
@@ -171,6 +227,7 @@ $('.pc_mes_tool_img').click( function () {
 //pc 提交
 $('.chat_btn').click(function () {
   var inputValue = $('.pc_mes_input').html();
+  $('#mes_textarea').html('');
   $('#mes_textarea').html(inputValue);
   $("#submit").trigger("click");
   $('.pc_mes_input').html('');
@@ -257,7 +314,7 @@ var ajaxGetStaffInfo = function (staffid, direction, css){
     var directionChang = arrDirectionCg[direction];
     var margin ="margin-"+directionChang;
     $.ajax({
-      url:"getStaffTels.php",
+      url:"/getStaffTels.php",
       type:"post",
       data:"staffid="+staffid,
       success: function ( data ){
@@ -372,8 +429,8 @@ $(".mes_footer, .pc_mes_input").keydown(function(e){
     var e = e || event,
         keycode = e.which || e.keyCode;
     if(e.shiftKey && (e.keyCode==13)){
-        $('#mes_textarea').append('<br/>')
     } else  if (keycode==13) {
+        e.preventDefault();
         var inputValue = $('.pc_mes_input').html();
         $('#mes_textarea').html(inputValue);
         $('.pc_mes_input').html('');
@@ -471,7 +528,8 @@ function addempath(className) {
     }
 }
 //表情的点击事件
-$(document).on('click', ".emoticons .cli_em, .pc_emoji_box .cli_em", function (){
+$(document).on('click', ".emoticons .cli_em, .pc_emoji_box .cli_em", function ( event ){
+    event.stopPropagation();
     var em_name = $(this).attr('em_name');
     inputSave = inputSave + "{|"+em_name+"|}";
     var addThis = $(this).clone();
@@ -674,16 +732,16 @@ $(document).on('click', '.mes_close', function ( e ){
     mes_id = $(this).attr('mes_id');
     mes_NoChakan_close(mestype, mes_id, mes_num);
 });
-  //消息关闭
-  $('.close').click(function (){
-      $('.mes_abs').animate({
-      right: 0
-    },
-    {
-      queue: true,
-      duration: 500
-    })
+//消息关闭
+$('.close').click(function (){
+    $('.mes_abs').animate({
+    right: 0
+  },
+  {
+    queue: true,
+    duration: 500
   })
+})
 //粘贴图片
 $(function(){
     var imgReader = function( item ){
@@ -721,7 +779,7 @@ $(function(){
             }
           }
           if ( item && item.kind === 'string') {
-            $( '#pc_mes_input' ).append( clipboardData.getData('text/plain') );
+            insertHtmlAtCaret(clipboardData.getData('text/plain'));
             inputSave += clipboardData.getData('text/plain');
           };
           if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
@@ -911,28 +969,5 @@ $('#file_zdl').on('change', function (){
     } else {
         console && console.log("form input error");
     }
-    $("#file_zdl").val('');
     $(".plus_menu_box").hide();
 });
-
-
-//发送文件
-// $('#file_zdl').on('change', function (){
-//     var nowTime = new Date().getTime();
-//     if (!mesParam.mes_obj()) {
-//         $(this).val('');
-//         return false;
-//     };
-//     $key = $file.value.split(/(\\|\/)/g).pop();
-//     document.getElementById('filename').value = $key;
-//     $key ='file/'+chat_uid+'/'+to_uid+'/'+nowTime+'/'+$key;
-//     document.getElementById('key').value = $key;
-
-//     var token = $("#token").val();
-//     if ($("#file_zdl")[0].files.length > 0 && token != "") {
-//         Qiniu_upload($("#file_zdl")[0].files[0], token, $key);
-//     } else {
-//         console && console.log("form input error");
-//     }
-
-// });

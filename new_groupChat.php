@@ -136,7 +136,7 @@ h2{margin:0;}
 <body>
 <div id="name_box">
         <?php
-        	include('../fenlei2/OS.php');
+        	include('fenlei2/OS.php');
         ?>
         <div style="width:100%;"><button style="width:157px;height:30px;font-size:18px" id="b_no" >取&nbsp;消</button><button style="margin-top:17px;width:157px;height:30px;font-size:18px" id="b_is">确&nbsp;定</button></div>
         <script type="text/javascript">

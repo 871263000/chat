@@ -123,6 +123,7 @@ $arrGroup = $mes->groupChatList();
 </body>
 <script>
 $('.chatDetale').click(function () {
+  
 	ws.send('{"type": "allOnlineNum"}');
 	
 })

@@ -290,10 +290,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             content1 = '【文 件 】';
             var fileArray = new Array();
             fileArray = content.split('|');
-            if ( webUrl == 'chat_index' ) {
-              addShare = "<span title='分享给别人' data-placement = '"+content+"' onclick='chatShare(this)' class='chat-share'></span>";
-            };
-            content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'>"+addShare+"<a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+            content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
           break;
           case 'voice':
             var voiceArray = new Array();
@@ -413,10 +410,11 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       };
     }
 //  聊天消息显示
-var messageShow = function (data) {
+var messageShow = function (data, text) {
     var mes_time;
     var content;
     var content2 = "";
+    $(".he_ov").html('');
     for (var i in data) {
         var addVoiceClass = "";
         if (i == 'type') {
@@ -432,20 +430,14 @@ var messageShow = function (data) {
                 break;
             case 'file':
                 var fileArray = new Array();
-                var addShare = '';
                 fileArray = data[i].message_content.split('|');
-                if ( webUrl == 'chat_index' ) {
-
-                  addShare = "<span title='分享给别人' data-placement = '"+data[i].message_content+"' onclick='chatShare(this)' class='chat-share'></span>";
-                };
-                content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'>  "+addShare+"<a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+                content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
                 break;
             case 'image':
                 content = data[i].message_content;
                 break;
             case 'images':
-                content = "<img  src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
-                $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' ></li>");
+                content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
                 break;
             case 'voice':
                 var voiceArray = new Array();
@@ -471,31 +463,130 @@ var messageShow = function (data) {
     }
 }
 
-//选择人后的消息列表
-function mes_chat(data){
-    $(".he_ov").html('');
-    messageShow(data);
-    $(".he_ov").prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---查看更多---</span></div>");
-    // 回到底部
-    $(".he-ov-box").scrollTop($(".he_ov")[0].scrollHeight);
-    return false;
-}
-//加载消息
-function onlode(data){
-  if (data.save == 0) {
-    $(".he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
+    //选择人后的消息列表
+    function mes_chat(data){
+      // messageShow(data, '查看更多');
+      // $(".he_ov").prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---查看更多---</span></div>");
+      // // 回到底部
+      // $(".he-ov-box").scrollTop($(".he_ov")[0].scrollHeight);
+      // return false;
+      // var chatNum = data.length;
+      var mes_time;
+      var content;
+      var content2 = "";
+      $(".he_ov").html('');
+      for (var i in data) {
+        var addVoiceClass = "";
+        if (i == 'type') {
+            break ;
+        };
+        // console.log(data);
+        mes_time = data[i].create_time;
+        switch (data[i].mesages_types) {
+            case 'text':
+              content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+              content = content.replace(/\|\}/g, '.gif">');
+              content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br/>")
+                break;
+            case 'file':
+              var fileArray = new Array();
+              fileArray = data[i].message_content.split('|');
+              content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+                break;
+            case 'image':
+                content = data[i].message_content;
+                break;
+            case 'images':
+              content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
+            break;
+            case 'voice':
+            var voiceArray = new Array();
+            voiceArray = data[i].message_content.split('|');
+            if (data[i].sender_id == chat_uid) {
+              content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+voiceArray[0]+'"></div>';
+              content2 = '<span class="chat_duration_right">'+voiceArray[1]+'\"</span';
+            } else {
+              content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "'+voiceArray[0]+'"></div>';
+              content2 = '<span class="chat_duration_left">'+voiceArray[1]+'\"</span';
+            }
+            voiceArray = data[i].message_content.split('|');
+            addVoiceClass = "web_chat_voice";
+            break;
+            default:
+                break;
+        }
+        if (data[i].sender_id == chat_uid) {
+          $(".he_ov").prepend('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+mes_time+'</span>'+chat_name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri '+addVoiceClass+'">'+content+'</span> '+content2+' </div></div></li>');
+        } else {
+          $(".he_ov").prepend('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
+        }
+      }
+
+    }
+    //加载消息
+    function onlode(data){
+      var mes_time;
+      var content;
+      var content2 = "";
+      if (data.save == 0) {
+        $(".he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
+          $('.loader').hide();
+          $('.onload').remove();
+          $('.he-ov-box').unbind('scroll');
+        return;
+      };
+      $(".he_ov .onload").hide();
+      var mes_load = $('#mes_load').html();
+      $('#mes_load').html(parseInt(mes_load)+10);
+      for (var i in data) {
+        var addVoiceClass = "";
+        if (i == 'type') {
+            break ;
+        };
+        mes_time = data[i].create_time;
+        switch (data[i].mesages_types) {
+            case 'text':
+              content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+              content = content.replace(/\|\}/g, '.gif">');
+              content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br/>");
+                break;
+            case 'file':
+              var fileArray = new Array();
+              fileArray = data[i].message_content.split('|');
+              content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+                break;
+            case 'image':
+                content = data[i].message_content;
+                break;
+            case 'images':
+              content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
+              break;
+            case 'voice':
+            var voiceArray = new Array();
+            voiceArray = data[i].message_content.split('|');
+            if (data[i].sender_id == chat_uid) {
+              content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+voiceArray[0]+'"></div>';
+              content2 = '<span class="chat_duration_right">'+voiceArray[1]+'\"</span';
+            } else {
+              content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "'+voiceArray[0]+'"></div>';
+              content2 = '<span class="chat_duration_left">'+voiceArray[1]+'\"</span';
+            }
+              addVoiceClass = "web_chat_voice";
+              break;
+            default:
+                break;
+        }
+        
+        if (data[i].sender_id == chat_uid) {
+          $(".he_ov").prepend('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+mes_time+'</span>'+chat_name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri '+addVoiceClass+'">'+content+'</span>'+content2+' </div></div></li>');
+        } else {
+          $(".he_ov").prepend('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"> <img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
+        }
+      }
+      $(".he-ov-box").scrollTop($('.he_ov').height() - mesHeight);
       $('.loader').hide();
-      $('.onload').remove();
-      $('.he-ov-box').unbind('scroll');
-    return;
-  };
-  messageShow(data);
-  $('.loader').hide();
-  var mes_load = $('#mes_load').html();
-  $('#mes_load').html(parseInt(mes_load)+10);
-  $(".he-ov-box").scrollTop($('.he_ov').height() - mesHeight);
-  return false;
-}
+
+    }
 /*window消息提醒*/
 function showMsgNotification(title, msg, document_url){
   var Notification = window.Notification || window.mozNotification || window.webkitNotification;
