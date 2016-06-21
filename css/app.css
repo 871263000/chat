@@ -27,7 +27,7 @@ li{list-style: none}
 .pc_he-ov-box .Chat_le .name{font-size: 12px;padding:0px 10px; float: none !important;display: block; height: 30px;line-height: 30px;color: #000}
 .user{height: auto;overflow: hidden;width: 100%;}
 .mes_content .jian{border: 5px solid transparent; border-right-color: #70C259; border-top-color: #70C259;margin-top: 10px;}
-.content-font{background-color: #70C259;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
+.content-font{background-color: #70C259;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
 .Chat{background-color: rgba(255, 255, 255, 0.44);padding: 10px 0px;}
 .web_chat_voice{padding: 0px 5px 0 0  !important}
 /*滚动条*/
@@ -48,9 +48,9 @@ li{list-style: none}
 /*.user_ri{padding:10px;}*/
 .pc_he-ov-box .Chat_ri .name_ri{font-size: 12px;padding:0px 10px;display: block;float: none; height: 30px;line-height: 30px;text-align: right;color: #000}
 .head_ri img{border-radius: 50px;width: 60px;}
-.content_ri .arrow{ left: 100%; position: absolute; border: 5px solid transparent; border-left-color: #3472CC; border-top-color: #3472CC;margin-top: 10px;}
+.content_ri .arrow{     left: 100%;position: absolute;border: 5px solid transparent;border-left-color: #D48E65;border-top-color: #D48E65;margin-top: 10px;}
 .content_ri{margin-top: 10px;position: relative;}
-.content_font_ri{float: right; background-color: #3472CC;color: #fff;min-width: 40px; max-width: 400px;font-size: 14px;padding:5px;border-radius: 7px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
+.content_font_ri{float: right; background-color: #D48E65;color: #fff;min-width: 40px; max-width: 400px;font-size: 14px;padding:5px;border-radius: 7px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/}
 
 
 /*滚动条*/

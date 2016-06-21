@@ -70,7 +70,7 @@ class chatMessageController
 				$sendData = $this->noticeInsert( $insert_id );
 				$sendData['to_uid'] = $this->messageData['to_uid'];
 				return $sendData;
-			} else if ($this->messageData['message_type'] == 'groupMessage' ) {
+			} else if ( $this->messageData['message_type'] == 'groupMessage' ) {
 				//是否在群聊里 如果在返回 群信息
 				$getData = $this->isInGroup();
 				if ( $getData ) {
@@ -82,6 +82,17 @@ class chatMessageController
 					$sendData['group_name'] = $getData['group_name'];
                     $sendData['to_uid'] = $getData['to_uid_id'];
 					return $sendData;
+				}
+			} else if ( $this->messageData['message_type'] == 'adminMessage' ) {
+				$getAdmin = $this->model->isAdmin();
+				if ($getAdmin) {
+					//获得插入的id
+					$insert_id = $this->messageInsert();
+					//通知消息的插入 返回 一组发给客户端的数据
+					$sendData = $this->noticeInsert( $insert_id );
+					$sendData['group_name'] = '管理员群';
+                    $sendData['to_uid'] = $getAdmin;
+                    return $sendData;
 				}
 			}
 			return false;
@@ -96,9 +107,12 @@ class chatMessageController
 	public function mes_chat () 
 	{
 		return $this->model->selectManModel();
-		return false;
 	}
-
+	//管理员 聊天
+	public function chatAdmin() {
+		$res = $this->model->chatAdminModel();
+		return $res;
+	}
 	//选择群聊天
 	public function mes_groupChat () 
 	{
@@ -175,6 +189,7 @@ class chatMessageController
 		$this->model->updContactModel();
 		return array('type'=>'default');
 	}
+
 	//统计 所有在线人数的 详情信息
 	public function allOnlineNum() {
 
@@ -194,19 +209,21 @@ class chatMessageController
         $allClients_list = $this->messageData;
         if (!empty($allClients_list)) {
             foreach ($allClients_list as $key => $value) {
-                if ( isset( $arrALlonlineInfo[$value['uid']] ) ) {
-                    unset( $allClients_list[$key] );
-                } else {
-                    // $arrALlonlineMan[] = $value['uid'];
-                    $arrALlonlineInfo[$value['uid']] = $value['room_id'];
-                    if ( isset($roomInfo[$value['room_id']]) ) {
-                    	$uniqueRoomId[$value['room_id']] ++;
-                    } else {
-                    	$uniqueRoomId[$value['room_id']] = 1;
-                    }
-                    $roomInfo[$value['room_id']][] = $value['client_name'];
-                    // $arrAllRoomId[] = $value['room_id'];
-                }
+            	if (!empty( $value )) {
+	                if ( isset( $arrALlonlineInfo[$value['uid']] ) ) {
+	                    unset( $allClients_list[$key] );
+	                } else {
+	                    // $arrALlonlineMan[] = $value['uid'];
+	                    $arrALlonlineInfo[$value['uid']] = $value['room_id'];
+	                    if ( isset($roomInfo[$value['room_id']]) ) {
+	                    	$uniqueRoomId[$value['room_id']] ++;
+	                    } else {
+	                    	$uniqueRoomId[$value['room_id']] = 1;
+	                    }
+	                    $roomInfo[$value['room_id']][] = $value['client_name'];
+	                    // $arrAllRoomId[] = $value['room_id'];
+	                }
+            	}
             }
             $new_allOnlineNum['type'] = 'allOnlineNum'; // 发送客户端的类型
             //所有的在线人的信息

@@ -40,7 +40,7 @@ class chatMessageModel
 	//聊天选择人
 	public function selectManModel(){
 
-		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_id']."' ORDER BY create_time desc limit 0, 10");
+		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY create_time desc limit 0, 10");
 		if (!empty($mes_list)) {
             foreach ($mes_list as $key => $value) {
                     $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -49,7 +49,10 @@ class chatMessageModel
         $mes_list['type'] = 'mes_chat';
 		return $mes_list;
 	}
-
+	public function chatAdminModel() {
+		return $this->selectManModel();
+		// $arrChatAdmin = $this->db->select('*')->from('oms_string_message')->where('session_no= :session_no')->bindValues(array('session_no'=> 'ca'))->query();
+	}
 	//选择群聊天
 	public function selectGroupChat () 
 	{
@@ -60,14 +63,7 @@ class chatMessageModel
         if (!in_array($this->selfInfo['uid'], $yanzheng) ) {
         	return array('type'=>'mes_chat');
         }
-        $group_mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`,a.`session_no`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`= b.staffid WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_no']."' ORDER BY a.create_time desc limit 0, 10");
-
-        if ( !empty($group_mes_list) ) {
-            foreach ($group_mes_list as $key => $value) {
-
-                    $group_mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
-            }
-        }
+        $group_mes_list = $this->selectManModel();
 
         //群聊的信息
         $group_mes_list['type'] = 'mes_chat';
@@ -112,6 +108,8 @@ class chatMessageModel
             }
 		} else if ( $this->messageData['message_type'] == 'groupMessage' ){
 			$this->db->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `pid`=".$this->messageData['session_id']);
+		} elseif ( $this->messageData['message_type'] == 'adminMessage' ) {
+			$this->db->query("UPDATE `oms_hr` SET  `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `general_admin`=1");
 		}
 		$sendMessageData = array(
 			'type'=> 'say_uid',
@@ -210,8 +208,10 @@ class chatMessageModel
 	{
 		if ( $this->messageData['message_type'] == 'message' ) {
             $this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
-        } else {
+        } else if ($this->messageData['message_type'] == 'groupMessage') {
             $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
+        } else if ( $this->messageData['message_type'] == 'adminMessage') {
+        	$this->db->query("UPDATE `oms_hr` SET `mes_num`=0 AND `mes_id` =0 WHERE `staffid` = ".$this->selfInfo['uid']);
         }
 	}
 	//增加群聊
@@ -365,6 +365,20 @@ class chatMessageModel
 		}
 		$res['type'] = 'sysNotice';
 		return $res;
+	}
+	// 判断是不是系统管理员 是 返回 所有管理员的id
+	public function isAdmin() {
+		$uid = $this->selfInfo['uid'];
+		$res = $this->db->select('staffid')->from('oms_hr')->where('general_admin = :general_admin AND state= :state')->bindValues(array('general_admin'=> 1, 'state'=> 0))->column();
+		if ( in_array($uid , $res) ) {
+			foreach ($res as $key => $value) {
+				if ($value == $uid) {
+					unset($res[$key]);
+				}
+			}
+			return $res;
+		}
+		return false;
 	}
 }
  ?>

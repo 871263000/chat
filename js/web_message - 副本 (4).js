@@ -186,21 +186,17 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             addImgAttr = ' href = "'+$('.sending-img-box .send-img').attr('src')+'" data-size="1600x1068" data-med="'+$('.sending-img-box .send-img').attr('src')+'" data-med-size="1024x683" data-author=""';
             addImgClass = 'bigImg';
 
-            inputcur = "<img index='"+imgIndex+"' src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
-            $('.loadImg').append(inputcur);
+            inputcur = "<img src='"+$('.sending-img-box .send-img').attr('src')+"' class='send-img'>";
           inputValue = $('.sending-img-box .send-img').attr('src');
           $('.img-box').hide();
-          imgIndex ++;
         break;
         case 'images':
           var ImgSrc = document.getElementById('key').value;
           addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/'+ImgSrc+'" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/'+ImgSrc+'" data-med-size="1024x683" data-author=""';
           addImgClass = 'bigImg';
-          inputcur = "<img index='"+imgIndex+"' src='http://7xq4o9.com1.z0.glb.clouddn.com/"+ImgSrc+"' class='send-img'>";
-          $('.loadImg').append(inputcur);
+          inputcur = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+ImgSrc+"' class='send-img'>";
           inputValue = ImgSrc;
           $('.img-box').hide();
-          imgIndex ++;
         break;
         case 'file':
           var fileName = document.getElementById('filename').value;
@@ -287,24 +283,19 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
         var addImgAttr = "";
         switch (image){
           case 'image':
-              var objE = document.createElement("div");
-        　　  objE.innerHTML = content;
-        　　  var obj = objE.childNodes;
-              var ImgSrc = obj[0].getAttribute('src');
-              content = "<img index='"+imgIndex+"' src='"+ImgSrc+"' class='send-img'>";
-              addImgAttr = ' href = "'+ImgSrc+'" data-size="1600x1068" data-med="'+ImgSrc+'" data-med-size="1024x683" data-author=""';
-              addImgClass = 'bigImg';
-              content1 = '【图片】';
-              $('.loadImg').append(content);
-              imgIndex++;
+                var objE = document.createElement("div");
+          　　  objE.innerHTML = content;
+          　　  var obj = objE.childNodes;
+                var ImgSrc = obj[0].getAttribute('src');
+                addImgAttr = ' href = "'+ImgSrc+'" data-size="1600x1068" data-med="'+ImgSrc+'" data-med-size="1024x683" data-author=""';
+                addImgClass = 'bigImg';
+            content1 = '【图片】';
           break;
           case 'images':
               content1 = '【图片】';
               addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/'+content+'" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/'+content+'" data-med-size="1024x683" data-author=""';
               addImgClass = 'bigImg';
-            content = "<img index='"+imgIndex+"' src='http://7xq4o9.com1.z0.glb.clouddn.com/"+content+"' class='send-img'>";
-            $('.loadImg').append(content);
-             imgIndex++;
+            content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+content+"' class='send-img'>";
           break;
           case 'text':
           content = content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
@@ -466,19 +457,14 @@ var messageShow = function (data) {
           　　  objE.innerHTML = content;
           　　  var obj = objE.childNodes;
                 var ImgSrc = obj[0].getAttribute('src');
-                content = "<img index='"+imgIndex+"' src='"+ImgSrc+"' class='send-img'>";
                 addImgAttr = ' href = "'+ImgSrc+'" data-size="1600x1068" data-med="'+ImgSrc+'" data-med-size="1024x683" data-author=""';
                 addImgClass = 'bigImg';
-                $('.loadImg').append(content);
-                imgIndex++;
                 break;
             case 'images':
                 addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/'+data[i].message_content+'" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/'+data[i].message_content+'" data-med-size="1024x683" data-author=""';
                 addImgClass = 'bigImg';
-                content = "<img index='"+imgIndex+"' src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
+                content = "<img  src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
                 $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' ></li>");
-                $('.loadImg').append(content);
-                imgIndex++;
                 break;
             case 'voice':
                 var voiceArray = new Array();
@@ -502,7 +488,7 @@ var messageShow = function (data) {
             $(".he_ov").prepend('<li '+addImgAttr+' class="Chat_le '+addImgClass+'"><div class="user"><span class="head le"><span class="header-img"><img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
         }
     }
-    // initPhotoSwipeFromDOM('.session-box');
+    initPhotoSwipeFromDOM('.session-box');
 }
 
 //选择人后的消息列表

@@ -1612,7 +1612,7 @@
     maxZoomRatio: 100,
 
     // Define the CSS `z-index` value of viewer in modal mode.
-    zIndex: 2015,
+    zIndex: 999999,
 
     // Define the CSS `z-index` value of viewer in inline mode.
     zIndexInline: 0,
@@ -1647,6 +1647,7 @@
           '<li class="viewer-rotate-right" data-action="rotate-right"></li>' +
           '<li class="viewer-flip-horizontal" data-action="flip-horizontal"></li>' +
           '<li class="viewer-flip-vertical" data-action="flip-vertical"></li>' +
+          '<li class="viewer-close" data-action="mix"></li>' +
         '</ul>' +
         '<div class="viewer-navbar">' +
           '<ul class="viewer-list"></ul>' +
@@ -1670,14 +1671,14 @@
       var $this = $(this);
       var data = $this.data(NAMESPACE);
       var fn;
-
-      if (!data) {
+      data = '';
+      // if (!data) {
         if (/destroy|hide|exit|stop|reset/.test(options)) {
           return;
         }
 
         $this.data(NAMESPACE, (data = new Viewer(this, options)));
-      }
+      // }
 
       if (isString(options) && $.isFunction(fn = data[options])) {
         result = fn.apply(data, args);

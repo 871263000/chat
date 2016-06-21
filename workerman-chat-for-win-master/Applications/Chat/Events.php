@@ -50,7 +50,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice');
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -86,6 +86,7 @@ class Events
                 case 'mes_groupChat':
                 case 'addGroupMan':
                 case 'signOut':
+                case 'chatAdmin':
                     $message_data['session_id'] = $message_data['session_no'];
                     break;
                 case 'sayUid':

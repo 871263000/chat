@@ -1,3 +1,6 @@
+
+
+
 // 当前的页面
 var webUrl = '';
 // 粘贴 插入
@@ -309,10 +312,12 @@ var getStaffInfo = function (data){
 }
 //请求人员信息
 var ajaxGetStaffInfo = function (staffid, direction, css){
+
     var arrDirectionCg =new Object();
     arrDirectionCg = { 'left': 'right','right':'left', 'up': 'bottom', 'down': 'top' };
     var directionChang = arrDirectionCg[direction];
     var margin ="margin-"+directionChang;
+    $('.staff-info-box').remove();
     $.ajax({
       url:"/getStaffTels.php",
       type:"post",
@@ -324,7 +329,7 @@ var ajaxGetStaffInfo = function (staffid, direction, css){
           $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li></ul></div>');
           $('.staff-info-box').css(css);
           $('.staff-info-box').css(directionChang, "100%");
-          $('.staff-info-box').css(margin, "6");
+          $('.staff-info-box').css(margin, "10");
           $('.staff-info-box .arrow').css('border-'+direction,"8px solid #fff");
           $('.staff-info-box .arrow').css(direction,"100%");
 
@@ -356,11 +361,18 @@ $(document).on('mouseenter' , '.staff-info',function(){
     // var offtop = height/2-85/2;
     ajaxGetStaffInfo(staffid, direction, { top: offtop});
 });
-$(document).on('mouseleave', '.staff-info', function (){
+$(document).on('mouseleave', '.staff-info, .online_man', function (){
     var obj = $(this);
     obj.removeClass('infoCurrent');
     $('.staff-info-box').remove();
 });
+
+// 人员消息的 消失
+// $(document).on('mouseleave', '.online_man', function (){
+//     var obj = $(this);
+//     obj.removeClass('infoCurrent');
+//     $('.staff-info-box').remove();
+// });
 //拖动
 var mes_bottom = parseInt($('.mes_fixed').css('bottom'));
 $('.mes_fixed').swipe( {
@@ -378,6 +390,24 @@ $('.mes_fixed').swipe( {
         };
     },
 });
+// 七牛上传文件
+var getQiniuToken = function () {
+    $xmlhttp = xmlhttp();
+    $xmlhttp.onreadystatechange = function() {
+        if ($xmlhttp.readyState == 4) {
+            if($xmlhttp.status == 200){
+                document.getElementById('token').value = $xmlhttp.responseText;
+            } else {
+                alert('get uptoken other than 200 code was returned')
+            }
+        }
+    }
+    $upTokenUrl = '/chat/uptoken.php';
+    $xmlhttp.open('GET', $upTokenUrl, true);
+    $xmlhttp.send(); 
+
+    $file = document.getElementById('file_zdl');
+};
 //触发文件点击
 var trig = function (obj){
     obj.trigger('click');
@@ -386,7 +416,9 @@ $('#upclick').click( function(){
     trig($('#file_zdl'));
 });
 $('#cli-upFile img').click(function(){
-    trig($('#file_zdl'));
+  console.log(4);
+  getQiniuToken();
+  trig($('#file_zdl'));
     return;
 });
 // 选择图片的改变
@@ -489,8 +521,7 @@ $(document).on('click', '.chat_people', function( e ){
 //选择群列表显示对话内容
 $(document).on('click', '.session_no', function ( event ){
     session_no = $(this).attr('session_no')//会话id
-    mes_type = "groupMessage";//消息类型
-    if (!$(event.target).is('.recent-action')) {
+   mes_type = $(this).attr('mestype')//会话id
     $('.chat-container').show();
     //end
     var valName = $(this).attr('group-name');//会话名字
@@ -501,17 +532,20 @@ $(document).on('click', '.session_no', function ( event ){
       mesScroll();
     })
     $('.mes_title_con').html(valName);
-    $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
-    $('.add-groupMan').show();
-    // if (!$(event.target).is('.mes_chakan_close')) {
+    if ( mes_type == 'groupMessage' ) {
+      $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
+      $('.add-groupMan').show();
+      groupJson = '{"type":"mes_groupChat", "session_no":"'+session_no+'" }';
+    } else if ( mes_type == 'adminMessage' ) {
+      groupJson = '{"type":"chatAdmin", "session_no":"ca" }';
+    };
     if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
       var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").find('.mes_num').html());
-      mes_chakan_close('groupMessage', session_no, con_mes_num);
+      mes_chakan_close(mes_type, session_no, con_mes_num);
     };
     // };
-    ws.send('{"type":"mes_groupChat", "session_no":"'+session_no+'" }');
+    ws.send(groupJson);
     $('#mes_load').html(10);
-  } 
 })
 
 //表情的添加
@@ -695,7 +729,7 @@ $('.mes_ico_box').hover(function (){
   var mes_chakan_close = function (mestype, session_id, mes_num){
       if ( mestype == 'message' ) {
         session_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
-      } else {
+      } else if ( mestype == 'groupMessage' ||  mestype == 'adminMessage' )  {
         session_no = session_id;
       }
       ws.send('{"type":"mes_close", "to_uid":"'+session_id+'",  "session_no": "'+session_no+'", "message_type":"'+mestype+'"}');
@@ -796,21 +830,12 @@ $(function(){
     }) 
 });
 //聊天对话框img放大
-$(document).on( 'click', '.he_ov .send-img',function (){
-    $('.send-img-box img').remove();
-    $('.send-img-box').show();
-    $('.send-img-box').append($(this).clone().attr('id', 'rotimg'));
-    var imgHeight = $('.send-img-box img').height();
-    var imgWidth = $('.send-img-box img').width();
-    $('.send-img-box img').css('margin-top', -imgHeight/2);
-    $('.send-img-box img').css('margin-left', -imgWidth/2);
+$(document).on( 'click', '.he_ov .send-img', function (){
+  var curIndex = $(this).attr('index');
+  $('.viewer-container').remove();
+  $(".loadImg").viewer();
+  $(".loadImg img").eq(parseInt(curIndex)).trigger('click');
 });
-$('.send-img-close, .send-img-box').click( function (event){
-    if ($(event.target).is('i')) {
-        return false;
-    };
-    $('.send-img-box').hide();
-})
 //发送文件
 
 //请求 token

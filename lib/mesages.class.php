@@ -73,13 +73,22 @@ class messageList
 	//自己的信息
 	public function userinfo()
 	{
-		$sql = 'SELECT `name`,`card_image` FROM `oms_hr` WHERE staffid='.$this->uid;
+		$sql = 'SELECT `name`,`card_image`, `general_admin` FROM `oms_hr` WHERE staffid='.$this->uid;
 		$arrName = $this->d->find($sql);
 		return $arrName;
 	}
-
+	// 查询所有管理员
+	public function getAdmin(){
+		$arrAdmin = [];
+		$sql = 'SELECT `staffid`,`card_image`, `name` FROM `oms_hr` WHERE `general_admin`= 1';
+		$arrAdmin = $this->d->findAll($sql);
+		if ($arrAdmin) {
+			return $arrAdmin;
+		}
+		return $arrAdmin;
+	}
 	//消息列表
-	public function mesAlertList(){
+	public function mesAlertList( $isAdmin ){
 		 //右边的消息根据$_SESSION获取名字
 
 		//单聊消息
@@ -88,6 +97,14 @@ class messageList
 		//群聊消息
 		$sql = "SELECT a.`mes_num`, a.`id`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_state`=1 AND  a.`staffid`=$this->uid";
   		$arrGroupMes = $this->d->findAll($sql);
+  		if ( $isAdmin == 1 ) {
+	  		//管理员群聊消息
+			$sql = "SELECT a.`mes_num`, a.`staffid`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_hr` a inner JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE  a.`staffid`=$this->uid";
+	  		$arrAdminMes = $this->d->findAll($sql);
+	  		foreach ($arrAdminMes as $key => $value) {
+	  			$arrMes[] = $value;
+	  		}
+  		}
   		foreach ($arrGroupMes as $key => $value) {
   			$arrMes[] = $value;
   		}
@@ -116,7 +133,8 @@ class messageList
 	{
 		// $sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." or `session_no` in (SELECT `pid` FROM `oms_groups_people` WHERE `contacts_id`=0 AND `staffid` =".$this->uid.")  ORDER BY timeStamp desc";
 		$sql = "SELECT a.*, b.`card_image` FROM `oms_nearest_contact` a LEFT JOIN  `oms_hr` b ON a.`mes_id` = b.`staffid` WHERE a. `pid`=".$this->uid." ORDER BY timeStamp desc";
-		return $this->d->findAll($sql);
+		$recentContact = $this->d->findAll($sql);
+		return $recentContact;
 	}
 }
  ?>

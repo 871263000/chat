@@ -179,60 +179,6 @@ function insertHtmlAtCaret(html) {
 
 
 <script>
-var messageShow = function (data, text) {
-    var mes_time;
-    var content;
-    var content2 = "";
-    $(".he_ov").html();
-    for (var i in data) {
-        var addVoiceClass = "";
-        if (i == 'type') {
-            $(".he_ov").prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---"+text+"---</span></div>");
-            $(".he-ov-box").scrollTop($(".he_ov")[0].scrollHeight);
-            return false;
-        };
-        // console.log(data);
-        mes_time = data[i].create_time;
-        switch (data[i].mesages_types) {
-            case 'text':
-                content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
-                content = content.replace(/\|\}/g, '.gif">');
-                content = content.replace(/%5C/g,"\\").replace(/\&br\&/g,"<br/>")
-                break;
-            case 'file':
-                var fileArray = new Array();
-                fileArray = data[i].message_content.split('|');
-                content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>"+fileArray[0]+"</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/"+fileArray[1]+"?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
-                break;
-            case 'image':
-                content = data[i].message_content;
-                break;
-            case 'images':
-                content = "<img src='http://7xq4o9.com1.z0.glb.clouddn.com/"+data[i].message_content+"' class='send-img'>";
-                break;
-            case 'voice':
-                var voiceArray = new Array();
-                voiceArray = data[i].message_content.split('|');
-                if (data[i].sender_id == chat_uid) {
-                  content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "'+voiceArray[0]+'"></div>';
-                  content2 = '<span class="chat_duration_right">'+voiceArray[1]+'\"</span';
-                } else {
-                  content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "'+voiceArray[0]+'"></div>';
-                  content2 = '<span class="chat_duration_left">'+voiceArray[1]+'\"</span';
-                }
-                voiceArray = data[i].message_content.split('|');
-                addVoiceClass = "web_chat_voice";
-                break;
-            default:
-                break;
-        }
-        if (data[i].sender_id == chat_uid) {
-            $(".he_ov").prepend('<li class="Chat_ri he"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="'+header_img_url+'" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">'+mes_time+'</span>'+chat_name+'</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri '+addVoiceClass+'">'+content+'</span> '+content2+' </div></div></li>');
-        } else {
-            $(".he_ov").prepend('<li class="Chat_le"><div class="user"><span class="head le"><span class="header-img"><img src="'+data[i].card_image+'" alt=""></span></span> <span class="name le">'+data[i].sender_name+'<span style="padding: 0 0 0 20px">'+mes_time+'</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font '+addVoiceClass+' le">'+content+'</span>'+content2+'</div></div></li>');
-        }
-    }
-}
 
 </script>
 </html>
