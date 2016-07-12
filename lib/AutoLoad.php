@@ -2,14 +2,15 @@
 /**
 * 自动加载类
 */
-class AutoLoad
+namespace lib\chatAutoload;
+
+class chatAutoload
 {
-	public static function ByuseAutoLoad( $className )
-	{
-		$className = str_replace( '\\', '/', $className );
-		require_once($className.'.php');
-	}
 	
+	public  static  function autoLoadClass( $className )
+	{
+		echo $className;
+	}
 }
-spl_autoload_register('AutoLoad::ByuseAutoLoad');
+spl_autoload_register('lib\chatAutoload\chatAutoload::autoLoadClass');
  ?>

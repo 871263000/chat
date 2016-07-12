@@ -40,7 +40,7 @@ class chatMessageModel
 	//聊天选择人
 	public function selectManModel(){
 
-		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY create_time desc limit 0, 10");
+		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY id desc limit 0, 10");
 		if (!empty($mes_list)) {
             foreach ($mes_list as $key => $value) {
                     $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -186,6 +186,7 @@ class chatMessageModel
 	public function image64tofile( $string ) {
 		$pa = $string;
         if (preg_match("/^(data:\s*image\/(\w+);base64,)/", $pa, $result)){
+        	var_dump($result[1]);
             $type = $result[2];
             //创建文件夹
             $save_path = "../chatImage/".$this->messageData['to_uid'] . "/";
@@ -379,6 +380,16 @@ class chatMessageModel
 			return $res;
 		}
 		return false;
+	}
+	// 删除好友
+	public function delFriend()
+	{
+		$uid = $this->selfInfo['uid'];
+		if (!empty($this->messageData['uid'])) {
+			$this->db->delete('oms_friend_list')->where('(pid = :pid AND staffid =:staffid) or (pid = :pid1 AND staffid =:staffid1)')->bindValues(array('pid'=> $uid, 'staffid'=> $this->messageData['uid'], 'pid1'=>$this->messageData['uid'] , 'staffid1'=> $uid))->query();
+			// $this->db->delete('oms_friend_list')->where('pid = :pid AND staffid =:staffid')->bindValues(array('pid'=>$this->messageData['uid'] , 'staffid'=> $uid))->query();
+		}
+		return ['type'=> 'default'];
 	}
 }
  ?>

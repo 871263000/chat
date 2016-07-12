@@ -3,42 +3,20 @@
 
 var AddSession = function () {
   this.sessionList = new Array();
-  this.index = 0;
-  this.mbAddSession = function ( session_id ) {
-    this.sessionList = [];
-    this.sessionList.push(session_id);
-    //对话框关闭
-    $('.chating-content .mes_dclose').on('click', function (){
-      session_no = 0;
-      $('.session-tab ul li').remove();
-      $('.chating-content .mes_load').html('10');
-      $('.chat-container').hide();
-      addSession.sessionList = [];
-    })
-      return true;
-  }
-};
+
+}
 AddSession.prototype.addSession = function ( headerImg, session_id, name ) {
-  $('.chat-tab-content').removeClass('chating-content');
-  $('.chat-session').removeClass('chat-sessioning');
-  if ( $.inArray( session_id, this.sessionList ) == -1 ) {
-    var liObj = $('<li mes_id ="'+session_id+'" tab-mes-num = "0" class="chat-sessioning chat-session"><span class="session-tab-head"><img src="'+headerImg+'" alt="'+name+'" /></span><span class="session-tab-name">'+name+'</span><span class="session-tab-close">&times;</span></li>');
-    liObj.hover(function () {
-      $(this).find('.session-tab-close').show();
-      $(this).find('.session-tab-num').hide();
-    }, function () {
-        $(this).find('.session-tab-close').hide();
-         $(this).find('.session-tab-num').show();
-    }).appendTo($('.session-tab ul'));
-    var html = '<div class="chat-tab-content chating-content"><div class="mes_title">'+
-               '<h2 class="mes_title_con">'+name+'</h2><span aria-hidden="true" onclick="chatMin()" class="mes_dMinimize">-</span><span aria-hidden="true" class="mes_dclose">&times;</span>'+
+  if ( $.inArray( session_id, sessionList ) ) {
+    $('.session-tab ul').append('<li session_no ="'+session_id+'" class="chat-sessioning "><span class="session-tab-head"><img src="'+headerImg+'" alt="'+name+'" /></span><span class="session-tab-name">'+name+'</span><span class="session-tab-close">&times;</span></li>');
+    var html = '<div class="chat-tab-content"><div class="mes_title">'+
+               '<h2 class="mes_title_con">傻逼</h2><span aria-hidden="true" onclick="chatMin()" class="mes_dMinimize">-</span><span aria-hidden="true" class="mes_dclose">&times;</span>'+
            '</div>'+
            '<div class="mes_con_box">'+
                '<div class="">'+
                    '<div class="">'+
                        '<div class="he-ov-box mes-scroll pc_he-ov-box">'+
                            '<div class="loader">'+
-                               '<div class="mes_load" style="display:none;">10</div>'+
+                               '<div id="mes_load" style="display:none;">10</div>'+
                                '<div class="loading-3">'+
                                    '<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>'+
                                '</div>'+
@@ -71,7 +49,7 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name ) {
                            '<i class="plus_icon"></i>'+
                            '<div class="mes_inout textarea" id="mes_textarea" style="height:auto;" contenteditable="true"></div>'+
                            '<textarea style="display:none" class="mes_inout" ></textarea>'+
-                           '<input type="submit" class="btn btn-primary btnSend" id="chat_submit" value="发送" />'+
+                           '<input type="submit" class="btn btn-primary btnSend" id="submit" value="发送" />'+
                            '<div style="clear:both"></div>'+
                        '</div>'+
                        '<div class="emoticons"></div>'+
@@ -81,132 +59,26 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name ) {
                '</div>'+
            '</div></div>';
            $('.chat-container').append(html);
-
-           // 监听 键盘按下事件
-           $(".chating-content .mes_footer, .chating-content .pc_mes_input").keydown(function(e){
-              var e = e || event,
-                  keycode = e.which || e.keyCode;
-              if(e.shiftKey && (e.keyCode==13)){
-              } else  if (keycode==13) {
-                  e.preventDefault();
-                  var inputValue = $('.chating-content .pc_mes_input').html();
-                  $('#mes_textarea').html(inputValue);
-                  $('.chating-content .pc_mes_input').html('');
-                  $("#chat_submit").trigger("click");
-              }
-            });
-            $(".mes_title_con").SliderObject($(".chat-container"));
-            if ( this.sessionList.length == 0 ) {
-                $('.session-tab').hide();
-            } else {
-              $('.session-tab').show();
-            }
-            // 关闭 
-            //对话框关闭
-          $('.chating-content .mes_dclose').on('click', function (){
-            session_no = 0;
-            $('.session-tab ul li').remove();
-            $('.chat-tab-content').remove();
-            $('.chat-container').hide();
-            $('.chat-container').append('<div class="chat-tab-content mb-chat-tab-content"><div class="mes_inout textarea chat_text_voice" id="mes_textarea" style="height:auto;" contenteditable="true"></div><textarea style="display:none" class="mes_inout" ></textarea><input type="submit" class="btn btn-primary chat_text_voice" id="chat_submit" value="发送" /></div>');
-            addSession.sessionList = [];
-          })
-          $('.chating-content .loader').hide();
-          $('.chating-content .mes_load').html('10');
-          this.sessionList.push(session_id);
-          this.index = this.sessionList.length - 1;
-          return true;
   } else {
-    var _index = $('.session-tab li[mes_id="'+session_id+'"]').index();
-    this.tabSession(_index);
-    return false;
+
   }  
+  this.sessionList.push(session_id);
 
 };
 
 // el dom 对象 ， session_id 会话ren id 
-AddSession.prototype.delSession = function ( _index ) {
-  var obj = $('.session-tab ul li');
-  var objThis = $('.session-tab ul li').eq(_index);
-  var objLength = obj.length;
-  var _NewIndex = _index+ 1;
-  $('.chat-tab-content').eq(_NewIndex).remove();
-  objThis.remove();
-  if ( objLength > 2 ) {
-    if ( _index == this.index ) {
-        if ( _index == 0 ) {
-          this.index  = 0;
-        } else {
-          this.index --;
-        }
-        addSession.tabSession(this.index);
-    };
-  } else {
-    addSession.tabSession(0);
-  }
-  if ( addSession.sessionList.length == 2 ) {
-      $('.session-tab').hide();
-  } else if ( addSession.sessionList.length == 1 ){
-    $('.mes_dclose').trigger('click');
-  } else if ( addSession.sessionList.length >= 2 ) {
-    $('.session-tab').show();
-  };
+AddSession.prototype.delSession = function (session_id ) {
+  $('.session-tab ul li[session_no = "'+session_id+'"]').remove();
+  this.sessionList.splice( $.inArray(session_id,this.sessionList),1 );
 };
-AddSession.prototype.tabSession = function (_index) {
-    // 内容 加一 手机 会占据一个
-    this.index = _index; 
-    var _NewIndex = _index + 1;
-    $('.session-tab ul li').eq(_index).find('.session-tab-num').remove();
-    $('.chat-tab-content').removeClass('chating-content').eq(_NewIndex).addClass('chating-content');
-    $('.chat-session').removeClass('chat-sessioning').eq(_index).addClass('chat-sessioning');
-};
-// 消息的数量
-AddSession.prototype.mesnum = function ( uid ) {
-      // 找出 和谁在聊天
-      var whoObj = $('.session-tab ul li[mes_id="'+uid+'"]');
-      var _index = whoObj.index();
-      var tabMesNum ;
-      var ObjChatTabNum = whoObj.find('.session-tab-num')
-      var chatTableng = ObjChatTabNum.length;
-      tabMesNum = ObjChatTabNum.html();
-      if ( this.index != _index ) {
-        if ( chatTableng == 0 ) {
-            whoObj.append('<span class="session-tab-num">1</span>');
-        } else {
-            ObjChatTabNum.html(parseInt(tabMesNum)+1);
-        }
-      };
-      return _index;
-}
+
 // 实例化 增加  会话 
 var addSession = new AddSession();
-
-// 会话的点击
-$(function () {
-  $(document).on('click', '.session-tab ul li', function (e) {
-    var obj = $(this);
-    var _index = obj.index();
-    to_uid = $(this).attr('mes_id');
-    //会话id的改变
-    session_no = parseInt(to_uid) < parseInt(chat_uid) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
-    addSession.tabSession(_index);
-  })
-  $(document).on('click', '.session-tab-close', function (e) { 
-    e.stopPropagation();
-    var obj = $(this).parent();
-    var _index = obj.index();
-    var session_id = obj.attr('mes_id');
-    addSession.delSession(_index);
-    addSession.sessionList.splice( $.inArray(session_id,addSession.sessionList), 1 );
-  })
-});
-
-
-// addSession.addSession('/chat/images/h1.jpg', 1, '傻逼');
+addSession.addSession('/chat/images/h1.jpg', 1, '傻逼');
 // addSession.delSession(1, 1);
 // 聊天框最小化
 var chatMin = function (obj) {
-  var chatName = $('.chating-content .mes_title_con').text();
+  var chatName = $('.mes_title_con').text();
   $('.chat-container').hide();
   $('.chatMin').show().css('background-color', '#fff');
   $('.chatMin span').html(chatName);
@@ -217,7 +89,7 @@ var chatMin = function (obj) {
 var chatMax = function (obj) {
   $('.chat-container').show();
   $('.chatMin').hide().css('background-color', '#fff') ;
-  $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
+  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 }
 
 //通知消息关闭
@@ -264,25 +136,22 @@ function insertHtmlAtCaret(html) {
 $('.chat_customer_notice').on( 'click', function (){
 
   var htmlCon = $(this).find('.chat_mes_content').html();
-  // var mes_num = $(this).attr( 'chat_mes_num' );
-  chatCustomerNotice();
-  chatSystemNotice();
+  var mes_num = $(this).attr( 'chat_mes_num' );
+  chatCustomerNotice( mes_num );
+  $('.chat_message_notice .chat_message_notice_con').html('');
+  $('.chat_message_notice .chat_message_notice_con').html(htmlCon);
+  $('.chat_message_notice').show(500);
 
 })
-//系统 通知消息
-var chatSystemNotice = function () {
-  var json = '{"type":"sysNotice"}';
-  chatController(json);
-}
+
 // 客户那里 消息关闭
-var chatCustomerNotice = function () {
-  var session_id = chat_uid+'sn';
-  var closeObj = $('.mes_chakan_close[session_no="'+session_id+'"]');
-  var objLength = closeObj.length;
+var chatCustomerNotice = function ( mes_num ) {
+
+  session_id = chat_uid+'sn';
   ws.send('{"type":"sys_mes_close", "message_type":"message"}');
-  mesnum = mesnum - parseInt(objLength);
+  mesnum = mesnum - parseInt(mes_num);
   $('.mes_radio').html(mesnum);
-  closeObj.remove();
+  $('.mes_chakan_close[session_no="'+session_id+'"]').remove();
 
 };
 //系统 通知消息
@@ -446,7 +315,7 @@ var  search_in = function ( inValue, array) {
 /************** end   ****************/
 /***************  pc输入框  ********************/
 //文件发送
-$(document).on('click', '.pc_mes_tool_file' ,function () {
+$('.pc_mes_tool_file').click( function () {
   trig($('#file_zdl'));
 })
 //图片发送
@@ -455,26 +324,26 @@ $('.pc_mes_tool_img').click( function () {
 })
 /****************  end  *******************/
 //pc 提交
-$(document).on( 'click', '.chating-content .chat_btn',function () {
-  var inputValue = $('.chating-content .pc_mes_input').html();
+$('.chat_btn').click(function () {
+  var inputValue = $('.pc_mes_input').html();
   $('#mes_textarea').html('');
   $('#mes_textarea').html(inputValue);
-  $("#chat_submit").trigger("click");
-  $('.chating-content .pc_mes_input').html('');
-  $('.chating-content .pc_mes_input').focus();
+  $("#submit").trigger("click");
+  $('.pc_mes_input').html('');
+  $('.pc_mes_input').focus();
   
 })
 //pc 输入框聚焦
-$('.chating-content .pc_mes_input').focus( function () {
-  $(".chating-content .pc_emoji_box").hide();
-  $(".chating-content .he-ov-box").css("bottom", inputBottom);
-  $(".chating-content .he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+$('.pc_mes_input').focus( function () {
+  $(".pc_emoji_box").hide();
+  $(".he-ov-box").css("bottom", inputBottom);
+  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 })
 //pc inout 的高度
 var inputBottom = $('.he-ov-box').css('bottom');
 //pc 表情的显示
-$(document).on('click', '.chating-content .pc_mes_tool_emoji', function () {
-  $('.chating-content .pc_emoji_box').show(500);
+$('.pc_mes_tool_emoji').click(function () {
+  $('.pc_emoji_box').show(500);
   addempath("pc_emoji_box");
 })
 //通知消息点击
@@ -643,6 +512,7 @@ $('#upclick').click( function(){
     trig($('#file_zdl'));
 });
 $('#cli-upFile img').click(function(){
+  console.log(4);
   getQiniuToken();
   trig($('#file_zdl'));
     return;
@@ -683,45 +553,37 @@ $(".plus_icon").click( function (){
 });
 //shift+enter 换行
 //enter 提交
-$(".chating-content .mes_footer, .chating-content .pc_mes_input").keydown(function(e){
+$(".mes_footer, .pc_mes_input").keydown(function(e){
     var e = e || event,
         keycode = e.which || e.keyCode;
     if(e.shiftKey && (e.keyCode==13)){
     } else  if (keycode==13) {
         e.preventDefault();
-        var inputValue = $('.chating-content .pc_mes_input').html();
+        var inputValue = $('.pc_mes_input').html();
         $('#mes_textarea').html(inputValue);
-        $('.chating-content .pc_mes_input').html('');
-        $("#chat_submit").trigger("click");
+        $('.pc_mes_input').html('');
+        $("#submit").trigger("click");
     }
 });
 //对话框的高度
 var mesHeight = 0;
 //查看更多
 $(document).on("click", ".onload", function(){
-    $('.chating-content .he-ov-box').trigger("scroll");
+    $('.he-ov-box').trigger("scroll");
 })
-
+//对话框关闭
+$('.mes_dclose').on('click', function (){
+  session_no = 0;
+  $('.chat-container').hide();
+})
 //滚动条滚动事件
 var mesScroll = function (){
-
-    if ($(".chating-content .he-ov-box").scrollTop() <= 10 && $(".chating-content .he-ov-box").scrollTop() >= 0) {
-      var mes_loadnum = $('.chating-content .mes_load').html();
-      $('.chating-content .loader').show();
-      mesHeight = $('.chating-content .he_ov').height();
+    if ($(".he-ov-box").scrollTop() <= 10 && $(".he-ov-box").scrollTop() >= 0) {
+      var mes_loadnum = $('#mes_load').html();
+      $('.loader').show()
+      mesHeight = $('.he_ov').height()
       ws.send('{"type":"mes_load","mes_loadnum":"'+mes_loadnum+'", "message_type":"'+mes_type+'", "to_uid":"'+to_uid+'","session_no": "'+session_no+'"}');
     };
-}
-//判断是不是移动端
-function IsPC()  
-{  
-    var userAgentInfo = navigator.userAgent;  
-    var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
-    var flag = true;  
-    for (var v = 0; v < Agents.length; v++) {  
-       if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
-    }  
-    return flag;  
 }
 // 选择人聊天
 $(document).on('click', '.chat_people', function( e ){
@@ -730,33 +592,26 @@ $(document).on('click', '.chat_people', function( e ){
     //会话id的改变
     session_no = parseInt(to_uid) < parseInt(chat_uid) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
     mes_type = "message";
+    //增加一个会话
+    addSession.addSession(to_uid_header_img, to_uid, $(this).attr('group-name'));
     // 提示消息消失
     $('.chatMin').hide();
       $('.chat-container').show();
     //end
     // groupId = $(this).attr('groupId');
     // if (!$(e.target).is('.mes_chakan_close')) {
-    // $('.chating-content .mes_title_con').html($(this).attr('group-name'));
+    $('.mes_title_con').html($(this).attr('group-name'));
       if ($.inArray(session_no, arrMessageList) != -1) {
         var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").attr('chat_mes_num'));
         mes_chakan_close('message', to_uid, con_mes_num);
 
       };
-    //增加一个会话 if 在列表里 返回 false
-    if ( IsPC() == true ) {
-      var res = addSession.addSession(to_uid_header_img, to_uid, $(this).attr('group-name'));
-      if ( res == false ) {
-        return ;
-      };
-    } else {
-      var res = addSession.mbAddSession(to_uid);
-      $('.mes_title_con').html( $(this).attr('group-name') );
-    }
     // };
     ws.send('{"type":"mes_chat", "to_uid":"'+to_uid+'"}');
+    $('#mes_load').html(10);
     //消息向上滚动
-    $('.chating-content .he-ov-box').unbind('scroll');
-    $('.chating-content .he-ov-box').bind("scroll", function (){
+    $('.he-ov-box').unbind('scroll');
+    $('.he-ov-box').bind("scroll", function (){
       mesScroll();
     })
 })
@@ -770,14 +625,14 @@ $(document).on('click', '.session_no', function ( event ){
     var valName = $(this).attr('group-name');//会话名字
     // groupId = $(this).attr('groupId');
     //消息向上滚动
-    $('.chating-content .he-ov-box').unbind('scroll');
-    $('.chating-content .he-ov-box').bind("scroll", function (){
+    $('.he-ov-box').unbind('scroll');
+    $('.he-ov-box').bind("scroll", function (){
       mesScroll();
     })
-    $('.chating-content .mes_title_con').html(valName);
+    $('.mes_title_con').html(valName);
     if ( mes_type == 'groupMessage' ) {
-      $('.chating-content .mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
-      $('.chating-content .add-groupMan').show();
+      $('.mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
+      $('.add-groupMan').show();
       groupJson = '{"type":"mes_groupChat", "session_no":"'+session_no+'" }';
     } else if ( mes_type == 'adminMessage' ) {
       groupJson = '{"type":"chatAdmin", "session_no":"ca" }';
@@ -788,6 +643,7 @@ $(document).on('click', '.session_no', function ( event ){
     };
     // };
     ws.send(groupJson);
+    $('#mes_load').html(10);
 })
 
 //表情的添加
@@ -795,46 +651,46 @@ function addempath(className) {
     var emPath = "/chat/emoticons/images/";//表情路径
     var total = 134;//表情的个数
     var newTotal = 14;//新增表情的个数
-    $('.chating-content .'+className).html('');
+    $('.'+className).html('');
     for(var i=0; i < newTotal ; i++) {
-      $('.chating-content .'+className).append('<div class="em_gif"><img width="24px" class="cli_em" em_name="'+'f'+i+'" src="'+emPath+'f'+i+'.gif"></div>');
+      $('.'+className).append('<div class="em_gif"><img width="24px" class="cli_em" em_name="'+'f'+i+'" src="'+emPath+'f'+i+'.gif"></div>');
     }
     for(var i=0; i < total ; i++) {
-      $('.chating-content .'+className).append('<div class="em_gif"><img width="24px" class="cli_em" em_name="'+i+'" src="'+emPath+i+'.gif"></div>');
+      $('.'+className).append('<div class="em_gif"><img width="24px" class="cli_em" em_name="'+i+'" src="'+emPath+i+'.gif"></div>');
     }
 }
 //表情的点击事件
-$(document).on('click', ".chating-content .emoticons .cli_em, .chating-content .pc_emoji_box .cli_em", function ( event ){
+$(document).on('click', ".emoticons .cli_em, .pc_emoji_box .cli_em", function ( event ){
     event.stopPropagation();
     var em_name = $(this).attr('em_name');
     inputSave = inputSave + "{|"+em_name+"|}";
     var addThis = $(this).clone();
     addThis.append().appendTo('.textarea');
     var addThis = $(this).clone();
-    addThis.append().appendTo('.chating-content .pc_mes_input');
+    addThis.append().appendTo('.pc_mes_input');
     // $('textarea').val($('.textarea').html())
 })
 //表情的显示
-$('.chating-content .header_icon').click(function () {
+$('.header_icon').click(function () {
   addempath('emoticons');
   $(".emoticons").toggle();
-  var inputHeight = $('.chating-content .mes_footer').height();// 输入框的高度
-  $(".chating-content .he-ov-box").css("bottom", inputHeight);
+  var inputHeight = $('.mes_footer').height();// 输入框的高度
+  $(".he-ov-box").css("bottom", inputHeight);
 
-  $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
-  $('.chating-content .plus_menu_box').hide();
+  $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+  $('.plus_menu_box').hide();
 })
 
 // 右边消息的个数
 var mesnum = parseInt($('.mes_radio').html());//消息的个数
-//隐藏加载
+//消息的高度
 $('.loader').hide();
 
 //消息向上滚动
-// $('.he-ov-box').bind("scroll", function (){
-//   mesScroll();
+$('.he-ov-box').bind("scroll", function (){
+  mesScroll();
 
-// })
+})
 //消息定位的底部
 //$(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
 //close popup
@@ -848,7 +704,7 @@ $('.cd-popup').on('click', function(event){
 $(document).keyup(function(event){
     if(event.which=='27'){
       $('.cd-popup').removeClass('is-visible');
-      if ($('.chating-content .pc_mes_input').html()  != '') {
+      if ($('#pc_mes_input').html()  != '') {
         return false;
       };
       //session 改变
@@ -973,15 +829,15 @@ $('.mes_ico_box').hover(function (){
   //单个消息的关闭
   var mes_chakan_close = function (mestype, session_id, mes_num){
       if ( mestype == 'message' ) {
-        groupSession_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
+        session_no = parseInt(chat_uid) < parseInt( session_id ) ? chat_uid+"-"+session_id : session_id+"-"+chat_uid;
       } else if ( mestype == 'groupMessage' ||  mestype == 'adminMessage' )  {
-        groupSession_no = session_id;
+        session_no = session_id;
       }
-      ws.send('{"type":"mes_close", "to_uid":"'+session_id+'",  "session_no": "'+groupSession_no+'", "message_type":"'+mestype+'"}');
+      ws.send('{"type":"mes_close", "to_uid":"'+session_id+'",  "session_no": "'+session_no+'", "message_type":"'+mestype+'"}');
       mesnum = parseInt(mesnum) - parseInt(mes_num);
-      $('.mes_fixed .mes_radio').html(mesnum);
-      $('.mes_chakan_close[session_no="'+groupSession_no+'"]').remove();
-      arrMessageList= _chat_remove(groupSession_no, arrMessageList);
+      $('.mes_radio').html(mesnum);
+      $('.mes_chakan_close[session_no="'+session_no+'"]').remove();
+      arrMessageList= _chat_remove(session_no, arrMessageList);
   }
   var mes_NoChakan_close = function (mestype, session_id, mes_num){
       if ( mestype == 'message' ) {
@@ -1139,17 +995,13 @@ var mesParam = {
         } else { return true; }
     },
 };
-
-$(document).on('click', '#chat_submit', function () {
-      //接收人名字
+document.getElementById('submit').onclick = function (){
+    //接收人名字
     if (!mesParam.mes_obj() || !mesParam.mes_empty()) {
         return false;
     };
     onSubmit(to_uid, chat_uid, groupId, mes_type, 'text',session_no);
-}) 
-// document.getElementById('submit').onclick = function (){
-
-// };
+};
 //消息提交
 document.getElementsByClassName('send-clipboard-img')[0].onclick = function (){
     //接收人名字

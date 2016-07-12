@@ -27,17 +27,54 @@ h2{margin-top: 0;}
 .emoticons{display: none;padding: 10px 0;background: #fff;height: 100px;overflow: auto;}
 .em_gif{cursor: pointer;width: 24px;height: 24px;display: inline-block;}
 .group-list{box-shadow: 0 0 5px #ccc;cursor: move;display: none;z-index: 99;background: #fff;position: absolute;width: 200px;height: 500px;left: 50%;top: 50%;margin-left: -100px;margin-top: -250px;}
+
+/* 通知消息 */
+.chat_notice_box{ position: fixed;  display: none; top: 100px; left: 50%;  margin-left: -186px;box-shadow: 0 0 10px #ccc;}
+/* 对话框切换  */
+.session-tab{ width: 200px;background-color: #EFEFEF;    height: 100%;position: absolute;right: 100%;padding: 5px;display: none; }
+.session-tab ul li{height: 50px; line-height: 50px; position: relative;margin: 5px 0;cursor:pointer;}
+.session-tab ul li span.session-tab-head{float: left;padding: 3px;margin: 3px 5px; height: 40px;width: 40px; line-height: 40px; overflow: hidden;display: inline-block; }
+.session-tab ul li span.session-tab-name{ height: 40px;line-height: 40px; display: inline-block; }
+.session-tab ul li img{ height: 40px; float: left;}
+.session-tab ul li span.session-tab-close{ position: absolute; height: 50px;line-height: 50px;  width: 32px;  text-align: center; right: 0;font-size: 24px;}
+/*.session-tab ul li:hover .session-tab-close{ display: inline-block;} */
+.chat-tab-content{ height: 100%;display: none; }
+.chating-content{display: block; }
+.chat-sessioning{ background-color: #fff !important; }
+.session-tab-close{ display: none; }
+
+/*.chat-session :hover{ background-color: rgba(0,0,0,0.5); }*/
 /***********最近联系人 搜索************/
-li.search-ren{ padding-left: 32px !important; height: 36px;line-height: 36px !important;margin: 0 !important; padding-top:0 !important;  /* border: none; */ }
+li.search-ren{ padding-left: 32px !important; height: 37px !important;line-height: 34px !important;margin: 0; padding-top:0 ;  /* border: none; */  position: absolute;top: 0px;width: 100%;z-index: 222;background: #fff;border-top: 1px solid #ccc;border-bottom: 1px solid #ccc;padding-right: 32px !important;}
 li.search-ren input{ width: 100%;    height: 32px;line-height: 32px;border: none;outline: none;    font-size: 15px; }
-li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/search.png') center no-repeat; }
-.search-ren-res{ position: absolute;top: 37px;left: 0;width: 100%;z-index: 1; border-top: none !important; height: 100%;background-color: #fff;display: none;}
+li.search-ren i.search-icon{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/search.png') center no-repeat; }
+li.search-ren i.fri-icon{position: absolute;top: 0;right: 0; width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/fri.png') center no-repeat;padding: 18px; }
+i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #955F34;border-left: 6px solid transparent;border-right: 6px solid transparent;position: absolute;right: 11px;top: 100%;margin-left: -5px;margin-top: -7px; }
+.search-ren-res{ position: absolute;top: 37px;left: 0;width: 100%;z-index: 1; border-top: none !important; height: 100%;background-color: #fff;display: none; z-index: 333333;}
+.search-ren-pos{ position: relative; }
+.recent-box{position: absolute; z-index: 111;background-color: #fff;width: 100%; }
+.recent-box li{ width: 100%;    font-size: 16px;border-bottom: 1px solid #ccc;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;width: 100%;}
+.com-recent-box{ margin-top: 123px; }
 /***********end************/
 .group-list ul{height: 400px;overflow: auto;}
 .session_no{cursor: pointer;background: #fff;}
 /*.panel{border: none;border-bottom: 1px dashed #ccc !important;}*/
 /*.panel-default>.panel-heading{background-color: #F7F3F3;}*/
 /*.panel-body{padding: 0;}*/
+
+
+/******  聊天框    **************/
+	.mes_dMinimize{ position: absolute;cursor: pointer; top: 0;right: 35px; color: #000;font-size: 44px;width: 32px; height: 47px; line-height: 47px; text-align: center; }
+	.chatMin{ width: 160px; height: 40px; line-height: 40px;font-size: 18px; position:fixed; bottom: 0; background-color: #fff; left: 50%;margin-left: -80px;z-index: 999999; box-shadow: 0 0 10px #000;display: none;text-align: center;cursor: pointer; }
+/******  end    **************/
+
+/******   最近联系人    ***********/
+.recent-container{ overflow: auto; }
+.friends-list-box{ display: none;border-top: 1px solid #ccc; }
+.friend-group{ cursor: pointer;border-bottom: 1px solid #ccc; position: relative;}
+.drop-down{position: absolute;top: 16px;right: 23px;border-left: 6px solid transparent; border-top: 6px solid #000;border-right: 6px solid transparent;  }
+
+
 .list-group{margin-bottom: 0px;}
 .online_man{/*overflow: auto !important;*/text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
 .online_man{/*overflow: auto;*/box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0;background: #fff;height: 100%;display: block;}
@@ -62,7 +99,7 @@ li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line
 .icon-caret-down{font-size: 32px;position: absolute;bottom: -10px;left: 15px;color: #fff;font-family: FontAwesome !important;}
 .icon-folder-open{font-family: FontAwesome !important;}
 .plus_menu img{padding: 10px;}
-.rotate-box{color: #fff;position: absolute;top: 0;left: 0;padding: 10px;}
+.rotate-box{ color: #fff;position: absolute;top: 0;left: 0;padding: 10px; }
 .rotate-box i{font-family: FontAwesome !important;margin: 10px;background-color: rgba(0,0,0,0.2);padding: 10px;}
 .plus_menu{cursor: pointer;}
 .he_ov i{font-family: FontAwesome !important;color: #ed145b;}
@@ -78,8 +115,8 @@ li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line
 /*.mes_fixed{display: none;}*/.list-group li{position: relative;}
 .recent-action{display: inline-block !important;}
 .recent-close{position: absolute;display: none;width: 20px;line-height: 20px;height: 20px;right: -9px;/*background-color: #ed145b;*/font-size: 14px;color: #000;text-align: left;border-radius: 20px;/*padding: 3px;*/top: -4px;}
-.mes_close{display: none;cursor: pointer;margin-right: 5px;background: #ccc;color: #fff;position:absolute;width:20px;height:20px;border-radius: 50%;right: 0;top: 20px;}
-.mes_num{cursor: pointer;margin-right: 5px;background: #ed145b;color: #fff;position:absolute;width:20px;height:20px;border-radius: 50%;right: 0;top: 20px;line-height: 20px;}
+.mes_close{display: none;cursor: pointer;margin-right: 5px;background: #ccc;color: #fff;position:absolute;width:20px;height:20px;border-radius: 50%;right: 0;top: 50%;margin-top: -10px;}
+.mes_num, .session-tab-num{    cursor: pointer;margin-right: 5px;background: #ed145b;color: #fff;position: absolute;width: 20px;height: 20px;border-radius: 50%;right: 0;top: 50%;line-height: 20px;text-align: center;margin-top: -10px;}
 .mes_move{cursor: move;background-color: #fff;text-align: center;}
 .mes_move i, .dropdown i{font-family: FontAwesome !important;}
 .dropdown{position: absolute !important;top: 10px;right: 10px;}
@@ -91,7 +128,7 @@ li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line
 .staff-info-box .arrow{top: 50%;margin-top: -11px;border-right-color: #999;border-right-color: rgba(0, 0, 0, .25);position: absolute;display: block;width: 0;height: 0;border-top:8px solid transparent;border-bottom:8px solid transparent;}
 .staff-info{position: relative;}
 .staff-info-box ul li{line-height: 25px;height: 25px;text-align: left !important;padding: 0 !important;}
-.con-tab-content ul{border-top: 1px solid #ccc;}
+/*.con-tab-content ul{border-top: 1px solid #ccc;}*/
 .con-tab-content ul li{/*overflow: hidden;*/}
 .man_tittle{background-color: #fff;text-align: center;height: 38px;line-height: 20px;border-bottom: 1px solid #dedede;color: #333;font-size: 14px;font-weight: 700;width: 100%;margin: 0 auto;}
 .kefu-icon{position: relative;overflow: hidden;}
@@ -99,7 +136,7 @@ li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line
 .mes_fixed{cursor: move;}
 .web_chat_voice_right_play{min-width: 30px;height: 29px;border-radius: 5px;background: url('/chat/images/voice_right.png') right no-repeat;float:right;}
 .web_voice_right_playing{min-width: 30px;height: 29px;border-radius: 5px;background: url('/chat/images/voice_right.gif') right no-repeat;float:right;}
-.chat_duration_right{position: absolute;right: 100%;color: #fff;margin-right: 5px;font-size: 16px;}
+.chat_duration_right{position: absolute;right: 100%;color: #000;margin-right: 5px;font-size: 12px;}
 .chat_duration_left{position: absolute;left: 100%;color: #fff;margin-left: 5px;font-size: 16px;}
 .web_chat_voice_left_play{min-width: 30px;height: 29px;border-radius: 5px;background: url('/chat/images/voice_left.png') left no-repeat;float:left;}
 .web_voice_left_playing{min-width: 30px;height: 29px;border-radius: 5px;background: url('/chat/images/voice_left.gif') left no-repeat;float:left;}
@@ -124,17 +161,17 @@ li.search-ren i{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line
 .chain_chat_tab ul{padding: 0;}
 .chain_chat_tab .current{background-color: #46b8da;}
 .chain_chat_tab ul li{cursor: pointer;width: 50%;height: 40px ;line-height: 40px;float: left;list-style: none;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc}
-.chat_notice_close{text-align: right;font-size: 20px;width: 100%;height: 20px;line-height: 8px;padding: 5px}
-.chat_notice_container{padding: 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
-}
+.chat_notice_close{text-align: center;font-size: 20px;width: 32px;height: 32px;line-height: 32px;}
+.chat_notice_close:hover{ background-color: #ED145B; }
 .chat_notice_container ul li{width: 400px;height: 50px;box-shadow: 0 0 5px #6F6A6A;margin: 20px auto;display: -webkit-box;display: -moz-box;display: box;}
 .chat_notice_container ul li img{text-align: left;width: 50px;height: 50px;}
 .chat_notice_container ul div{height: 50px;}
-.chat_notice_img, .chat_notice_img img{width: 50px;height: 50px;}
+.chat_notice_img, .chat_notice_img img{width: 55px;height: 55px;padding: 3px;}
 .chat_notice_list{-webkit-box-sizing: border-box;-moz-box-sizing: border-box;-ms-box-sizing: border-box;box-sizing: border-box;-webkit-box-orient: horizontal;-moz-box-orient: horizontal;-ms-box-orient: horizontal;box-orient: horizontal;display: -webkit-box;display: -moz-box;display: box;width: 100%;margin: 20 auto;background: #95B0C3}
 .chat_notice_con{word-break: initial;-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;}
 .chat_notice_con span{padding: 0 5px;border-bottom: 1px solid #ccc;width: 100%;height: 25px;display: inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
-.chat_notice_sel{cursor: pointer;width: 80px;height: 30px;margin: 10px 10px;text-align: center;line-height: 30px;border: 1px solid #ccc;box-shadow: 0 0 1px #ccc;}
+.chat_notice_sel{cursor: pointer;height: 30px;margin: 10px 0;text-align: center;line-height: 30px;border: 1px solid #ccc;box-shadow: 0 0 1px #ccc;}
+.chat_notice_agree { background-color: #88CC86;}
 .chat_mes_notice{position: absolute;top: 10px;right: 10px;font-size: 16px;cursor: pointer;}
 .chat_mes_notice img{width: 16px;}
 .chain_chat_con{display: none;}
@@ -160,7 +197,7 @@ i.voiceOn{ display: inline-block; background: url('/chat/images/voiceOff.png') c
 i.deskOff{display: inline-block; background: url('/chat/images/deskOn.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') center no-repeat; width: 16px; height: 16px;line-height: 16px;vertical-align: middle;margin: 5px;}
 
-.chat_message_notice{ text-align: center; width: 350px;  position: fixed; top: 100px; left: 50%;  margin-left: -186px;background: #fff;z-index: 999999; box-shadow: 0 0 10px #ccc;padding: 20px; display: none;z-index: 111;  max-height: 300px;overflow: auto;}
+.chat_message_notice{ text-align: center; width: 350px; background: #fff;z-index: 222222; padding: 20px; max-height: 300px;overflow: auto;}
 .chat_message_notice_con{ margin: 10px 0;    height: 50px;padding: 10px;border: 1px solid #ccc;box-shadow: 0 0 3px #ccc;}
 .chat_close{    position: absolute;top: 0;right: 0;margin: 0px 5px;cursor: pointer;width: 20px;height: 20px;line-height: 20px;font-size: 20px;}
 /***********  表情的滑过  ***********/
@@ -191,15 +228,21 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	/** 表情  */
 	.pc_emoji_box{ display: none; background: #fff; position: absolute; width: 350px; box-shadow: 0 0 10px #ccc;border-radius: 5px;max-height: 200px;min-height: 100px; overflow: auto !important;bottom: 100%;}
 	/******************  end  *****************************/
+
 	/*********************  聊天框  *************************/
+	.mb-chat-tab-content{ display: none !important; }
+    .mes_content .jian{border: 5px solid transparent; border-right-color: #F3F3F3; border-top-color: #F3F3F3;margin-top: 10px;}
+    .content-font{background-color: #F3F3F3;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
+    .content-font .Journalism{color: #81E9EC;width: 100%;display: block;text-decoration: none}
 	.pc_he-ov-box .seeMore{ color: #000; }
 	.chat_initial{ background: url('/chat/images/chat_initial.png') center no-repeat;}	
 	.mes_title{padding: 3px;border-bottom: 1px solid #ccc;}
-	.mes_title_con{text-align: center;color: #848080;}
+	.mes_title_con{text-align: center;color: #848080;cursor: move;}
 	/*********************  end  *************************/
 	.viewer-container{ background-color: #000; }
-	.mes_content .jian{border: 5px solid transparent; border-right-color: #3C3434; border-top-color: #3C3434;margin-top: 10px;}
 /*********  群  ***************/
+.chat_notice_container{padding: 0 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
+}
 .group-man-show{ width: 190px; display: inline-block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;  }
 .group-chat{ border-bottom: 1px solid #ccc;position: relative; }  
 /*********  end ***************/
@@ -215,7 +258,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .container-tab, .container-tab ul li{height: 40px;width: 100%;text-align: center;}
 .container-tab ul{position: relative;border-bottom: 1px solid #ccc;clear: both;height: 41px;}
 .container-tab ul li{padding-top: 2px;width: 25%;float: left;cursor: pointer;}
-.sanjiao{width: 0;height: 0;border-bottom: 8px solid #fc5e5e;border-left: 6px solid transparent;border-right: 6px solid transparent;position: absolute;left: 12.5%;top: 100%;margin-left: -5px;margin-top: -7px;}
+.sanjiao{width: 0;height: 0;border-bottom: 8px solid #955F34;border-left: 6px solid transparent;border-right: 6px solid transparent;position: absolute;left: 12.5%;top: 100%;margin-left: -5px;margin-top: -7px;}
 .clear{clear: both;}
 .group_pep{margin-top: 8px;}
 .con-tab-content{display: block;}
@@ -230,13 +273,18 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .img-box-act span{margin: 10px;width: 100px !important;}
 .sending-img-box{text-align: center;}
 .sending-img-box img{max-width: 500px;}}
+.groupMan-list{ padding: 2px; }
 @media (max-width: 600px){
 	/*********************  输入框  **************************/
 	.mb_mes_footer{display: block;}
 	/*********************   end  **************************/
 	.pc_mes_input_box{display: none;}
-.content-font{max-width: 230px !important;}
-.chat_notice_container{padding: 10px;overflow: auto !important;width: 100%;position: absolute;top: 0;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
+    .content-font{background-color: #fff;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
+    .content-font .Journalism{color: #000;width: 100%;display: block;text-decoration: none}
+    .mes_content .jian{border: 5px solid transparent; border-right-color: #fff; border-top-color: #fff;margin-top: 10px;}
+    .mes_content .jian{border: 5px solid transparent; border-right-color: #fff; border-top-color: #fff;margin-top: 10px;}
+    .content-font{max-width: 230px !important;}
+.chat_notice_container{padding:0 10px;overflow: auto !important; display: none; width: 100%;position: absolute;top: 200px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
 .chat_message_notice{width: 100%;left: 0;margin-left: 0;top: 150px;}
 .online_man{overflow: auto;}
 .mes_dclose{display: block;}

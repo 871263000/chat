@@ -136,5 +136,12 @@ class messageList
 		$recentContact = $this->d->findAll($sql);
 		return $recentContact;
 	}
+	// 还有列表
+	public function friendsList() 
+	{
+		$sql = "SELECT a.*, b.`card_image`,b.`name` FROM `oms_friend_list` a LEFT JOIN `oms_hr` b ON a.staffid = b.staffid WHERE  a.`state` = 2 AND a.`pid`=".$this->uid;
+		$arrFriendList = $this->d->findAll($sql);
+		return $arrFriendList;
+	}
 }
  ?>

@@ -189,7 +189,9 @@ class chatMessageController
 		$this->model->updContactModel();
 		return array('type'=>'default');
 	}
-
+	public function delFriend() {
+		return $this->model->delFriend();
+	}
 	//统计 所有在线人数的 详情信息
 	public function allOnlineNum() {
 
