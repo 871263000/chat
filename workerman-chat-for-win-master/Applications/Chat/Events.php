@@ -50,7 +50,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend');
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -89,6 +89,15 @@ class Events
                 case 'chatAdmin':
                     $message_data['session_id'] = $message_data['session_no'];
                     break;
+                case 'vaAnswer':
+                    $new_message_data = $message_data;
+                    Gateway::sendToClient($message_data['client_id'], json_encode($new_message_data));
+                    $new_message_data['type'] = "cancelVa";
+                    Gateway::sendToUid($selfInfo['uid'], json_encode($new_message_data));
+                    return;
+                case 'vaChat':
+                    
+                //     break;
                 case 'sayUid':
                 case 'mes_load':
                 case 'mes_close':
@@ -105,14 +114,25 @@ class Events
             }
 
             //$selfInfo 自己的一些信息 $message_data 客户端发来的数据
-           $chatMessageData =new \Controllers\chatMessageController($selfInfo, $message_data);
+           $chatMessageData = \Controllers\chatMessageController::getInstance();
 
             //根据客户端传来的类型调用相应的方法
-           $resMessageData = $chatMessageData->init($type);
+           $resMessageData = $chatMessageData->init($type,$selfInfo, $message_data );
            if ($type == 'sayUid') {
                 Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
+                $resMessageData['type'] = 'resSayUid';
+                // 发给自己
+                Gateway::sendToClient($client_id, json_encode($resMessageData));
+                return ;
 
            } else {
+            if ( $type == 'vaChat' ) {
+                Gateway::sendToClient($client_id, json_encode($resMessageData));
+                 $resMessageData['type'] = 'va_say_uid';
+                Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
+                // 发给自己
+                return ;
+            }
                 Gateway::sendToClient($client_id, json_encode($resMessageData));
            }
 
@@ -203,6 +223,18 @@ class Events
                     }
                     Gateway::joinGroup($client_id, $room_id);   
                     return;
+                case 'va':
+                    $uid = $_SESSION['uid'];
+                    $client_name = $_SESSION['client_name'];
+                    $toUid = $message_data['to_uid'];
+                    unset($message_data['to_uid']);
+
+                    $new_message = $message_data;
+                    $new_message['from_uid'] = $uid;
+                    $new_message['client_name'] = $client_name;
+                    $new_message['client_id'] = $client_id;
+                     Gateway::sendToUid( $toUid, json_encode($new_message));
+                    break;
                 //admin 登录 
                 case 'adminLogin':
 

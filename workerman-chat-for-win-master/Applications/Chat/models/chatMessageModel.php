@@ -5,23 +5,43 @@ namespace models;
 use \GatewayWorker\Lib\Db;
 
 /**
+* 单例模式
 * 消息的处理数据
 */
 class chatMessageModel
 {
 	//数据连接资源
-	public $db;
+	public $db = null;
 	//自己的信息
 	public $selfInfo;
 	//客户端发来的消息
 	public $messageData;
+	static private $_instance  = null;
 
-	function __construct( $selfInfo, $messageData )
+	private function __construct()
 	{
-		$this->db = Db::instance('oms');
+		// $this->db = Db::instance('oms');
+		// $this->selfInfo = $selfInfo;
+		// $this->messageData = $messageData;
+	}
+	// 获取 单例对象
+	static public function getInstance () 
+	{
+		if (is_null(self::$_instance)) {
+			self::$_instance = new chatMessageModel();
+		}
+		return self::$_instance;
+
+	}
+	// 初始数据
+	public function init( $selfInfo, $messageData ) 
+	{
+		if ( is_null($this->db) ) {
+			$this->db = Db::instance('oms');
+		}
 		$this->selfInfo = $selfInfo;
 		$this->messageData = $messageData;
-	}
+	} 
 	//判断是不是在一个房间
 	public function isSameRooomModel ()
 	{
@@ -144,19 +164,29 @@ class chatMessageModel
 	public function isInGroupModel () 
 	{
 		//验证是否在群聊
-		$va = $this->db->select('`group_participants`,`group_name`')->from('oms_group_chat')->where('id = :id')->bindValues(array('id'=> $this->messageData['session_id']))->row();
-	    $arrVa = explode(',', $va['group_participants']);
+		$va = $this->db->select('`staffid`,`group_name`')->from('oms_groups_people')->where('pid = :pid')->bindValues(array('pid'=> $this->messageData['session_id']))->query();
+	    // $arrVa = explode(',', $va['group_participants']);
 	    $uid = $this->selfInfo['uid'];
-	    if (in_array($this->selfInfo['uid'], $arrVa)) {
-	    	foreach ($arrVa as $key => $value) {
-		    	if ($value == $uid ) {
-		    		unset($arrVa[$key]);
-		    	}
-		    }
+	    $group_name = '';
+	    $arrVa = array();
+	    $strVa = '';
+	    $is = false;
+	    if (empty($va)) {
+	    	return;
+	    }
+	    foreach ($va as $key => $value) {
+	    	if ( $uid == $value['staffid'] ) {
+	    		$is = true;
+	    	} else {
+	    		$arrVa[] = $value['staffid'];
+	    	}
+	    }
+	    $strVa = implode(',', $arrVa);
+	    if ($is) {
 	    	$resData = array(
 	    		'to_uid_id'=> $arrVa,
-	    		'group_name'=> $va['group_name'],
-	    		'group_participants' => $va['group_participants'],
+	    		'group_name'=> $va[0]['group_name'],
+	    		'group_participants' => $strVa,
 	    		);
 	        return $resData;
 	    }
@@ -186,7 +216,6 @@ class chatMessageModel
 	public function image64tofile( $string ) {
 		$pa = $string;
         if (preg_match("/^(data:\s*image\/(\w+);base64,)/", $pa, $result)){
-        	var_dump($result[1]);
             $type = $result[2];
             //创建文件夹
             $save_path = "../chatImage/".$this->messageData['to_uid'] . "/";
@@ -390,6 +419,17 @@ class chatMessageModel
 			// $this->db->delete('oms_friend_list')->where('pid = :pid AND staffid =:staffid')->bindValues(array('pid'=>$this->messageData['uid'] , 'staffid'=> $uid))->query();
 		}
 		return ['type'=> 'default'];
+	}
+	// 删除 聊天信息
+	public function delChatMesModel()
+	{
+		$uid = $this->selfInfo['uid'];
+		if (empty($this->messageData['mes_id'])) {
+			return false;
+		}
+		
+		$this->db->update('oms_string_message')->cols(array('dialog'))->where('id ='.$this->messageData['mes_id'].' AND sender_id ='.$uid)->bindValue('dialog', 2)->query();
+		// $this->db->delete('oms_string_message')->where('id =:id AND sender_id =:sender_id')->bindValues(array('id'=>$this->messageData['mes_id'], 'sender_id'=>$uid))->query();
 	}
 }
  ?>

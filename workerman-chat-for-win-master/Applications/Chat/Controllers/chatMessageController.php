@@ -3,7 +3,7 @@ namespace Controllers;
 
 use models;
 /**
-* 
+* 单例模式
 */
 class chatMessageController 
 {
@@ -21,26 +21,42 @@ class chatMessageController
 
 	//客户端发来的数据
 	public $messageData;
+	// 单例对象
+	static private $_instance  = null;
 	/*******
 	*@param 数组  $selfInfo ， 自己的基本信息
 	*@param 数组  $messageData ， 客户端传来的数据
 	*
 	*****/
-	function __construct( $selfInfo, $messageData )
+	private function __construct(  )
 	{
-		$this->selfInfo = $selfInfo;
-		$this->messageData = $messageData;
+		
 	}
+	// 获取 单例对象
+	static public function getInstance () 
+	{
+		if (is_null(self::$_instance)) {
+			self::$_instance = new chatMessageController();
+		}
+		return self::$_instance;
 
+	}
 	/******
 	*
 	* return $data 返回的数据
 	* $type 方法类型
 	*
 	********/
-	public function init( $type )
+	public function init( $type, $selfInfo, $messageData )
 	{
-		$this->model = new \models\chatMessageModel($this->selfInfo, $this->messageData);
+		// 初始化自己的 信息
+		$this->selfInfo = $selfInfo;
+		//初始化 客户端发来的消息
+		$this->messageData = $messageData;
+
+		$this->model = \models\chatMessageModel::getInstance();
+		$this->model->init( $this->selfInfo, $this->messageData );
+		// 客户端发来的控制器  调用相应的 方法
 		return $data = $this->$type();
 		
 	}
@@ -48,6 +64,7 @@ class chatMessageController
 	//发来的消息
 	public function sayUid()
 	{
+		$insert_id= 0;
 		if ($this->messageData['to_uid'] != 'all') {
 			if ( $this->messageData['message_type'] == 'message' ) {
 				//验证是不是在同一个房间
@@ -55,11 +72,12 @@ class chatMessageController
 				if ( !$resRoom ) {
 					$resIs = $this->isFriends();
 					if ($resIs) {
-						//获得插入的id
+						//获得 消息 内容 插入的id
 						$insert_id = $this->messageInsert();
 						//通知消息的插入 返回 一组发给客户端的数据
 						$sendData = $this->noticeInsert( $insert_id );
 						$sendData['to_uid'] = $this->messageData['to_uid'];
+						$sendData['insert_id'] = $insert_id;
 						return $sendData;
 					}
 					return false;
@@ -69,7 +87,6 @@ class chatMessageController
 				//通知消息的插入 返回 一组发给客户端的数据
 				$sendData = $this->noticeInsert( $insert_id );
 				$sendData['to_uid'] = $this->messageData['to_uid'];
-				return $sendData;
 			} else if ( $this->messageData['message_type'] == 'groupMessage' ) {
 				//是否在群聊里 如果在返回 群信息
 				$getData = $this->isInGroup();
@@ -81,7 +98,6 @@ class chatMessageController
 					$sendData = $this->noticeInsert( $insert_id );
 					$sendData['group_name'] = $getData['group_name'];
                     $sendData['to_uid'] = $getData['to_uid_id'];
-					return $sendData;
 				}
 			} else if ( $this->messageData['message_type'] == 'adminMessage' ) {
 				$getAdmin = $this->model->isAdmin();
@@ -92,17 +108,23 @@ class chatMessageController
 					$sendData = $this->noticeInsert( $insert_id );
 					$sendData['group_name'] = '管理员群';
                     $sendData['to_uid'] = $getAdmin;
-                    return $sendData;
 				}
 			}
-			return false;
+			$sendData['insert_id'] = $insert_id;
+            return $sendData;
 			
 		}
 		// $this->model->sayUid();
 		return false;
 
 	}
-
+	// 语音取消
+	public function vaChat() 
+	{
+		$res = $this->sayUid();
+		$res['type'] = 'vaCancel';
+		return $res;
+	}
 	//选择人聊天
 	public function mes_chat () 
 	{
@@ -258,7 +280,12 @@ class chatMessageController
 	{
 		return $this->model->messageInsertModel();
 	}
-
+	// 删除 聊天信息
+	public function delChatMes() 
+	{
+		$this->model->delChatMesModel();
+		return array('type'=>'default');
+	}
 	//消息通知的记录插入
 	public function noticeInsert( $insert_id ) 
 	{

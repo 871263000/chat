@@ -99,7 +99,7 @@ class messageList
   		$arrGroupMes = $this->d->findAll($sql);
   		if ( $isAdmin == 1 ) {
 	  		//管理员群聊消息
-			$sql = "SELECT a.`mes_num`, a.`staffid`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_hr` a inner JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE  a.`staffid`=$this->uid";
+			$sql = "SELECT a.`mes_num`, a.`staffid`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_hr` a inner JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_num` != 0 AND a.`staffid`=$this->uid";
 	  		$arrAdminMes = $this->d->findAll($sql);
 	  		foreach ($arrAdminMes as $key => $value) {
 	  			$arrMes[] = $value;
@@ -114,7 +114,7 @@ class messageList
 	//群列表
 	public function groupChatList(){
 		//自己有多少个群聊
-		$sql = "SELECT a.*,b.group_founder FROM `oms_groups_people` a LEFT JOIN  `oms_group_chat` b ON a.pid = b.id  WHERE a.`state`= 0 AND a.`staffid`=".$this->uid;
+		$sql = "SELECT a.*,b.group_founder FROM `oms_groups_people` a LEFT JOIN  `oms_group_chat` b ON a.pid = b.id  WHERE a.`state`= 0 AND a.`staffid`=".$this->uid." ORDER BY id desc";
 		//群聊参加人
 		$arr_group_num = $this->d->findAll($sql);
 		// $sql = "SELECT a.*, b.name,b.card_image FROM `oms_groups_people` a LEFT JOIN `oms_hr` b ON a.`staffid` = b.staffid WHERE a.`state` = 0 AND a.`pid` in(SELECT `pid` FROM `oms_groups_people` WHERE `staffid`=".$this->uid.")";

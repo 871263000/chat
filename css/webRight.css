@@ -18,7 +18,7 @@
   _bottom: auto;
   _top: expression(documentElement.scrollTop+documentElement.clientHeight-this.offsetHeight-10);
 }
-.plus_icon { cursor: pointer;width: 50px;height: 50px; display: block;background-position: center; background-color: #fff ; background-image: url(../images/plus.png);background-repeat: no-repeat;}
+.plus_icon { cursor: pointer;width: 35px;margin-right: 4px; height: 35px; display: block;background-position: center; background-color: #fff ; background-image: url(../images/chat_add.png);background-repeat: no-repeat;}
 .online_man{ /*overflow: auto;*/ box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0; background: #fff; height: 100%; display: block; }
 .header_icon{ cursor: pointer; }
 .mes_con{ overflow: auto !important; box-shadow: 0 0 5px #999;position: absolute;width: 200px;left: 0px;top: 0;background: #fff;height: 100%;display: block; }
