@@ -5,6 +5,14 @@ require_once 'curl/lib/curl_response.php';
 require_once '../config.inc.php';
 require_once 'lib/ssmAPI.php';
 
+// 自己的 id
+$chat_uid = $_SESSION['staffid'];
+// 组织id
+$oms_id = $_SESSION['oms_id'];
+
+$chat_uid = 4;
+$oms_id = 1;
+
 
 //// 实时 猫的 验证 key secret
 $key = "7eb3b686-54e4-4c23-8ef7-90391c29d35d";
@@ -39,10 +47,10 @@ $num = 1;
 
 
 // 创建 session
-if ($post['createSession']) {
+if (isset($post['createSession'])) {
         // 创建 一个 sesssion ( 房间 ),
     $url = "https://api.realtimecat.com/v0.3/sessions";
-    $cData = ['type'=> 'p2p', 'live_days'=>1];
+    $cData = ['type'=> 'p2p', 'live_days'=>1,  'label'=>$chat_uid ];
     $res = $ssmApi->handleSession( 'post', $url, $cData );
 
     $arrSessionId = json_decode($res, true);
@@ -59,7 +67,7 @@ if ( isset($post['Invitation']) ) {
     $num = 2;
     // 创建 一个 sesssion ( 房间 ),
     $url = "https://api.realtimecat.com/v0.3/sessions";
-    $cData = ['type'=> 'p2p', 'live_days'=>1];
+    $cData = ['type'=> 'p2p', 'live_days'=>1, 'label'=>$chat_uid];
     $res = $ssmApi->handleSession( 'post', $url, $cData );
 
     $arrSessionId = json_decode($res, true);

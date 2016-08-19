@@ -5,6 +5,21 @@ var vaChat = function ( obj ) {
   if (!mesParam.mes_obj() || $('.vaChat').length > 0) {
     return false;
   };
+  if ( mes_type == 'groupMessage' ) {
+    if ( !confirm('你确定要开启群视频吗？') ) {
+      return false;
+    };
+    $.ajax({
+            url: '/chat/va-chat/ajax_getToken.php?createSession=1',
+            data: 'createSession=1',
+            type: 'post',
+            success: function (data) {
+            ws.send('{"type":"sayUid","to_uid":"0","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+$('.chating-content .mes_title_con').text()+'","message_type":"groupMessage", "mes_types":"va","session_no":"1","content":"'+data+'"}');
+            }
+
+        })
+    return false;
+  }
   var type = obj.getAttribute('data-para');
   var wait = $('<div>正在等待对方连接.....</div>');
   wait.addClass('vaChat');
@@ -12,10 +27,7 @@ var vaChat = function ( obj ) {
 
   cancel.click(function () {
     $(this).parent().remove();
-    // session_no = parseInt( to_uid ) < parseInt( chat_uid ) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
     ws.send('{"type":"vaChat","to_uid":"'+to_uid+'","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+ $('.chating-content .mes_title_con').text()+'","message_type":"message", "mes_types":"text","session_no":"'+session_no+'","content":"语音取消"}');
-    // {"type":"sayUid","to_uid":"'++'","senderid":"4", "groupId":"0", "accept_name":"赵桂芳","message_type":"message", "mes_types":"text","session_no":"4-5","content":"语音取消"}
-    // ws.send('{"type":"vaCancel", "to_uid": }');
   });
 
   wait.append(cancel);
@@ -173,6 +185,8 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
             $('.chat-tab-content').remove();
             $('.chat-container').hide();
             $('.chat-container').append('<div class="chat-tab-content mb-chat-tab-content"><div class="mes_inout textarea chat_text_voice" id="mes_textarea" style="height:auto;" contenteditable="true"></div><textarea style="display:none" class="mes_inout" ></textarea><input type="submit" class="btn btn-primary chat_text_voice" id="chat_submit" value="发送" /></div>');
+            // 图片显示插件 缓存清空 
+            $(".loadImg").not(":first").remove(); 
             addSession.sessionList = [];
           })
           $('.chating-content .loader').hide();
@@ -196,6 +210,7 @@ AddSession.prototype.delSession = function ( _index ) {
   var _NewIndex = _index+ 1;
   $('.chat-tab-content').eq(_NewIndex).remove();
   objThis.remove();
+  //图片显示插件 里的 图片清空
   $('.loadImg').eq(_index).remove();
   if ( objLength > 2 ) {
     if ( _index == this.index ) {

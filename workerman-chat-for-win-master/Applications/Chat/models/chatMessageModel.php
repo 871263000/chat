@@ -428,7 +428,7 @@ class chatMessageModel
 			return false;
 		}
 		
-		$this->db->update('oms_string_message')->cols(array('dialog'))->where('id ='.$this->messageData['mes_id'].' AND sender_id ='.$uid)->bindValue('dialog', 2)->query();
+		$this->db->update('oms_string_message')->cols(array('mesages_types', 'message_content'))->where('id ='.$this->messageData['mes_id'].' AND sender_id ='.$uid)->bindValues(['mesages_types'=>'revoke', 'message_content'=>'撤销了一条消息'])->query();
 		// $this->db->delete('oms_string_message')->where('id =:id AND sender_id =:sender_id')->bindValues(array('id'=>$this->messageData['mes_id'], 'sender_id'=>$uid))->query();
 	}
 }

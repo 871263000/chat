@@ -227,7 +227,7 @@ class Events
                     $uid = $_SESSION['uid'];
                     $client_name = $_SESSION['client_name'];
                     $toUid = $message_data['to_uid'];
-                    unset($message_data['to_uid']);
+                    $toUid = explode(',', $toUid);
 
                     $new_message = $message_data;
                     $new_message['from_uid'] = $uid;

@@ -45,6 +45,11 @@ class ssmApi
         // 设置  curl  header
         $this->_curl->headers = $this->header = array( 'X-RTCAT-APIKEY'=> $this->key, 'X-RTCAT-SECRET'=>$this->Secret );
     }
+    // 删除一个 会话中 过期的 token 
+    public function deltokened ( $session_id ) 
+    {
+        return false;
+    } 
 }
 
  ?>

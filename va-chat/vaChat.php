@@ -1,10 +1,15 @@
 <?php 
-require_once '../config.inc.php';
 require_once 'curl/lib/curl.php';
 require_once 'curl/lib/curl_response.php';
 require_once 'lib/ssmAPI.php';
+error_reporting(E_ALL ^ E_NOTICE^ E_DEPRECATED);
+// 自己的 id
+$chat_uid = $_SESSION['staffid'];
+// 组织id
+$oms_id = $_SESSION['oms_id'];
 
-
+$chat_uid = 4;
+$oms_id = 1;
 //// 实时 猫的 验证 key secret
 $key = "7eb3b686-54e4-4c23-8ef7-90391c29d35d";
 $Secret = "22155338-de04-4419-bd20-c0bf91a4c71e";
@@ -48,14 +53,14 @@ if ( isset($get['uuid']) ) {
     // 创建 一个 token 
     $num = 1;
    
-        // 创建 token 
+    // 创建 token 
     $url = "https://api.realtimecat.com/v0.3/sessions/".$session."/tokens";
-    $cData = ['type'=>'pub', 'live_days'=>1, 'number'=> $num];
+    $cData = ['type'=>'pub', 'live_days'=>1, 'number'=> $num, 'label'=>$chat_uid ];
     $res = $ssmApi->getToken( $url, $cData );
     $arrRes = json_decode($res, true );
     $token = $arrRes['uuid'];
 }
-
+// a 语音 v 是 视频
 $type = $get['act'];
 
 if ( empty($type) ) {
@@ -68,28 +73,41 @@ if ( empty($type) ) {
 <head>
 
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>视频语音</title>
 
     <!-- jQuery -->
-    <script src="//cdn.realtimecat.com/realtimecat/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     
     <!-- 实时猫 RealTimeCat JavaScript SDK -->
     <script src="//cdn.realtimecat.com/realtimecat/realtimecat-0.2.min.js"></script>
-    <script src="//cdn.realtimecat.com/realtimecat/realtimecat-0.2.min.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <!-- css -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="fonts/css/font-awesome.min.css">
-    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <style>
-        body{ background-color: #181818; }
+        body{ background-color: #181818;width: 100%;height: 100%; }
         #navbar{ margin: auto; }
-        #media-list >div{  margin: auto;} 
-        #peer-self{ width: 200px; height: 170px;} 
+        #media-list{width: 0;margin: auto;max-width: 100%;}
+        /*#peer-self{ width: 200px; height: 170px;} */
         .vaIng{ background-color: #CCC;}
+        .va-box{ display: inline-block;margin: 0 10px; }
+        .big-va-box { position: fixed; width: 800px;height: 800px;top: 50%; left: 50%; margin-left: -400px;margin-top: -400px;z-index: 111;}
+        .big-va-box video{ width: 800px;height: 800px;transition:all 1s;
+            -moz-transition:all 1s;
+             /* Firefox 4 */
+            -webkit-transition:all 1s;
+            /* Safari and Chrome */
+            -o-transition:all 1s; /* Opera */ }
+        @media (max-width: 500px) {
+            .va-box{ width: 90% !important;height: 100% !important; margin: auto;display: block !important;}
+            .va-box video{ width: 100% !important; height: auto !important; margin: auto;}
+        }
     </style>
     <!-- <link rel="stylesheet" href="css/main.min.css"> -->
 
@@ -106,7 +124,7 @@ if ( empty($type) ) {
                     <h4 class="modal-title" id="myModalLabel">把以下链接发给你的好友邀请加入</h4>
                 </div>
                 <div class="modal-body">
-                    https://www.omso2o.com?session_id=<?php echo $session; ?>&Invitation=1
+                    https://www.omso2o.com/chat/va-chat/vaChat.php?session_id=<?php echo $session; ?>&Invitation=1
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -170,9 +188,13 @@ if ( empty($type) ) {
 <!--     <div id="ask-for-allowance">
         <img id="ask-for-allowance-image" src="./images/ask-for-allowance.png" alt="请点击允许按钮">
     </div> -->
-    <div id="media-list"></div>
+    <div id="media-list">
+        <h2 style="text-align: center;">点击放大</h2>
+    </div>
     <script>
         (function ($) {
+            //拖动
+            
             // 浏览器检测对象
             // var detect = new RTCat.Detect();  
             // var browser =  detect.getBrowser();  
@@ -218,19 +240,61 @@ if ( empty($type) ) {
 
             // 显示流
             function displayStream(id, stream) {
-
+                var vWidth = '300px';
+                var listWidth = '';
                                 // Video container
                 var videoContainer = document.createElement("div");
-                videoContainer.setAttribute('style', "width: 300px; height:300px;");
+                videoContainer.setAttribute('style', "width: "+vWidth+"; height:300px;");
+                videoContainer.className = 'va-box';
+
                 // Video player
                 var videoPlayer = document.createElement('div');
                 videoPlayer.setAttribute("id", "peer-" + id);
+                $(videoPlayer).dblclick(function (event) {
+                    var is = $(this).hasClass('big-va-box');
+                    if ( !is ) {
+                        $('.va-box .big-va-box').removeClass('big-va-box')
+                        $(this).addClass('big-va-box');
+                        $( ".big-va-box" ).draggable();
+                    } else {
+                        $(this).removeClass('big-va-box')
+                    }
+                })
+                // videoPlayer.onclick = function (event) {
+                //     var obj = event.srcElement ? event.srcElement : event.target; 
+                //     var addClass = 'big-va-box';
+                //     var is = $(obj).parent().hasClass('big-va-box');
+                //     console.log(is);
+                //     if ( !is ) {
+                //         $('.va-box .big-va-box').removeClass('big-va-box')
+                //         $(obj).parent().addClass('big-va-box');
+                //         $( ".big-va-box" ).draggable({
+                //             start: function() {
+                //             },
+                //             drag: function() {
+                //             },
+                //             stop: function() {
+                //                 is = false;
+                //             }
+                //         });
+                //         // videoContainer.childNodes[0].onclick = function () {
+                //         //     window.event? window.event.cancelBubble = true : evt.stopPropagation();
+                //         //     $('.va-box .big-va-box').removeClass('big-va-box');
+                //         //     console.log(4);
+                //         // }
+                //     } else {
+                //         $('.va-box .big-va-box').removeClass('big-va-box')
+                //         // videoPlayer.className = '';
+                //     }
+                // }
                 videoContainer.appendChild(videoPlayer);
                 mediaList.appendChild(videoContainer);
                 stream.play("peer-" + id);
-                videoPlayer.childNodes[0].setAttribute('poster', '')
+                videoPlayer.childNodes[0].setAttribute('poster', '');
 
-                
+                listWidth = parseInt( $('#media-list').css('width').replace('px', '') );
+                listWidth +=320;
+                $('#media-list').css('width', listWidth+"px");
                 // Video container
                 // var videoContainer = document.createElement("div");
                 // if ( id == "self" ) {
@@ -266,7 +330,7 @@ if ( empty($type) ) {
 
             session.on('connected', function (users) {
                 console.log('Session connected');
-                initStream(ssmOptions.options, function (stream) {
+                initStream( ssmOptions.options, function (stream) {
                     displayStream('self', stream)
                 });
             });

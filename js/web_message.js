@@ -24,7 +24,7 @@ function onopen() {
     var login_data = '{"type":"login","oms_id":"' + oms_id + '", "uid": "' + chat_uid + '", "header_img_url":"' + header_img_url + '",  "client_name":"' + chat_name + '","room_id":"' + room_id + '"}';
     ws.send(login_data);
 }
-// 
+// 自己 发的 信息 
 var ChatObj = {
     data: '',
     resSayUid: function(data) {
@@ -59,6 +59,14 @@ var ChatObj = {
                 content = data.content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
                 content = content.replace(/\|\}/g, '.gif">');
                 content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br>");
+                break;
+            case 'va':
+                content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
+                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+data.from_client_name+
+                    "开启了群聊视频</div>"+
+                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
+                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data.content+"&Invitation=1' target='_blank' >加入</a></div>"+
+                "</div>";
                 break;
             case 'file':
                 var fileArray = new Array();
@@ -125,7 +133,9 @@ function onmessage(e) {
         break;
     case 'va_say_uid':
         sayUid(data['mes_types'], data['mestype'], data['header_img_url'], data['group_name'], data['insert_id'], data['session_no'], data['from_uid_id'], data['to_uid_id'], data['from_client_id'], data['from_client_name'], data['content'], data['time']);
-         audio.pause();
+         if ( typeof audio != 'undefined' ) {
+             audio.pause();
+        };
         $('.vaChatRequest').remove();
         $('.vaChat').remove();
         break;
@@ -151,11 +161,17 @@ function onmessage(e) {
         break;
     case 'vaAnswer':
         $('.vaChat').remove();
-        // window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?uuid="+data.uuid+"&act="+data.act;
-        window.location.href="/chat/va-chat/vaChat.php?uuid="+data.uuid+"&act="+data.act+"&session_id="+data.session_id;
-        // window.open("/chat/va-chat/vaChat.php?uuid="+data.uuid+"&act="+data.act);
+        if ( data.act == 'vM' ) {
+            return false;
+        };
+        // window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data.session_id+"&Invitation=1";
+        window.location.href="/chat/va-chat/vaChat.php?session_id="+data.session_id+"&Invitation=1";
+        //window.open("https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data.session_id+"&Invitation=1");
         break;
     case 'cancelVa':
+        if ( typeof audio != 'undefined' ) {
+            audio.pause();
+        };
     $('.vaChatRequest').remove();
     break;
         //消息的加载
@@ -302,14 +318,12 @@ function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types, from_sessi
         inputValue = fileName + "|" + fileUrl;
         break;
     case 'voice':
-        inputValue = $('.chat_voice_box').attr('voice_url');
+        inputValue = $('.chat_voice_box').attr('voice_url'); 
         ws.send('{"type":"FUid","to_uid":"' + to_uid + '","senderid":"' + chat_uid + '", "groupId":"' + groupId + '", "accept_name":"' + accept_name + '","message_type":"' + message_type + '", "mes_types":"' + mes_types + '","session_no":"' + from_session_no + '","content":"' + inputValue + '"}');
         $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
         return;
 
     }
-    // $(".chating-content .he_ov").append('<li ' + addImgAttr + ' class="Chat_ri he ' + addImgClass + '"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="' + header_img_url + '" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">' + nowTime + '</span>' + chat_name + '</span> <div class="ri content_ri"><span class="arrow ri"></span><span class="content_font_ri">' + inputcur + '</span> </div></div></li>');
-    // $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
     ws.send('{"type":"sayUid","to_uid":"' + to_uid + '","senderid":"' + chat_uid + '", "groupId":"' + groupId + '", "accept_name":"' + accept_name + '","message_type":"' + message_type + '", "mes_types":"' + mes_types + '","session_no":"' + from_session_no + '","content":"' + inputValue + '"}');
     document.getElementById("mes_textarea").innerHTML = "";
     inputSave = '';
@@ -405,6 +419,15 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         content = content.replace(/\|\}/g, '.gif">');
         content1 = content.replace(/%5C/g, "\\").replace(/\&b\r&/g, " ");
         content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br>");
+        break;
+    case 'va':
+        content1 = "开启了群聊视频";
+        content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
+                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+from_client_name+
+                    "开启了群聊视频</div>"+
+                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
+                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+content+"&Invitation=1'  target='_blank' >加入</a></div>"+
+                "</div>";
         break;
     case 'file':
         content1 = '【文 件 】';
@@ -542,43 +565,70 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         audio.loop="loop";
         audio.play();
     }
+    $anSwerStyle = '';
+    $session_id = '';
     if  ( data.act == 'a' ) {
         var text = '邀请你语音通话';
-    } else { 
+    } else if ( data.act == 'v' ) { 
         var text = '邀请你视频通话';
-    }
+    } else if ( data.act == 'vM' ) {
+        if ( data.from_uid == chat_uid ) {
+            $session_id = data.session_id;
+            data.client_name = '';
+            var text = '加入多人视频通话';
+            $anSwerStyle = 'style="width: 80px;margin:auto;padding: 0"';
+            audio.pause();
+        } else {
+            var text = '发起多人视频通话';
+        }
+    };
     var vaQuest = $('<div class="vaChatRequest"><div class="vaRequestName">'+data.client_name+text+'</div></div>');
-    var handleBox = $('<div class="handleBox"></div>');
-    var Answer = $('<span from-uid = "'+data.from_uid+'" act="'+data.act+'" client_id="'+data.client_id+'" class="vaAnswer">接听</span>').click(function () {
+    var handleBox = $('<div class="handleBox" '+$anSwerStyle+'></div>');
+    var Answer = $('<span from-uid = "'+data.from_uid+'" session_id="'+data.session_id+'" act="'+data.act+'" client_id="'+data.client_id+'" class="vaAnswer">接听</span>').click(function () {
         var client_id = $(this).attr('client_id');
         var act = $(this).attr('act');
-        audio.pause();
+        if ( typeof audio != 'undefined' ) {
+            audio.pause();
+        };
+        if ( act == 'vM' ) {
+            var session_id = $(this).attr('session_id');
+            ws.send('{"type": "vaAnswer", "client_id": "'+client_id+'", "act": "'+act+'", "session_id": "'+session_id+'"}');
+            window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+session_id+"&Invitation=1";
+            //window.open("https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+session_id+"&Invitation=1");
+            return false;
+        };
         $.ajax({
             url: '/chat/va-chat/ajax_getToken.php',
-            data: '',
+            data: 'createSession=1',
             type: 'post',
-            dataType: 'json',
             success: function (data) {
-                // window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?uuid="+data[0].uuid+"&act="+act;
-                ws.send('{"type": "vaAnswer", "client_id": "'+client_id+'", "uuid": "'+data[1].uuid+'", "act": "'+act+'", "session_id": "'+data[1].session_id+'"}');
-                window.location.href="/chat/va-chat/vaChat.php?uuid="+data[0].uuid+"&act="+act+"&session_id="+data[0].session_id;
 
-                // window.open("/chat/va-chat/vaChat.php?uuid="+data[0].uuid+"&act="+act);
+                ws.send('{"type": "vaAnswer", "client_id": "'+client_id+'", "act": "'+act+'", "session_id": "'+data+'"}');
+                // window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data+"&Invitation=1";
+                window.location.href="/chat/va-chat/vaChat.php?session_id="+data+"&Invitation=1";
+
+                //window.open("https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data[1].session_id+"&Invitation=1");
             },
 
         })
     });
-    var cancel = $('<span from-uid = "'+data.from_uid+'" act="'+data.act+'" class="vaCancel">取消</span>').click(function () {
-        audio.pause();
-        var t_to_uid = $(this).attr('from-uid');
-        var act = $(this).attr('act');
-        var content = "视频取消";
-        if ( act == 'a' ) {
-            content = "语音取消";
-        };
-        ws.send('{"type":"vaChat","to_uid":"'+t_to_uid+'","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+ $('.chating-content .mes_title_con').text()+'","message_type":"message", "mes_types":"text","session_no":"'+session_no+'","content":"'+content+'"}');
-        $('.vaChatRequest').remove();
-    });
+    if ( data.from_uid == chat_uid ) {
+        var cancel = "";
+    } else {
+        var cancel = $('<span from-uid = "'+data.from_uid+'" act="'+data.act+'" class="vaCancel">取消</span>').click(function () {
+            if ( typeof audio != 'undefined' ) {
+                audio.pause();
+            };
+            var t_to_uid = $(this).attr('from-uid');
+            var act = $(this).attr('act');
+            var content = "视频取消";
+            if ( act == 'a' ) {
+                content = "语音取消";
+            };
+            ws.send('{"type":"vaChat","to_uid":"'+t_to_uid+'","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+ $('.chating-content .mes_title_con').text()+'","message_type":"message", "mes_types":"text","session_no":"'+session_no+'","content":"'+content+'"}');
+            $('.vaChatRequest').remove();
+        });
+    }
     handleBox.append(Answer).append(cancel);
     vaQuest.append(handleBox);
     $('body').append(vaQuest);
@@ -586,13 +636,12 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
 //  聊天消息显示
 var messageShow = function(data) { 
     var mes_time;
-    var content;
     var content2 = "";
+    var addVoiceClass = "";
+    var addImgClass = "";
+    var addImgAttr = "";
+    var content = "";
     for (var i in data) {
-        var addVoiceClass = "";
-        var addImgClass = "";
-        var addImgAttr = "";
-        var content2 = "";
         if (i == 'type') {
             break;
         };
@@ -603,6 +652,14 @@ var messageShow = function(data) {
             content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
             content = content.replace(/\|\}/g, '.gif">');
             content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br/>");
+            break;
+        case 'va':
+            content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
+                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+data[i].sender_name+
+                    "开启了群聊视频</div>"+
+                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
+                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data[i].message_content+"&Invitation=1'  target='_blank' >加入</a></div>"+
+                "</div>";
             break;
         case 'file':
             var fileArray = new Array();
@@ -646,6 +703,10 @@ var messageShow = function(data) {
             voiceArray = data[i].message_content.split('|');
             addVoiceClass = "web_chat_voice";
             break;
+        case 'revoke':
+            $(".chating-content .he_ov").prepend('<div style="text-align:center;margin:10px 0;color:#ccc;">'+data[i].sender_name+'撤销了一条信息</div>');
+            continue;
+            // return;
         default:
             break;
         }
@@ -654,6 +715,11 @@ var messageShow = function(data) {
         } else {
             $(".chating-content .he_ov").prepend('<li ' + addImgAttr + ' class="Chat_le ' + addImgClass + '"><div class="user"><span class="head le"><span class="header-img"><img src="' + data[i].card_image + '" alt=""></span></span> <span class="name le">' + data[i].sender_name + '<span style="padding: 0 0 0 20px">' + mes_time + '</span></span><div class="mes_content le"><span class="jian le"></span> <span class="content-font ' + addVoiceClass + ' le">' + content + '</span>' + content2 + '</div></div></li>');
         }
+        addVoiceClass = "";
+        addImgClass = "";
+        addImgAttr = "";
+        content2 = "";
+        content = "";
     }
     $(".chating-content .he_ov .delChatMes").unbind('click');
     $(".chating-content .he_ov .delChatMes").bind('click', function () {
