@@ -33,7 +33,7 @@ $get = $_GET;
 $post = $_POST;
 
 // 传输类型
-$type = 'v';
+$type = '';
 
 // 房间id
 $session = $get['session_id'];
