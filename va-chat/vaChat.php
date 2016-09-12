@@ -375,10 +375,13 @@ if ( empty($type) ) {
                         localStream.enableAudio();
                     }
                 }
+
             })            
             // $('#audio-toggle').click( function () {
             //     localStream.disableAudio();
                 
+
+
             // })
             function colorChange(obj) {
                 if ( obj.hasClass('vaIng') == false ) {
