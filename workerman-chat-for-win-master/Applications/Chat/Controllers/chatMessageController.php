@@ -72,7 +72,7 @@ class chatMessageController
 				if ( !$resRoom ) {
 					$resIs = $this->isFriends();
 					if ($resIs) {
-						//获得 消息 内容 插入的id
+						// 消息 内容 插入 返回 插入id
 						$insert_id = $this->messageInsert();
 						//通知消息的插入 返回 一组发给客户端的数据
 						$sendData = $this->noticeInsert( $insert_id );
@@ -80,6 +80,7 @@ class chatMessageController
 						$sendData['insert_id'] = $insert_id;
 						return $sendData;
 					}
+					$sendData['to_uid'] = 0;
 					return false;
 				}
 				//获得插入的id
@@ -115,7 +116,8 @@ class chatMessageController
 			
 		}
 		// $this->model->sayUid();
-		return false;
+		$sendData['to_uid'] = 0;
+		return $sendData;
 
 	}
 	// 语音取消
@@ -273,6 +275,12 @@ class chatMessageController
 
 		return $resData = $this->model->isFriendsModel();
 
+	}
+	// 好友的 查找
+	public function friendAdd()
+	{
+		$resData = $this->model->friendAddModel();
+		return $resData;
 	}
 	
 	//消息内容的插入

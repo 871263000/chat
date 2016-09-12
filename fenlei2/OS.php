@@ -210,7 +210,6 @@ $('.add_select').click(function(){
     //清空数组 将得到的sid放入数组最后
     sidList=[];pathPid=[];maxPnId=[]; $('.selected').find('sid').each(function(){ sidList.push($(this).html());pathPid.push($(this).attr('pathid')); maxPnId.push($(this).attr('maxpnid'));})
     // $('#No1').find('.ltclasscheckbox').attr('checked',false);
-    console.log(maxPnId);
     $('#No1').find('.ltclasscheckbox').each(function(){
         if($(this).attr('checked'))
         {

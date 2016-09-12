@@ -6,7 +6,7 @@
 .mes_radio{ width: 21px; height: 21px; display: block; border-radius: 50%; background: #ed145b; text-align: center; line-height: 21px; margin: 9px 0 0 10px; cursor: pointer; color: #fff; text-align: center; line-height: 21px; }
 .online_man{/*overflow: auto !important;*/ text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
 .man_hid,.mes_fixed{ cursor: pointer; }
-.mes_fixed{ z-index: 999; width: 40px; position: absolute; bottom: 34%;left: -40px;height: 200px;background-color: #444851; }
+.mes_fixed{ z-index: 999; width: 40px; position: absolute; bottom: 34%;left: -40px;height: 160px;background-color: #444851; }
 .mes_ico {height:50%; background: url(../images/message.png) no-repeat center; }
 .mes_ico_box{ height: 80px;width: auto; text-align: center;border-bottom: 1px solid #fff;}
 .mes_fixed_big{ position: fixed;top: 0; right: 0;z-index: 99999; width: 0;height: 100%;

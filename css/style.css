@@ -45,12 +45,30 @@ h2{margin-top: 0;}
 .chat-sessioning{ background-color: #fff !important; }
 .session-tab-close{ display: none; }
 
+/****************   主面板     *******************/
+.chat-main-footer{ position: absolute; bottom: 0; width: 100%; height: 37px;line-height: 37px;background-color: #DED6D6; }
+.chat-main-footer ul li { float: left;width: 25%;text-align: center; cursor: pointer; }
+.foot-curColor{ background-color: #8C8C8C; }
+.all-search{ background:url('/chat/images/searchFriend.png') center no-repeat; width: 56px;height: 37px; line-height: 37px;display: inline-block;cursor: pointer;  }
+.search-box{  }
+.search-box input{ padding: 6px 32px 6px 12px; }
+.searchAll-icon{ position: absolute; right: 0px; width: 50px;height: 32px; display: inline-block;line-height: 32px;top: 15px;background: url('/chat/images/search.png') left no-repeat; }
+
+.chat-home { width: 32px;height: 38px;line-height: 38px; background: url('/chat/images/homepage.png') center no-repeat; display: inline-block; }
+/***********************************/
+
+/*--------------------- 好友 查找----------------*/
+.friendItem{ width: 260px;height: 71px;float: left;margin: 10px 10px; }
+.friendItem img{ width: 60px;}
+.friendHeader{ height: 100%; width: 60px;float: left; }
+.friendInfo{ height: 100%; width: 190px;float: left;margin-left: 10px; }
+.friendInfo span{ height: 24px; width: 200px;display: inline-block;cursor: pointer;}
 /*.chat-session :hover{ background-color: rgba(0,0,0,0.5); }*/
 /***********最近联系人 搜索************/
-li.search-ren{ padding-left: 32px !important; height: 37px !important;line-height: 34px !important;margin: 0; padding-top:0 ;  /* border: none; */  position: absolute;top: 0px;width: 100%;z-index: 222;background: #fff;border-top: 1px solid #ccc;border-bottom: 1px solid #ccc;padding-right: 32px !important;}
+li.search-ren{ padding-left: 32px !important; height: 37px !important;line-height: 34px !important;margin: 0; padding-top:0 ;  /* border: none; */  position: absolute;top: 0px;width: 100%;z-index: 222;background: #fff;border-top: 1px solid #ccc;border-bottom: 1px solid #ccc;}
 li.search-ren input{ width: 100%;    height: 32px;line-height: 32px;border: none;outline: none;    font-size: 15px; }
 li.search-ren i.search-icon{position: absolute;top: 0;left: 0; width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/search.png') center no-repeat; }
-li.search-ren i.fri-icon{position: absolute;top: 0;right: 0; width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/fri.png') center no-repeat;padding: 18px; }
+i.fri-icon{width: 32px;height: 32px;line-height: 32px; display: inline-block;background: url('/chat/images/fri.png') center no-repeat;padding: 18px; }
 i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #955F34;border-left: 6px solid transparent;border-right: 6px solid transparent;position: absolute;right: 11px;top: 100%;margin-left: -5px;margin-top: -7px; }
 .search-ren-res{ position: absolute;top: 142px;left: 0;width: 100%;z-index: 1; border-top: none !important; height: 100%;background-color: #fff;display: none; z-index: 333333;}
 .search-ren-res li{     font-size: 16px;border-bottom: 1px solid #ccc;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;width: 100%; }
@@ -69,22 +87,24 @@ i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #95
 /******  聊天框    **************/
 	.mes_dMinimize{ position: absolute;cursor: pointer; top: 0;right: 35px; color: #000;font-size: 44px;width: 32px; height: 47px; line-height: 47px; text-align: center; }
 	.chatMin{ width: 160px; height: 40px; line-height: 40px;font-size: 18px; position:fixed; bottom: 0; background-color: #fff; left: 50%;margin-left: -80px;z-index: 999999; box-shadow: 0 0 10px #000;display: none;text-align: center;cursor: pointer; }
-	.delChatMes{ display: none; position: absolute;width: 19px;height: 19px;background-color: #FFFFFF;line-height: 16px;text-align: center;font-size: 16px;border-radius: 9.5px;top: -9px;left: -12px;cursor: pointer;border: 1px solid#A29999; }
+	.delChatMes{ display: none; position: absolute;width: 19px;height: 19px;background-color: #FFFFFF;line-height: 16px;text-align: center;font-size: 16px;border-radius: 9.5px;top: -9px;cursor: pointer;border: 1px solid#A29999; }
+	.delChatMes_right{right: -12px;  }
+	.delChatMes_left{left: -12px;  }
 	.chatMesCon:hover .delChatMes{ display: block; }
 	.chat_submit{ margin:auto 5px 0;display: inline-block;padding: 6px 12px;margin-bottom: 0;font-size: 14px;font-weight: normal;line-height: 1.428571429;text-align: center;white-space: nowrap;vertical-align: middle;cursor: pointer;background-image: none;border: 1px solid transparent;border-radius: 4px;-webkit-user-select: none; }
 /******  end    **************/
 
 /******   最近联系人    ***********/
 .recent-container{ overflow: auto; height: 100%;}
-.friends-list-box{ display: none;border-top: 1px solid #ccc; }
-.friend-group{ cursor: pointer;border-bottom: 1px solid #ccc; position: relative;}
+.friends-list-box{ display: none;border-top: 1px solid #ccc; position: relative; z-index: 111; }
+.friend-group{ cursor: pointer; position: relative;}
 .drop-down{position: absolute;top: 16px;right: 23px;border-left: 6px solid transparent; border-top: 6px solid #000;border-right: 6px solid transparent;  }
 
 
 .list-group{margin-bottom: 0px;}
 .online_man{/*overflow: auto !important;*/text-align: center;margin: 0 auto;box-shadow: 0 0 5px #999;}
 .online_man{/*overflow: auto;*/box-shadow: 0 0 5px #999;position: absolute;width: 140px;left: 0px;top: 0;background: #fff;height: 100%;display: block;}
-.con-tab-content .list-group li, .panel-body .list-group li{/*overflow: hidden;*/font-size: 16px;border-bottom: 1px solid #ccc;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;width: 100%}
+.con-tab-content .list-group li, .panel-body .list-group li{/*overflow: hidden;*/font-size: 16px;cursor: pointer;padding-left: 2px;line-height: 40px;padding-top: 2px;padding-bottom: 2px;width: 100%}
 .onlinesSroll-box{display: none;min-height: 20px;position: absolute;top: 38px;right: 0;z-index: 99999;width: 10px;border-radius: 5px;background: rgba(0,0,0,.4);height: 100px;}
 /*.man_tittle{position: absolute;top: 0;z-index: 11111;}*/.mes_dclose{cursor: pointer;display: none;position: absolute;top: 0;right: 0;color: #fff;font-size: 38px;padding: 0 10px 0 0;}
 .panel-title{display: inline-block;}
@@ -130,7 +150,7 @@ i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #95
 .panel-group .panel{overflow: visible;}
 .dropdown-menu{right: 0;left: inherit;}
 .dropdown-menu .dropdown-menu-man{padding: 0 10px;cursor: pointer;}
-.staff-info-box{height: 85px;width: 210px;position: absolute;z-index: 99999999;padding: 5px;box-shadow: 0 5px 10px rgba(0, 0, 0, .2);-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);background-color: #fff;border: 1px solid rgba(0, 0, 0, .2);}
+.staff-info-box{height: 108px;width: 260px;position: absolute;z-index: 99999999;padding: 5px;box-shadow: 0 5px 10px rgba(0, 0, 0, .2);-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);background-color: #fff;border: 1px solid rgba(0, 0, 0, .2);}
 .staff-info-box .arrow{top: 50%;margin-top: -11px;border-right-color: #999;border-right-color: rgba(0, 0, 0, .25);position: absolute;display: block;width: 0;height: 0;border-top:8px solid transparent;border-bottom:8px solid transparent;}
 .staff-info{position: relative;}
 .staff-info-box ul li{line-height: 25px;height: 25px;text-align: left !important;padding: 0 !important;}
@@ -217,7 +237,8 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 
 /***********  end  ***********/
 @media (min-width: 600px){
-	/***********   通知消息  ***********/
+    .friendItem-box{ margin: 10px;padding: 10px; }
+    /***********   通知消息  ***********/
 	.chat_notice_box{ position: fixed;  display: none; top: 100px; left: 50%;  margin-left: -186px;box-shadow: 0 0 10px #ccc;}
 	/**************  输入框 ******************/
 	.pc_mes_tool_list{cursor: pointer;}
@@ -232,7 +253,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	.pc_mes_tool_file{background: url('/chat/images/chat_file.png') center no-repeat;}
 	.pc_mes_tool_audio{background: url('/chat/images/iconfont-yuyin.png') center no-repeat;width: 32px;height: 32px;float: left;}
 	.pc_mes_tool_video{background: url('/chat/images/chat_video.png') center no-repeat;width: 32px;height: 32px;float: left;}
-	.pc_mes_tool_videoM{background: url('/chat/images/vMChat.png') center no-repeat;width: 32px;height: 32px;float: left;}
+	.pc_mes_tool_videoM{background: url('/chat/images/vMChat.png') center no-repeat;width: 32px;height: 32px;display: inline-block}
 	.pc_mes_input_box .pc_mes_send{height: 40px;text-align: right;}
 	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 10px;}
 	/** 表情  */
@@ -240,7 +261,8 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	/******************  end  *****************************/
 	
 	/*********************  聊天框  *************************/
-	.mb-chat-tab-content{ display: none !important; }
+    .modal-css{ width: 965px; }
+    .mb-chat-tab-content{ display: none !important; }
     .mes_content .jian{border: 5px solid transparent; border-right-color: #F3F3F3; border-top-color: #F3F3F3;margin-top: 10px;}
     .content-font{background-color: #F3F3F3;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
     .content-font .Journalism{color: #81E9EC;width: 100%;display: block;text-decoration: none}
@@ -268,7 +290,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .mes_dclose{display: none;color: #000}
 .container-box{width: 1000px;margin: 0 auto;height: 100%}
 .chat-container{box-shadow: 0 0 10px #000;position: relative;background: #fff !important;width: 600px !important;height: 100%;margin: 0 0 0 280px;padding: 0;}
-.details-list{position: absolute;box-shadow: 0 0 10px #656e73;width: 260px;background-color: #fff;height: 100%;float: left;}
+.details-list{position: relative;box-shadow: 0 0 10px #656e73;width: 260px;background-color: #fff;height: 100%;float: left;}
 .container-title{background: rgba(0,0,0,.5)!important;color: #fff;height: 64px;border-bottom: 1px solid #000;}
 .container-header{height: 64px;text-align: center;background: url(../images/herderbg.jpg) no-repeat;}
 .container-header img{display: block;margin-top: 5px;position: absolute;padding-left: 4px;padding-top: 2px;}
@@ -294,11 +316,13 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 .groupMan-list{ padding: 2px; }
 @media (max-width: 600px){
 	/*********************  输入框  **************************/
+	.friendItem-box{ max-height: 440px; overflow: auto; }
 	.mb_mes_footer{display: block;}
 	/*********************   end  **************************/
 	/*********************   聊天框 **************************/
 	.delChatMes{ display: block !important;}
-	.pc_mes_tool_video{background: url('/chat/images/chat_video.png') center no-repeat;width: 45px;height: 48px;display: inline-block;line-height: 48px;float: right;}
+    .pc_mes_tool_video{background: url('/chat/images/chat_video.png') center no-repeat;width: 45px;height: 48px;display: inline-block;line-height: 48px;float: right;}
+    .pc_mes_tool_videoM{background: url('/chat/images/vMChat.png') center no-repeat;width: 32px;height: 32px;display: inline-block}
 	/*********************   end **************************/
 	/**************  通知消息 ****************/
 	.chat_notice_box{ width: 100%; position: fixed;  display: none; top: 100px; box-shadow: 0 0 10px #ccc;z-index: 999999; }

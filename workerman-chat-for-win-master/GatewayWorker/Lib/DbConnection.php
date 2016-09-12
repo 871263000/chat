@@ -1804,9 +1804,7 @@ class DbConnection
 
         $this->resetAll();
         $this->lastSql = $query;
-
         $this->execute($query, $params);
-
         $rawStatement = explode(" ", $query);
 
         $statement = strtolower(trim($rawStatement[0]));

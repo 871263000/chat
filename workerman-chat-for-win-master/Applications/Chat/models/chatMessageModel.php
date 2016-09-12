@@ -60,7 +60,7 @@ class chatMessageModel
 	//聊天选择人
 	public function selectManModel(){
 
-		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY id desc limit 0, 10");
+		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image`, a.`delState`, a.`accept_name` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY id desc limit 0, 10");
 		if (!empty($mes_list)) {
             foreach ($mes_list as $key => $value) {
                     $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
@@ -103,13 +103,16 @@ class chatMessageModel
 		return false;
 	}
 	//消息列表的的插入
+	/**
+	 * @$selfInfo, $this->messageData['to_uid']  接收人的 id， $this->messageData['accept_name'] 接收人的 名字， $this->messageData['mes_types'] 类型 ，$this->messageData['content'] 内容 ，$this->messageData['session_id']  会话id
+	 */
 	public function messageInsertModel () 
 	{
 		if ( $this->messageData['mes_types'] == 'image') {
 
 			$this->messageData['content'] = $this->image64tofile( $this->messageData['content'] );
 		}
-		$insert_id = $this->db->insert('oms_string_message')->cols(array('room_id'=>$this->selfInfo['room_id'], 'sender_id'=>$this->selfInfo['uid'],'accept_id'=>$this->messageData['to_uid'], 'sender_name'=>$this->selfInfo['client_name'], 'accept_name'=>$this->messageData['accept_name'],'message_type'=>$this->messageData['message_type'], 'mesages_types'=>$this->messageData['mes_types'], 'groupId'=>$this->messageData['groupId'], 'message_content'=>$this->messageData['content'], 'session_no'=>$this->messageData['session_id'], 'create_time'=>time(), 'update_time'=>time()))->query();
+		$insert_id = $this->db->insert('oms_string_message')->cols(array('room_id'=>$this->selfInfo['room_id'], 'sender_id'=>$this->selfInfo['uid'],'accept_id'=>$this->messageData['to_uid'], 'sender_name'=>$this->selfInfo['client_name'], 'accept_name'=>$this->messageData['accept_name'],'message_type'=>$this->messageData['message_type'], 'mesages_types'=>$this->messageData['mes_types'], 'message_content'=>$this->messageData['content'], 'session_no'=>$this->messageData['session_id'], 'create_time'=>time(), 'update_time'=>time()))->query();
 
 		return $insert_id;
 	}
@@ -153,7 +156,7 @@ class chatMessageModel
 			$this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
 			
 		}
-        $this->db->query("UPDATE `oms_friend_list` SET `state`=0 WHERE `staffid`= ".$this->selfInfo['uid']);
+        $this->db->query("UPDATE `oms_friend_list` SET `state`=0 WHERE `pid`= '".$this->messageData['to_uid']."' and `staffid`= ".$this->selfInfo['uid']);
 
         $arrChat_notice = $this->db->select('*')->from('oms_friend_list')->where('staffid= :staffid AND state= :state')->bindValues(array("staffid"=> $this->selfInfo['uid'], "state"=> 0))->query();
         
@@ -427,9 +430,81 @@ class chatMessageModel
 		if (empty($this->messageData['mes_id'])) {
 			return false;
 		}
-		
-		$this->db->update('oms_string_message')->cols(array('mesages_types', 'message_content'))->where('id ='.$this->messageData['mes_id'].' AND sender_id ='.$uid)->bindValues(['mesages_types'=>'revoke', 'message_content'=>'撤销了一条消息'])->query();
+		if ( $this->messageData['dataMan'] == "self" ) {
+			$this->db->update('oms_string_message')->cols(array('mesages_types', 'message_content'))->where('id ='.$this->messageData['mes_id'].' AND sender_id ="'.$uid.'"')->bindValues(['mesages_types'=>'revoke', 'message_content'=>'撤销了一条消息'])->query();
+			return ;
+		}
+		$session_id = $this->selfInfo['uid'] < $this->messageData['uid'] ? $this->selfInfo['uid']."-".$this->messageData['uid'] : $this->messageData['uid']."-".$this->selfInfo['uid'];
+
+		$this->db->update('oms_string_message')->cols(array('mesages_types', 'message_content', 'delState', 'dialog'))->where('id ='.$this->messageData['mes_id'].' AND session_no ="'.$session_id.'"')->bindValues(['mesages_types'=>'del', 'message_content'=>'撤销了一条消息', 'delState'=>$uid, 'dialog'=>0])->query();
 		// $this->db->delete('oms_string_message')->where('id =:id AND sender_id =:sender_id')->bindValues(array('id'=>$this->messageData['mes_id'], 'sender_id'=>$uid))->query();
+	}
+	// 好友查找
+	public function friendAddModel()
+	{
+		$res = [];
+		// print_r($this->messageData);
+		if ( $this->messageData['actType'] == "lookup" ) {
+			$this->messageData['name'] = htmlspecialchars($this->messageData['name']);
+			if ( empty( $this->messageData['name'] ) ) {
+				$res['type'] = "default";
+				return $res;
+			}
+			$res = $this->db->select('oms_hr.name, oms_hr.card_image,oms_general_admin_user.org_name, oms_hr.staffid')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_hr.oms_id = oms_general_admin_user.oms_id')->where('oms_hr.oms_id != '.$this->selfInfo['room_id'].' and name like "%'.$this->messageData['name'].'%" and oms_hr.state=0')->query();
+				$res['type'] = 'searchFriends';
+				return $res;
+		} else if ($this->messageData['actType'] == "add") {
+			$sendData = ['type'=>'default'];
+			if ( !empty( $this->messageData['staffid'] ) ) {
+				$staffidInfo = $this->getStaffid( $this->messageData['staffid'] );
+				$selectCol = $this->db->select('state')->from('oms_friend_list')->where('pid= :pid AND  staffid= :staffid')->bindValues(array('pid' => $this->selfInfo['uid'], 'staffid'=> $this->messageData['staffid']))->limit(2)->column();
+				if ( !empty($selectCol) ) {
+                    if ( count($selectCol) == 1) {
+                         if ($selectCol[0] == 1) {
+
+                            return;
+                         } else if ( $selectCol[0] == 0 ) {
+                            $this->db->update('oms_friend_list')->cols(array("state"))->where('pid= '.$this->selfInfo['uid'].' AND  staffid= '.$this->messageData['staffid'])->bindValue('state', 1)->query();
+                         } else if ( $selectCol[0] == 2 ) {
+                                return;
+                         }
+                    } else {
+
+                        return;
+                    }
+
+                } else {
+                    $this->db->insert('oms_friend_list')->cols(array("pid"=> $this->selfInfo['uid'], "staffid"=> $this->messageData['staffid'], "pid_name"=>$this->selfInfo['client_name'], "pid_header_url"=>$this->selfInfo['header_img_url'], "additional_Information" =>$staffidInfo['org_name'], "create_time"=> time(), "update_time"=> time(), "oms_id"=> $staffidInfo['oms_id']))->query();
+
+                }
+                // 通知消息
+                //消息列表的的插入
+				/**
+				 * @$selfInfo, $this->messageData['to_uid']  接收人的 id， $this->messageData['accept_name'] 接收人的 名字， $this->messageData['mes_types'] 类型 ，$this->messageData['content'] 内容 ，$this->messageData['session_id']  会话id
+				 */
+				$to_uid = $this->messageData['staffid'];
+				$this->messageData = ['to_uid'=>$this->messageData['staffid'], 'accept_name'=>$staffidInfo['name'], 'mes_types'=> 'notice','content'=>$staffidInfo['org_name'], 'session_id'=> $this->selfInfo['uid'].'t', 'message_type'=>'message'];
+                $insert_id = $this->messageInsertModel();
+                //通知消息的插入 返回 一组发给客户端的数据
+				$sendData = $this->noticeInsertModel( $insert_id );
+                $sendData['to_uid'] = $to_uid;
+			}
+			// $res['type'] = 'addFriends';
+			return $sendData;
+		}
+
+	}
+	// 查找一个人的信息
+	/**
+	 * @staffid 员工的id
+	 */
+	public  function getStaffid( $staffid )
+	{
+		$res = [];
+		if ( !empty( $staffid ) ) {
+			$res = $this->db->select('oms_hr.name, oms_general_admin_user.org_name, oms_hr.card_image, oms_hr.oms_id')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_general_admin_user.oms_id = oms_hr.oms_id')->where('oms_hr.staffid =:staffid')->bindValues(array('staffid'=>$staffid))->row();
+		}
+		return $res;
 	}
 }
  ?>

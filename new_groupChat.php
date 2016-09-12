@@ -1,14 +1,34 @@
 <?php 
 	require_once('config.inc.php');
+	require_once('lib/mesages.class.php');
+
+	$chat_uid = $_SESSION['staffid'];
+	$oms_id = $_SESSION['oms_id'];
+	
+	$mes = new messageList($chat_uid, $oms_id);
+	$arrfrientList = $mes->friendsList();
+	if (!empty($arrfrientList)) {
+		foreach ($arrfrientList as $key => $value) {
+			$friend['id'] =  $value['id'];
+			$friend['id'] =  $value['pid'];
+			$friend['mestype'] =  'message';
+			$friend['contacts_name'] =  $value['name'];
+			$friend['mes_id'] =  $value['staffid'];
+			$friend['card_image'] =  $value['card_image'];
+			$friendSearch[] = $friend;
+		}
+
+	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0" />
 <title>事件</title>
 <script src='js/jquery.js'></script>
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <style type="text/css">
 *{font-family: '微软雅黑' !important;}
 html,body {
@@ -25,7 +45,40 @@ html,body {
 	/*position: relative;*/
 	width: 100%;
 }
-#name_box{ position:fixed;background:#fff;display:none;width: 100%;margin-top:0px;z-index: 99999;}
+#name_box{ position:fixed;background:#fff;display:none;width: 100%;margin-top:0px; z-index:9999;height: 100%;}
+.myFriend { display: none; width: 80%;height: 300px;margin: auto;border: 1px solid #ccc; }
+.myFriend > div { float: left; }
+.myFriend .myFriend-icon{ width: 8%;height: 100%;line-height: 300px; text-align: center;vertical-align: middle;}
+.myFriend .myFriend-icon span{ width: 32px; height: 32px;margin: auto;display: inline-block; }
+.myFriend .chat-orgFriend{ width: 46%;height: 100%;overflow: auto;background: rgb(250,238,241); }
+.myFriend .myFriend-list li { height: 36px; line-height: 36px; font-size: 14px; position: relative;}
+.myFriend .myFriend-list li:hover {background-color: #ccc;}
+.myFriend .myFriend-list .myFriend-items-del { cursor: pointer; width: 32px;height: 32px;padding: 5px;display: inline-block;margin-left: 10px;line-height: 22px;text-align: center;background: #F1A8A8;}
+
+.myFriend .myFriend-body{padding: 2px;}
+.myFriend .myFriend-list li img { height: 32px; width: 32px;line-height: 32px; }
+.myFriend .myFriend-list li input { display: none; height: 23px; line-height: 23px;width: 15px; float: left;}
+.orgFriend { width: 100%;text-align: center; }
+.orgFriend > p { display: inline-block; border: 1px solid #ccc; }
+.orgFriend .orgFriend-list-cur { background-color: #ccc; }
+#chat-orgFriend-list{ overflow: auto; }
+#chat-orgFriend .panel{ background: transparent; }
+.chat-orgName-select { width: 46%;height: 100%;background: rgb(250,238,241);}
+/*.orgFriend .orgFriend-list { border: 1px solid #ccc; }*/
+/*.orgFriend  > span { width: 120px; height: 40px; line-height: 40px;display: inline-block; }*/
+.mes_chakan_close{ line-height: 20px; cursor: pointer; }
+.mes_dclose{ cursor: pointer; position: absolute;  top: 3px;  font-size: 33px;  color: #fff;  right: 0;}
+.tab-content{ overflow: auto;position: absolute; width: 100%;top: 105px;bottom: 37px;}
+/*#submit{height: 35px;}*/
+@media screen and (max-width:500px){
+	.myFriend .chat-orgFriend{ width: 100%;height: 100%;overflow: auto;background: rgb(250,238,241); }
+	.myFriend { display: none; width: 100%;height: 300px;margin: auto;border: 1px solid #ccc; }
+	.chat-orgName-select ,.myFriend-icon{display: none;}
+	.myFriend .myFriend-list li input { display: block; }
+	.myFriend .myFriend-list li > span { display: inline-block;width: 100%;position: absolute;height: 100%;background-color: transparent;opacity: 0;left: 0;z-index: 111;}
+}
+.friend-group{ cursor: pointer; position: relative;}
+.drop-down{position: absolute;top: 16px;right: 23px;border-left: 6px solid transparent; border-top: 6px solid #000;border-right: 6px solid transparent;  }
 h2{margin:0;}
 .box_con {
 	/*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#6699FF', endColorstr='#6699FF');  /* IE */*/
@@ -134,44 +187,153 @@ h2{margin:0;}
 </head>
 
 <body>
+
+
 <div id="name_box">
-        <?php
-        	include('fenlei2/OS.php');
-        ?>
-        <div style="width:100%;"><button style="width:157px;height:30px;font-size:18px" id="b_no" >取&nbsp;消</button><button style="margin-top:17px;width:157px;height:30px;font-size:18px" id="b_is">确&nbsp;定</button></div>
-        <script type="text/javascript">
-          // console.log(sidList)
-          //button确定
-          $('#b_is').click(function (){
-
-            var jsonText = JSON.stringify(sidList);
-            $('.group_pep').html('')
-            to_uid = sidList.join(',');
-            $('#group_participants').val(to_uid);
-            $.ajax({
-              url:'getndp.php',
-              data:'jsonText='+jsonText,
-              type:'post',
-              success:function(data){
-                var d=eval('('+data+')')
-                for (var i = 0; i < d.length; i++) {
-                  $('.group_pep').append("<li class='list-group-item'>"+d[i]['name']+"</li>");    
-                }
-              }
-            })
-            $('#name_box').hide();
-            $('.selected').find('div').html('<ul></ul>');
-            $('#No1').find('.ltclasscheckbox').attr('checked',false);
-            $('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
-            sidList=[];
-          })
-          //button取消
-          $('#b_no').click(function(){
-            $('#name_box').hide();
-          })
-        </script>
+	<div>
+		<div class="orgFriend">
+			<p>
+				<span class="orgFriend-list orgFriend-list-cur btn" data-type= "c">公司内部组织</span><span class="orgFriend-list btn" data-type="m">我的好友</span>
+			</p>
+		</div>
+		<div class="myFriend">
+			<!-- 我的好友 -->
+			<div class="chat-orgFriend"> 
+				<div class="panel-group" id="chat-orgFriend">
+					<div class="panel friend-group">
+						<div class="panel-heading" mestype= "groupMessage" data-toggle="collapse" class="group-man-show" data-parent="#chat-orgFriend" href="#chat-orgFriend-list">
+							<h4 class="panel-title"><span title="我的好友" >我的好友</span></h4>
+						</div>
+						<div id="chat-orgFriend-list" class="panel-collapse collapse">
+							<div class="panel-body myFriend-body">
+								<ul class="list-group myFriend-list">
+								<?php if (!empty($arrfrientList)) :?>
+									<?php foreach ($arrfrientList as $k => $v) : ?>
+										<li mes_id="<?php echo $v['staffid'];?>" group-name="<?php echo $v['name'];?>" class="myFriend-items"><span class="myFriend-items-Mask" mes_id="<?php echo $v['staffid'];?>"></span><input type="checkbox" mes_id="<?php echo $v['staffid'];?>" class="myFriend-items-in"><img class="header-img" src="<?php echo empty($v['card_image'])?'/chat/images/niming.png':$v['card_image']; ?>" alt=""><?php echo $v['name'];?></li>
+									<?php endforeach; ?>
+								<?php else:?>
+									还没有好友！
+								<?php endif ;?>
+								</ul>
+							</div>
+						</div>
+						<span class="caret drop-down"></span>
+					</div>
+				</div>
+			</div>
+			<div class="myFriend-icon"><span><img src="/chat/images/jiantou.png" alt=""></span></div>
+			<!-- 选择人后的容器 -->
+			<div class="chat-orgName-select">
+			<h5>已选好友</h5>
+				<ul class="list-group myFriend-list">
+					
+				</ul>
+			</div>
+		</div>
+		<!-- 公司组织 -->
+		<div class="orgJiagou">
+			<?php
+				include('fenlei2/OS.php');
+			?>
+		</div>
+		<div style="clear:both;"></div>
+		<div style="width:100%;text-align: center;"><button style="margin-top:17px;width:157px;height:30px" id="b_no" class="btn btn-sm btn-info" >取&nbsp;消</button><button style="margin-top:17px;width:157px;height:30px;" id="b_is"  class="btn btn-sm btn-info">确&nbsp;定</button></div>
+	</div>
 </div>
+<script type="text/javascript">
+	$(function () {
+		//删除指定数组元素
+		Array.prototype.remove = function(val) {
+			var index = this.indexOf(val);
+			if (index > -1) {
+				this.splice(index, 1);
+			}
+		};
+		// 手机 上的点击
+		var myFriendItemsIn = $('.myFriend-items-in');
 
+		var friendItem = $('.myFriend-items');
+		var orgNameSelected = $('.chat-orgName-select ul');
+		var orgFriendList = $('.orgFriend-list');
+		orgFriendList.click(function () {
+			var dataType = $(this).attr('data-type');
+			orgFriendList.removeClass('orgFriend-list-cur');
+			$(this).addClass('orgFriend-list-cur');
+			if ( dataType == 'c' ) {
+				$('.myFriend').hide();
+				$('.orgJiagou').show();
+			} else {
+				$('.myFriend').show();
+				$('.orgJiagou').hide();
+			}
+		})
+
+		// window.friendMap = '';
+		var friendSelect = function  () {
+			this.mes_id ='';
+			this.group_name ='';
+			this.friendMap = [];
+		}
+		friendSelect.prototype.addMan = function (obj){
+
+			if ( $.inArray(this.mes_id, this.friendMap)  == -1 ) {
+				if ( typeof obj == 'object' ) {
+					var selected = obj.clone();
+					var manDel = $('<span mes_id="'+this.mes_id+'">&times;</span>');
+					selected.addClass('myFriend-items-sel');
+					manDel.addClass('myFriend-items-del');
+					manDel.css('display', 'none');
+					// 删除 已选好友
+					manDel.click(function (e) {
+						e.stopPropagation();
+						var mes_id = $(this).attr('mes_id');
+						myFriend.mes_id = mes_id;
+						selected.remove();
+						myFriend.delMan();
+					})
+					selected.hover(function () {
+						manDel.css('display', 'inline-block');
+					}, function () {
+						manDel.css('display', 'none');
+					});
+					selected.append(manDel);
+					orgNameSelected.append(selected);
+				}
+				this.friendMap.push(this.mes_id);
+				return window.friendMap = this.friendMap;
+			};
+		}
+		friendSelect.prototype.delMan = function (obj) {
+			this.friendMap.remove(this.mes_id);
+			return window.friendMap = this.friendMap;
+		}
+		var myFriend = new friendSelect();
+
+		friendItem.click(function (e) {
+			var $this = $(this);
+			var $thisIn = $this.find('input');
+			var mes_id = $this .attr('mes_id');
+			var group_name = $this .attr('group-name');
+			myFriend.mes_id = mes_id;
+			myFriend.group_name = group_name;
+			myFriend.addMan($(this));
+		});
+
+		// 手机上的 input  点击
+		$('.myFriend-items-Mask').click(function (e){
+			e.stopPropagation();
+			var mes_id = $(this).attr('mes_id');
+			myFriend.mes_id = mes_id;
+			if ( $(this).next().prop('checked') ) {
+				$(this).next().prop('checked', false);
+				myFriend.delMan();
+			} else {
+				myFriend.addMan('');
+				$(this).next().prop('checked', true);
+			}
+		})
+	})
+</script>
 <div class="box">
 		<div class="login-box">
 			<div class="login-title text-center">
@@ -200,7 +362,7 @@ h2{margin:0;}
 					<div class="form-group form-actions">
 						<div style="text-align: center;" class="">
 							<a href="javascript:void(0)"  onclick="window.open('about:blank','_self'); window.close();"  class="btn btn-sm btn-info"> 取消</a>
-                            <button type="submit" class="btn btn-sm btn-info"> 提交</button>
+                            <button type="submit" class="btn btn-sm btn-info createGroup"> 提交</button>
 						</div>
 					</div>
 				</form>
@@ -209,19 +371,57 @@ h2{margin:0;}
 		</div>
 	</div>
 </div>
-
 <script type="text/javascript">
+          // console.log(sidList)
+          //button确定
+         $('#b_is').click(function (){
+			if ( typeof friendMap != 'undefined' ) {
+				Array.prototype.push.apply(sidList, friendMap);
+			};
+            var jsonText = JSON.stringify(sidList);
+            $('.group_pep').html('')
+            to_uid = sidList.join(',');
+            $('#group_participants').val(to_uid);
+            $.ajax({
+              url:'getndp.php',
+              data:'jsonText='+jsonText,
+              type:'post',
+              success:function(data){
+                var d=eval('('+data+')')
+                for (var i = 0; i < d.length; i++) {
+                  $('.group_pep').append("<li class='list-group-item'>"+d[i]['name']+"</li>");    
+                }
+              }
+            })
+            $('#name_box').hide();
+            $('.selected').find('div').html('<ul></ul>');
+            $('#No1').find('.ltclasscheckbox').attr('checked',false);
+            $('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
+            sidList=[];
+          })
+          //button取消
+          $('#b_no').click(function(){
+            $('#name_box').hide();
+          })
+        </script>
+<script type="text/javascript">
+
+
 //选择人
 $('#s_man').click(function(){
   $('#name_box').show();
 })
-$('.btn').on('click',function(){
-	if ($("input[name='start']").val()=='') {
-		alert('起始时间不能为空!')
+$('.createGroup').on('click',function(){
+	if ( $('#group_name').val() == '' ){
+		alert('群聊名字不能为空！');
+		return false ;
+	}
+	if (sidList.length == 0) {
+		alert('还没有选择人!');
 		return false;
 	};
 })
 </script>
 </body>
-<?php require_once('header.php')?>
+<?php require_once('header.php');?>
 </html>

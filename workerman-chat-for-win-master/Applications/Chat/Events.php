@@ -50,7 +50,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer');
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer','friendAdd');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -125,16 +125,24 @@ class Events
                 Gateway::sendToClient($client_id, json_encode($resMessageData));
                 return ;
 
-           } else {
-            if ( $type == 'vaChat' ) {
-                Gateway::sendToClient($client_id, json_encode($resMessageData));
-                 $resMessageData['type'] = 'va_say_uid';
-                Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
-                // 发给自己
-                return ;
+            } else {
+                if ( $type == 'vaChat' ) {
+                    Gateway::sendToClient($client_id, json_encode($resMessageData));
+                     $resMessageData['type'] = 'va_say_uid';
+                    Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
+                    // 发给自己
+                    return ;
+                }
+                if (  $type == 'friendAdd' ) {
+                    if ( !empty($resMessageData['to_uid']) ) {
+                        Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
+                    } else {
+                        Gateway::sendToClient($client_id, json_encode($resMessageData));
+                    }
+                    return ;
+                }
+                    Gateway::sendToClient($client_id, json_encode($resMessageData));
             }
-                Gateway::sendToClient($client_id, json_encode($resMessageData));
-           }
 
         } else {
             switch($message_data['type'])
@@ -281,10 +289,9 @@ class Events
                     // }
                     // $db1->select('followid')->from('')
                     return;
-                case "addFriends":
+                case "addFriends" :
                     //实例化数据
                     $db1 = Db::instance('oms');
-
                     $uid = $_SESSION['uid'];
                     $room_id = $_SESSION['room_id'];
                     $client_name = $_SESSION['client_name'];
@@ -299,7 +306,6 @@ class Events
                         if ( count($selectCol) == 1) {
 
                              if ($selectCol[0] == 1) {
-
                                 return;
                              } else if ( $selectCol[0] == 0 ) {
 
@@ -326,18 +332,18 @@ class Events
 
                     /**********   向客户端发送数据  *****************/
                     $new_message = array(
-                            'type'=>'say_uid',
-                            'from_client_id'=>$client_id, 
-                            'from_client_name' =>$client_name,
-                            'from_uid_id'=>$uid,
-                            'header_img_url'=>$header_img_url,
-                            'mestype'=> 'message',
-                            'mes_types'=> 'notice',
-                            'session_no'=>$session_no,
-                            'insert_id'=> $room_id,
-                            'content'=>$message_data['companyName'],
-                            'time'=>date('Y-m-d H:i:s'),
-                        );
+                        'type'=>'say_uid',
+                        'from_client_id'=>$client_id, 
+                        'from_client_name' =>$client_name,
+                        'from_uid_id'=>$uid,
+                        'header_img_url'=>$header_img_url,
+                        'mestype'=> 'message',
+                        'mes_types'=> 'notice',
+                        'session_no'=>$session_no,
+                        'insert_id'=> $room_id,
+                        'content'=>$message_data['companyName'],
+                        'time'=>date('Y-m-d H:i:s'),
+                    );
                     /******************************   消息列表插入  ***********************************/
 
                     $chat_res = $db1->single('SELECT `id` FROM `oms_chat_message_ist` WHERE `pid`='.$message_data['uid'].' AND `mews_types`="notice"');
@@ -367,9 +373,10 @@ class Events
                         if ( $dataParm == "unagree" ) {
                             $db1->delete('oms_friend_list')->where('pid = '.$senderId.' AND staffid='.$uid)->query();
                         } else {
-
                             $db1->query('UPDATE `oms_friend_list` SET `state` = 2 WHERE pid = '.$senderId.' AND staffid='.$uid);
+
                              $insert_id1 = $db1->insert('oms_friend_list')->cols( array('pid'=>$uid,'pid_name'=>$client_name,'pid_header_url'=> $header_img_url,'additional_Information'=>'同意', 'staffid'=>$senderId,'state'=> 2,'oms_id'=>$message_data['oms_id'], 'create_time'=>time(), 'update_time'=>time()))->query();
+
                             $session_no = $uid > $message_data['senderId'] ? $message_data['senderId']."-".$uid : $uid."-".$message_data['senderId'];
 
                             $insert_id = $db1->insert('oms_string_message')->cols(array('room_id'=>$room_id, 'sender_id'=>$uid,'accept_id'=>$senderId, 'sender_name'=>$client_name,'message_type'=> 'message', 'mesages_types'=> 'notice_respond', 'message_content'=>'可以会话了', 'session_no'=>$session_no,'dialog'=> 0, 'create_time'=>time(), 'update_time'=>time()))->query();

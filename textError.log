@@ -1,9 +1,0 @@
-[16-May-2016 04:30:00 Europe/Paris] sb
-[16-May-2016 04:30:19 Europe/Paris] sb
-[16-May-2016 04:30:19 Europe/Paris] PHP Notice:  Undefined variable: test in D:\wamp\www\chat\test.php on line 12
-[16-May-2016 04:30:19 Europe/Paris] PHP Stack trace:
-[16-May-2016 04:30:19 Europe/Paris] PHP   1. {main}() D:\wamp\www\chat\test.php:0
-[16-May-2016 04:30:32 Europe/Paris] sb
-[16-May-2016 04:30:32 Europe/Paris] PHP Notice:  Undefined variable: test in D:\wamp\www\chat\test.php on line 12
-[16-May-2016 04:30:32 Europe/Paris] PHP Stack trace:
-[16-May-2016 04:30:32 Europe/Paris] PHP   1. {main}() D:\wamp\www\chat\test.php:0

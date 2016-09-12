@@ -14,7 +14,7 @@ var vaChat = function ( obj ) {
             data: 'createSession=1',
             type: 'post',
             success: function (data) {
-            ws.send('{"type":"sayUid","to_uid":"0","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+$('.chating-content .mes_title_con').text()+'","message_type":"groupMessage", "mes_types":"va","session_no":"1","content":"'+data+'"}');
+            ws.send('{"type":"sayUid","to_uid":"0","senderid":"'+chat_uid+'", "groupId":"0", "accept_name":"'+$('.chating-content .mes_title_con').text()+'","message_type":"groupMessage", "mes_types":"va","session_no":"'+session_no+'","content":"'+data+'"}');
             }
 
         })
@@ -271,7 +271,7 @@ $(function () {
     to_uid = $(this).attr('mes_id');
     mes_type = $(this).attr('mestype');
     if ( mes_type == 'message' ) {
-    session_no = parseInt(to_uid) < parseInt(chat_uid) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
+      session_no = parseInt(to_uid) < parseInt(chat_uid) ? to_uid+"-"+chat_uid : chat_uid+"-"+to_uid;
     } else {
       session_no  = to_uid;
     }
@@ -582,7 +582,7 @@ $(document).on('click', '.chat_notice_sel', function () {
     var dataParm = $(this).attr('data-parm');
     var senderId = $(this).attr('sender-id');
     var noticeHtml = $(this).html();
-    $('.chat_notice_sel').hide();
+    $('.chat_notice_container').hide();
     ws.send('{"type": "chat_notice_sel", "dataParm": "'+dataParm+'", "senderId": "'+senderId+'", "oms_id": "'+ChainOmsId+'"}');
 })
 //通知消息关闭
@@ -633,14 +633,14 @@ var ajaxGetStaffInfo = function (staffid, direction, css){
     var margin ="margin-"+directionChang;
     $('.staff-info-box').remove();
     $.ajax({
-      url:"/getStaffTels.php",
+      url:"/chat/getStaffTels.php",
       type:"post",
       data:"staffid="+staffid,
       success: function ( data ){
-          var data = $.parseJSON(data);
+          var data = $.parseJSON( data );
           getStaffInfo(data);
           // var index = parseInt($(".infoCurrent").index());
-          $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li></ul></div>');
+          $(".infoCurrent").append('<div class= "staff-info-box"><div class="arrow"></div><ul><li>座机：'+data.tel+'</li><li>分机：'+data.tel_branch+'</li><li>手机：'+data.mobile_phone+'</li><li>组织名字：'+data.org_name+'</li></ul></div>');
           $('.staff-info-box').css(css);
           $('.staff-info-box').css(directionChang, "100%");
           $('.staff-info-box').css(margin, "10");
