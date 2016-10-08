@@ -26,69 +26,6 @@ function onopen() {
 }
 // 自己 发的 信息 
 var ChatObj = {
-    fromMes: function(data) {
-        var addVoiceClass = "";
-        var addClass = "chat_people";
-        var addImgClass = "";
-        var addImgAttr = "";
-        var content = "";
-        if ( data.session_no != session_no ) {
-            return false;
-        }
-        switch (data.mes_types) {
-            case 'image':
-                var objE = document.createElement("div");　　objE.innerHTML = data.content;　　
-                var obj = objE.childNodes;
-                var ImgSrc = obj[0].getAttribute('src');
-                content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
-                addImgClass = 'bigImg';
-                $('.loadImg-box .loadImging').append(content);
-                imgIndex++;
-                break;
-            case 'images':
-                addImgClass = 'bigImg';
-                content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + data.content + "' class='send-img'>";
-                $('.loadImg-box .loadImging').append(content);
-                imgIndex++;
-                break;
-            case 'text':
-                content = data.content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
-                content = content.replace(/\|\}/g, '.gif">');
-                content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br>");
-                break;
-            case 'va':
-                if ( chat_name == data.from_client_name ) {
-                    var vName = '我';
-                } else {
-                    var vName = data.from_client_name;
-                }
-                content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
-                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+vName+
-                    "开启了群聊视频</div>"+
-                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
-                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data.content+"&Invitation=1' target='_blank' >加入</a></div>"+
-                "</div>";
-                break;
-            case 'file':
-                var fileArray = new Array();
-                fileArray = data.content.split('|');
-                var addShare = '';
-                if (webUrl == 'chat_index') {
-                    addShare = "<span title='转发' data-placement = '" + data.content + "' onclick='chatShare(this)' class='chat-share'></span>";
-                };
-                content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>" + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
-                if ( data.to_uid != to_uid ) {
-                    return false;
-                };
-                break;
-        }
-        $(".chating-content .he_ov").append('<li class="Chat_ri he ' + addImgClass + '"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="' + data.header_img_url + '" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">' + data.time + '</span>' + chat_name + '</span> <div class="ri content_ri chatMesCon"><span title ="撤销消息" uid="'+to_uid+'" data-man="self" mes_id= "'+data.insert_id+'" class="delChatMes delChatMes_left">&times;</span><span class="arrow ri"></span><span class="content_font_ri">' + content + '</span> </div></div></li>');
-        $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
-        $(".chating-content .he_ov .delChatMes").unbind('click');
-        $(".chating-content .he_ov .delChatMes").bind('click', function () {
-            ChatObj.delChatMes($(this));
-        });
-    },
     delChatMes: function ( Obj ) {
         var dataMan = Obj.attr('data-man');
         if ( dataMan == "self" ) {
@@ -107,8 +44,6 @@ var ChatObj = {
     }
 };
 // 消息的 点击事件
-
-
 // 服务端发来消息时
 function onmessage(e) {
     // console.log(e.data);
@@ -133,15 +68,15 @@ function onmessage(e) {
             online++;
         }
         $('.online_ren').html(online);
-        setTimeout('flush_onlineman_list()', 1000);
+        setTimeout( 'flush_onlineman_list()', 1000 );
         // flush_onlineman_list();
         // console.log(data['client_name']+"登录成功");
         break;
     case 'say_uid':
-        sayUid(data['mes_types'], data['mestype'], data['header_img_url'], data['group_name'], data['insert_id'], data['session_no'], data['from_uid_id'], data['to_uid_id'], data['from_client_id'], data['from_client_name'], data['content'], data['time']);
+        sayUid(data['mesages_types'], data['mestype'], data['card_image'], data['group_name'], data['id'], data['session_no'], data['sender_id'], data['to_uid'], data['from_client_id'], data['accept_name'], data['message_content'], data['create_time']);
         break;
     case 'va_say_uid':
-        sayUid(data['mes_types'], data['mestype'], data['header_img_url'], data['group_name'], data['insert_id'], data['session_no'], data['from_uid_id'], data['to_uid_id'], data['from_client_id'], data['from_client_name'], data['content'], data['time']);
+        sayUid(data['mesages_types'], data['mestype'], data['card_image'], data['group_name'], data['id'], data['session_no'], data['sender_id'], data['to_uid'], data['from_client_id'], data['accept_name'], data['message_content'], data['create_time']);
          if ( typeof audio != 'undefined' ) {
              audio.pause();
         };
@@ -151,14 +86,19 @@ function onmessage(e) {
         break;
         //审核消息
     case 'showGroupMan':
-        showGroupMan(data);
+        var Callback = data['Callback'];
+        delete data['type'];
+        showGroupMan.data = data;
+        showGroupMan[Callback]();
         break;
     case 'audit':
         audit(data['session_no'], data['from_client_id'], data['from_client_name'], data['content'], data['message_url'], data['time']);
         // 用户退出 更新用户列表
         break;
     case 'mes_chat':
-        mes_chat(data);
+        mesShow.init(data);
+        mesShow.mes_chat();
+        // mes_chat(data);
         break;
         // 语音 请求
     case 'va':
@@ -167,7 +107,14 @@ function onmessage(e) {
         break;
     // 语音 取消
     case 'vaCancel':
-        ChatObj.fromMes(data);
+       mesShow.init(data);
+        mesShow.showSay(data, 'p');
+        $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
+        $(".chating-content .he_ov .delChatMes").unbind('click');
+        $(".chating-content .he_ov .delChatMes").bind('click', function () {
+            ChatObj.delChatMes($(this));
+        });
+        // ChatObj.fromMes(data);
         break;
     case 'vaAnswer':
         $('.vaChat').remove();
@@ -187,7 +134,9 @@ function onmessage(e) {
     break;
         //消息的加载
     case 'onlode':
-        onlode(data);
+        mesShow.init(data);
+        mesShow.onlode();
+        // onlode(data);
         break;
     case 'chain_staff_list':
         var staff_list = data['staff_list'];
@@ -224,7 +173,14 @@ function onmessage(e) {
         sysNotice(data);
         break;
     case 'resSayUid':
-        ChatObj.fromMes(data);
+        mesShow.init(data);
+        mesShow.showSay(data, 'p');
+        $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
+        $(".chating-content .he_ov .delChatMes").unbind('click');
+        $(".chating-content .he_ov .delChatMes").bind('click', function () {
+            ChatObj.delChatMes($(this));
+        });
+        // ChatObj.fromMes(data);
         // resSayUid();
         break;
     // 显示搜索到的 好友
@@ -292,7 +248,18 @@ function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types, from_sessi
     switch (mes_types) {
     case 'text':
         input = document.getElementById("mes_textarea");
+        //里边 有 @
+        if ( $(input).find('.given').length > 0 ) {
+            $(input).find('.given').each(function (i, o) {
+                var name = $(input).find('.given').attr('name');
+                var staffid = $(input).find('.given').attr('staffid');
+                var res = '{@'+name+'|'+staffid+'@}';
+                $(this).after(res);
+                $(this).remove();
+            })
+        };
         inputValue = input.innerHTML;
+
         inputValue = inputValue.replace(/<img([^>].*?)em_name=\"/ig, '{|').replace(/\"([^<].*?)[>?]/ig, '|}').replace(/<br>/g, '&br&').replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, '&quot;').replace(/[\r\n]/g, "").replace(/[\\]/g, "%5C");
         inputcur = input.innerHTML;
         break;
@@ -357,18 +324,124 @@ function sysNotice(data) {
     $('.chat_notice_box').show(500);
 }
 //显示群聊人
-function showGroupMan(data) {
-    var addClass = ''
-    if (data[0]['group_founder'] == chat_uid) {
-        addClass = 'group-people';
-    };
-    for (i in data) {
-        if (i == "type") {
-            break;
-        };
-        $('.groupAct').parents('.panel').find('.list-group').append('<li class="db_chat_people chat_people ' + addClass + '" group-name="' + data[i]['name'] + '" groupId="' + data[i]['pid'] + '" mes_id="' + data[i]['staffid'] + '"><span class="header-img"><img src="' + data[i]['card_image'] + '" alt="' + data[i]['name'] + '"></span><i>' + data[i]['name'] + '</i><span class="delgroupman" groupId="' + data[i]['pid'] + '" id="' + data[i]['staffid'] + '">&times;</span></li>')
+var showGroupMan = {
+    data: {},
+    showGroupMans_list: function () {
 
-    };
+        var addClass = '';
+        if ( this.data != '' ) {
+            var data = this.data;
+            if (data[0]['group_founder'] == chat_uid) {
+                addClass = 'group-people';
+            };
+            delete data['Callback'];
+            for (i in data) {
+                $('.groupAct').parents('.panel').find('.list-group').append('<li class="db_chat_people chat_people ' + addClass + '" group-name="' + data[i]['name'] + '" groupId="' + data[i]['pid'] + '" mes_id="' + data[i]['staffid'] + '"><span class="header-img"><img src="' + data[i]['card_image'] + '" alt="' + data[i]['name'] + '"></span><i>' + data[i]['name'] + '</i><span class="delgroupman" groupId="' + data[i]['pid'] + '" id="' + data[i]['staffid'] + '">&times;</span></li>')
+
+            };
+        };
+    },
+    showGroupMan_dialogue: function () {
+
+    },
+    TshowGroupMans_list: function () {
+        var data = this.data;
+        var sg = $('.chating-content .mes_con_box');
+        $('.chating-content .chat-show-groupMan-box').remove();
+        var sbBox = $('<div class="chat-show-groupMan-box" style="display:none"></div>');
+        sbBox.css({
+            position: 'relative',
+            width: '100%',
+        })
+        var sbBoxUl = $('<ul class="chat-show-groupMan"></ul>');
+        var html = '';
+        delete data['Callback'];
+        for ( var i in data ) {
+            html += '<li group-name="' + data[i]['name'] + '" groupId="' + data[i]['pid'] + '" mes_id="' + data[i]['staffid'] + '" ><img src="'+data[i].card_image+'" alt="'+data[i].name+'" /><p>'+data[i].name+'</p></li>';
+        }
+        sbBoxUl.append( html ).appendTo(sbBox);
+        sg.append(sbBox);
+        sbBox.slideToggle('slow', function () {
+            $('.dropDown-showMan-n').css('background-image', "url(/chat/images/xiala.png)");
+        });
+        sbBox.bind('contextmenu',function( e ) { 
+                return false; 
+        }); 
+        sbBoxUl.find('li').mousedown(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if ( e.which == 3 ) {
+                var name = $(this).attr('group-name');
+                var mesId = $(this).attr('mes_id');
+                $('.groupMenu').remove();
+                var _x = e.pageX;
+                var _y = e.pageY;
+                var menuBox = $('<div class ="groupMenu"></div>');
+                var menuBoxUl = $('<ul></ul>');
+                var menuBoxLi = $('<li onmousedown="return false" ontouchstart="return false"  name="'+name+'" staffid="'+mesId+'">@Ta</li>');
+                menuBox.css({'position': 'absolute', 'width': '85px', 'top': _y+2, 'left': _x+3, 'background-color': '#fff','border': '1px solid #ccc', 'box-shadow': '0 0 12px #ccc', 'padding': '5px', 'cursor': 'pointer'});
+                menuBoxLi.click(function (e) {
+                    e.stopPropagation();
+                    // 把输入框聚焦
+                    var myInput = document.getElementById('pc_mes_input');
+                    if ( myInput != document.activeElement ) {
+                        myInput.focus();
+                    }
+                    var staffid = $(this).attr('staffid');
+                    var name = $(this).attr('name');
+                    var img = $(textToImg('@'+name));
+                    img.addClass('given');
+                    img.attr('staffid', staffid);
+                    img.attr('name', name);
+                    insertHtmlAtCaret(img[0].outerHTML, false);
+                    $(this).parent().parent().remove();
+                })
+                menuBoxUl.append(menuBoxLi).appendTo(menuBox);
+                $('body').append(menuBox);
+            };
+            return false;
+        })
+    }
+}
+// 文字 生成图片
+
+function textToImg( text,fontSize, fontWeight ) {
+
+    var txt = text;
+    var len = txt.length;
+    var i = 0;
+    var fontSize = fontSize || 15;
+    var fontWeight = fontWeight || 'normal';
+    var fillStyle = '#1F5DEC';
+    var canvas = document.createElement('canvas');
+    canvas.width = fontSize * len;
+    canvas.height = fontSize * (3 / 2)
+            * (Math.ceil(txt.length / len) + txt.split('\n').length - 1);
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = fillStyle;
+    context.font = fontWeight + ' ' + fontSize + 'px sans-serif';
+    context.textBaseline = 'top';
+    canvas.style.display = 'none';
+    function fillTxt(text) {
+        while (text.length > len) {
+            var txtLine = text.substring(0, len);
+            text = text.substring(len);
+            context.fillText(txtLine, 0, fontSize * (3 / 2) * i++,
+                    canvas.width);
+        }
+        context.fillText(text, 0, fontSize * (3 / 2) * i, canvas.width);
+    }
+    var txtArray = txt.split('\n');
+    for ( var j = 0; j < txtArray.length; j++ ) {
+        fillTxt(txtArray[j]);
+        context.fillText('\n', 0, fontSize * (3 / 2) * i++, canvas.width);
+    }
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    var img = document.createElement('img');
+    img.src = canvas.toDataURL("image/png");
+    return img;
+    // $('#pc_mes_input').append($(img));
 }
 // 刷新在线人数
 function flush_onlineman_list() {
@@ -416,14 +489,34 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + content + '" data-med-size="1024x683" data-author=""';
         addImgClass = 'bigImg';
         content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + content + "' class='send-img'>";
-        $('.loadImg-box .loadImging').append(content);
+        $('.loadImg-box .loadImging').append( content );
         imgIndex++;
         break;
     case 'text':
+        var res = content.match(/\{\@(.*?)\@\}/g);
+        var imgStr = '';
+        if ( res ) {
+            var Appoint = {staffid: [], name: [], sn: {} };
+            for (var i = 0; i <= res.length - 1; i++) {
+                var ress = res[i].match(/^{@(.*)@}$/);
+                var ressArr = ress[1].split('|');
+                if ( ressArr[1] == chat_uid ) {
+                    Appoint.name.push(from_client_name);
+                    Appoint.sn[ressArr[1]] = from_client_name;
+                    Appoint.staffid.push(ressArr[1]);
+                };
+                imgStr += $(textToImg('@'+ressArr[0]))[0].outerHTML;
+            };
+            content = content.replace(/\{\@(.*?)\@\}/g, '');
+        };
+
         content = content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
         content = content.replace(/\|\}/g, '.gif">');
         content1 = content.replace(/%5C/g, "\\").replace(/\&b\r&/g, " ");
         content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br>");
+        if ( imgStr ) {
+            content = imgStr+content;
+        };
         break;
     case 'va':
         content1 = "开启了群聊视频";
@@ -457,7 +550,9 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         content2 = '<span class="chat_duration_left">' + voiceArray[1] + '\"</span';
         addVoiceClass = "web_chat_voice";
         break;
+
     case 'notice':
+
         content1 = content;
         header_img_url = "/chat/images/chatNotice.png";
 
@@ -502,7 +597,7 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
     }
 
     // 发消息者和正在聊天不同
-    if (mestype != "message") {
+    if ( mestype != "message" ) {
         from_uid_id = from_session_no;
     }
     if ($.inArray(from_uid_id, addSession.sessionList) == -1) {
@@ -510,6 +605,7 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         ChatOptions.content = content1;
         ChatOptions.imgUrl = header_img_url;
         // $('#mesNotice').chatNotice( options );
+        // 桌面通知
         if (localStorage.getItem('desktopState') == '0') {
             showMsgNotification(from_client_name, content1, header_img_url);
         };
@@ -520,13 +616,30 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
             addClass = "session_no";
             header_img_url = '/chat/images/rens.png';
         }
+
         if ($.inArray(from_session_no, arrMessageList) != -1) {
             var curmesnum = parseInt($(".mes_chakan_close[session_no='" + from_session_no + "']").find('.mes_num').html()) + 1;
-            $(".mes_chakan_close[session_no='" + from_session_no + "']").attr('chat_mes_num', curmesnum).find('.mex_con').html(from_client_name);
-            $(".mes_chakan_close[session_no='" + from_session_no + "']").find('.mes_num').html(curmesnum);
-            $(".mes_chakan_close[session_no='" + from_session_no + "']").find('.chat_mes_content').html(content1);
+            var mesCC = $(".mes_chakan_close[session_no='" + from_session_no + "']");
+            mesCC.attr('chat_mes_num', curmesnum).find('.mex_con').html( from_client_name );
+            mesCC.find('.mes_num').html(curmesnum);
+            mesCC.find('.chat_mes_content_s').html( content1 );
+            // 有人 @
+            if ( typeof Appoint != 'undefined' ) {
+                if ( $.inArray(chat_uid, Appoint.staffid) != -1 )  {
+                    var name = Appoint.name.join(",");
+                    mesCC.find('.chat_mes_content').html('');
+                    mesCC.find('.chat_mes_content').prepend('<span class ="mention" data-name ="'+name+'" style="color: red">有人@我</span>');
+                }
+            };
         } else {
-            $(".mes_con").append('<div class="mes_box mes_chakan_close ' + addClass + '" chat_mes_num="1"  mestype="' + mestype + '"  group-name="' + from_client_name + '" mes_id="' + from_uid_id + '" session_no="' + from_session_no + '"><div class= "mes_header"><img src="' + header_img_url + '" alt="' + from_client_name + '" /></div><span class="mex_con">' + from_client_name + '</span><div class="mes_content_list" style=""><span class="chat_mes_content">' + content1 + '</span></div><span class="mes_num">1</span><span session_no="' + from_session_no + '" mes_id="' + from_uid_id + '"  mestype="' + mestype + '" group-name="' + from_client_name + '" class="mes_close">X</span></div>');
+            var nameStr = '';
+            if ( typeof Appoint != 'undefined' ) {
+                if ( $.inArray(chat_uid, Appoint.staffid) != -1 )  {
+                    var name = Appoint.name.join(",");
+                    nameStr = '<span class ="mention" data-name ="'+name+'" style="color: red">有人@我</span>';
+                }
+            };
+            $(".mes_con").append('<div class="mes_box mes_chakan_close ' + addClass + '" chat_mes_num="1"  mestype="' + mestype + '"  group-name="' + from_client_name + '" mes_id="' + from_uid_id + '" session_no="' + from_session_no + '"><div class= "mes_header"><img src="' + header_img_url + '" alt="' + from_client_name + '" /></div><span class="mex_con">' + from_client_name + '</span><div class="mes_content_list" style=""><span class="chat_mes_content">' + nameStr + content1 + '</span></div><span class="mes_num">1</span><span session_no="' + from_session_no + '" mes_id="' + from_uid_id + '"  mestype="' + mestype + '" group-name="' + from_client_name + '" class="mes_close">X</span></div>');
         }
         mesnum++;
         // console.log(mesnum);
@@ -542,6 +655,11 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         } else {
             var tabObj = $('.mb-chat-tab-content .he_ov');
         }
+        if ( typeof Appoint != 'undefined' ) {
+            if ( $.inArray(chat_uid, Appoint.staffid) != -1 )  {
+                mentionNotice( Appoint.sn[chat_uid] );
+            }
+        };
         // 消息提示
         $('.chatMin').css('background-color', '#BD8246');
 
@@ -644,110 +762,6 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
     vaQuest.append(handleBox);
     $('body').append(vaQuest);
  }
-//  聊天消息显示
-var messageShow = function(data) { 
-    var mes_time;
-    var content2 = "";
-    var addVoiceClass = "";
-    var addImgClass = "";
-    var addImgAttr = "";
-    var content = "";
-    for (var i in data) {
-        if (i == 'type') {
-            break;
-        };
-        // console.log(data);
-        mes_time = data[i].create_time;
-        switch (data[i].mesages_types) {
-        case 'text':
-            content = data[i].message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
-            content = content.replace(/\|\}/g, '.gif">');
-            content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br/>");
-            break;
-        case 'va':
-
-            if ( chat_name == data[i].sender_name ) {
-                var vName = '我';
-            } else {
-                var vName = data[i].sender_name;
-            }
-            content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
-                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+vName+
-                    "开启了群聊视频</div>"+
-                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
-                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data[i].message_content+"&Invitation=1'  target='_blank' >加入</a></div>"+
-                "</div>";
-            break;
-        case 'file':
-            var fileArray = new Array();
-            var addShare = '';
-            fileArray = data[i].message_content.split('|');
-            if (webUrl == 'chat_index') {
-
-                addShare = "<span title='分享给别人' data-placement = '" + data[i].message_content + "' onclick='chatShare(this)' class='chat-share'></span>";
-            };
-            content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>  " + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
-            break;
-        case 'image':
-            content = data[i].message_content;
-            var objE = document.createElement("div");　　objE.innerHTML = content;　　
-            var obj = objE.childNodes;
-            var ImgSrc = obj[0].getAttribute('src');
-            content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
-            addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
-            addImgClass = 'bigImg';
-            $('.loadImg-box .loadImging').append(content);
-            imgIndex++;
-            break;
-        case 'images':
-            addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + data[i].message_content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + data[i].message_content + '" data-med-size="1024x683" data-author=""';
-            addImgClass = 'bigImg';
-            content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + data[i].message_content + "' class='send-img'>";
-            $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/" + data[i].message_content + "' ></li>");
-            $('.loadImg-box .loadImging').append(content);
-            imgIndex++;
-            break;
-        case 'voice':
-            var voiceArray = new Array();
-            voiceArray = data[i].message_content.split('|');
-            if (data[i].sender_id == chat_uid) {
-                content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "' + voiceArray[0] + '"></div>';
-                content2 = '<span class="chat_duration_right">' + voiceArray[1] + '\"</span';
-            } else {
-                content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "' + voiceArray[0] + '"></div>';
-                content2 = '<span class="chat_duration_left">' + voiceArray[1] + '\"</span';
-            }
-            voiceArray = data[i].message_content.split('|');
-            addVoiceClass = "web_chat_voice";
-            break;
-        case 'revoke':
-            $(".chating-content .he_ov").prepend('<div style="text-align:center;margin:10px 0;color:#ccc;">'+data[i].sender_name+'撤销了一条信息</div>');
-            // if ( data[i].delState == data[i].sender_id ) {
-            // } else {
-            //     $(".chating-content .he_ov").prepend('<div style="text-align:center;margin:10px 0;color:#ccc;">'+data[i].accept_name+'撤销了一条信息</div>');
-            // }
-            continue;
-            // return;
-        default:
-            break;
-        }
-        if (data[i].sender_id == chat_uid) {
-            $(".chating-content .he_ov").prepend('<li ' + addImgAttr + ' class="Chat_ri he ' + addImgClass + '"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="' + header_img_url + '" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">' + mes_time + '</span>' + chat_name + '</span> <div class="ri content_ri chatMesCon"><span mes_id= "'+data[i].id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="self" class="delChatMes delChatMes_left">&times;</span><span class="arrow ri"></span><span class="content_font_ri ' + addVoiceClass + '">' + content + '</span> ' + content2 + ' </div></div></li>');
-        } else {
-            $(".chating-content .he_ov").prepend('<li ' + addImgAttr + ' class="Chat_le ' + addImgClass + '"><div class="user"><span class="head le"><span class="header-img"><img src="' + data[i].card_image + '" alt=""></span></span> <span class="name le">' + data[i].sender_name + '<span style="padding: 0 0 0 20px">' + mes_time + '</span></span><div class="mes_content le chatMesCon"><span mes_id= "'+data[i].id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="other" class="delChatMes delChatMes_right">&times;</span><span class="jian le"></span> <span class="content-font ' + addVoiceClass + ' le">' + content + '</span>' + content2 + '</div></div></li>');
-        }
-        addVoiceClass = "";
-        addImgClass = "";
-        addImgAttr = "";
-        content2 = "";
-        content = "";
-    }
-    $(".chating-content .he_ov .delChatMes").unbind('click');
-    $(".chating-content .he_ov .delChatMes").bind('click', function () {
-        ChatObj.delChatMes($(this));
-    });
-    // initPhotoSwipeFromDOM('.session-box');
-}
 // 查找好友 显示
 var searchFriends = function (data) {
     var html = '';
@@ -766,35 +780,209 @@ searchFriends.friendAdd = function ( obj ) {
     alert('发送成功！');
 
 }
-//选择人后的消息列表
-function mes_chat(data) {
-    $(".chating-content .he_ov").html('');
-    messageShow(data);
-    $(".chating-content .he_ov").prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---查看更多---</span></div>");
-    // 回到底部
-    $(".chating-content .he_ov img").load(function() {
-        $(".chating-content .he-ov-box").scrollTop($(".chating-content .he_ov")[0].scrollHeight);
-    });
-    return false;
+var messageShow = function () {
+    this.data = ''; // 消息的 数据
+    this.type = ''; // 消息的 类型
+    this.showHtmlBox = ''; // 显示消息 容器
+    this.showHtmlboxStr = ''; // 需要添加的 到 显示消息的容器 所有东西
+    this.messageData = '';  // 单条消息的 数据
+    this.sender_id = '';
+    this.options = {
+        addVoiceClass: "",
+        addImgClass: "",
+        addImgAttr: "",
+        content2: "",
+        content: "",
+    },
+
+    this.createStrL = function (data) {
+        this.showHtmlboxStr = '<li ' + this.options.addImgAttr + ' class="Chat_le ' + this.options.addImgClass + '"><div class="user"><span class="head le"><span class="header-img"><img src="' + data.card_image + '" alt=""></span></span> <span class="name le">' + data.sender_name + '<span style="padding: 0 0 0 20px">' + data.create_time + '</span></span><div class="mes_content le chatMesCon"><span mes_id= "'+data.id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="other" class="delChatMes delChatMes_right">&times;</span><span class="jian le"></span> <span class="content-font ' + this.options.addVoiceClass + ' le">' + this.options.content + '</span>' + this.options.content2 + '</div></div></li>';
+    },
+    this.createStrR = function (data) {
+        this.showHtmlboxStr = '<li ' + this.options.addImgAttr + ' class="Chat_ri he ' + this.options.addImgClass + '"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="' + header_img_url + '" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">' + data.create_time + '</span>' + chat_name + '</span> <div class="ri content_ri chatMesCon"><span mes_id= "'+data.id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="self" class="delChatMes delChatMes_left">&times;</span><span class="arrow ri"></span><span class="content_font_ri ' + this.options.addVoiceClass + '">' + this.options.content + '</span> ' + this.options.content2 + ' </div></div></li>';
+    },
+    this.text = function () {
+        var content = '';
+        var res = this.messageData.message_content.match(/\{\@(.*?)\@\}/g);
+        var imgStr = '';
+        if ( res ) {
+            var Appoint = {staffid: [], name: [], sn: {} };
+            for (var i = 0; i <= res.length - 1; i++) {
+                var ress = res[i].match(/^{@(.*)@}$/);
+                var ressArr = ress[1].split('|');
+                // Appoint.name.push(ressArr[0]);
+                // Appoint.sn[from_uid_id] = from_client_name;
+                imgStr += $(textToImg('@'+ressArr[0]))[0].outerHTML;
+                // Appoint.staffid.push(ressArr[1]);
+            };
+            this.messageData.message_content = this.messageData.message_content.replace(/\{\@(.*?)\@\}/g, '');
+        };
+        content = this.messageData.message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+        content = content.replace(/\|\}/g, '.gif">');
+        content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br/>");
+        if ( imgStr ) {
+            content = imgStr+content;
+        };
+        this.options.content = content;
+
+    },
+    this.va =  function () {
+        if ( chat_name == this.messageData.sender_name ) {
+            var vName = '我';
+        } else {
+            var vName = this.messageData.sender_name;
+        }
+        var content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
+                    "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+vName+
+                    "开启了群聊视频</div>"+
+                    "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
+                    "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+this.messageData.message_content+"&Invitation=1'  target='_blank' >加入</a></div>"+
+                "</div>";
+        this.options.content = content;
+
+    },
+    this.file = function () {
+        var fileArray = new Array();
+        var addShare = '';
+        fileArray = this.messageData.message_content.split('|');
+        if (webUrl == 'chat_index') {
+
+            addShare = "<span title='分享给别人' data-placement = '" + this.messageData.message_content + "' onclick='chatShare(this)' class='chat-share'></span>";
+        };
+        content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>  " + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+        this.options.content = content;
+
+    },
+    this.image =  function () {
+        var content = this.messageData.message_content;
+        var objE = document.createElement("div");　　objE.innerHTML = content;　　
+        var obj = objE.childNodes;
+        var ImgSrc = obj[0].getAttribute('src');
+        content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
+        this.options.addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
+        this.options.addImgClass = 'bigImg';
+        this.options.content = content;
+        $('.loadImg-box .loadImging').append(content);
+        imgIndex++;
+
+    },
+    this.images = function () {
+        var content = '';
+        this.options.addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-med-size="1024x683" data-author=""';
+        this.options.addImgClass = 'bigImg';
+        this.options.content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' class='send-img'>";
+        $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' ></li>");
+        $('.loadImg-box .loadImging').append(this.options.content);
+        imgIndex++;
+
+    }
+    this.voice = function () {
+        var voiceArray = new Array();
+        voiceArray = this.messageData.message_content.split('|');
+        if ( this.messageData.sender_id == chat_uid ) {
+            this.options.content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "' + voiceArray[0] + '"></div>';
+            this.options.content2 = '<span class="chat_duration_right">' + voiceArray[1] + '\"</span';
+        } else {
+            this.options.content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "' + voiceArray[0] + '"></div>';
+            this.options.content2 = '<span class="chat_duration_left">' + voiceArray[1] + '\"</span';
+        }
+        this.options.addVoiceClass = "web_chat_voice";
+
+    },
+    this.revoke = function () {
+        this.showHtmlboxStr = '<div style="text-align:center;margin:10px 0;color:#ccc;">'+this.messageData.sender_name+'撤销了一条信息</div>';
+    }
 }
-//加载消息
-function onlode(data) {
-    $(".chating-content .onload").remove();
-    if (data.save == 0) {
-        $(".chating-content .he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
-        $('.chating-content .loader').hide();
-        $('.chating-content .onload').remove();
-        $('.chating-content .he-ov-box').unbind('scroll');
-        return;
-    };
-    messageShow(data);
-    $('.loader').hide();
-    var mes_load = $('.chating-content .mes_load').html();
-    $('.chating-content .mes_load').html(parseInt(mes_load) + 10);
-    $(".chating-content .he_ov img").load(function() {
-        $(".chating-content .he-ov-box").scrollTop($('.chating-content .he_ov').height() - mesHeight);
-    });
-    return false;
+// 显示消息 操作
+messageShow.prototype = {
+    init: function (data) {
+        this.data = data;
+        this.showHtmlBox = $(".chating-content .he_ov");
+    },
+    // 自己 说的消息
+    resSayUid: function () {
+
+    },
+    // sayUid: function () {
+
+    // },
+    //选择人后的消息列表
+    mes_chat : function () {
+        this.showHtmlBox.html('');
+        this.showOldMore();
+        this.showHtmlBox.prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---查看更多---</span></div>");
+        // 回到底部
+        $(".chating-content .he_ov img").load(function() {
+        $(".chating-content .he-ov-box").scrollTop($(".chating-content .he_ov")[0].scrollHeight);
+        });
+        return false;
+    },
+     // 加载更多消息
+    onlode: function () {
+        $(".chating-content .onload").remove();
+        if (this.data.save == 0) {
+            $(".chating-content .he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
+            $('.chating-content .loader').hide();
+            $('.chating-content .onload').remove();
+            $('.chating-content .he-ov-box').unbind('scroll');
+            return;
+        };
+        delete this.data.save;
+        this.showOldMore();
+        $('.loader').hide();
+        var mes_load = $('.chating-content .mes_load').html();
+        $('.chating-content .mes_load').html(parseInt(mes_load) + 10);
+        $(".chating-content .he_ov img").load(function() {
+            $(".chating-content .he-ov-box").scrollTop($('.chating-content .he_ov').height() - mesHeight);
+        });
+        return false;
+    },
+    // 显示消息
+    showOldMore: function (data) {
+        var type = this.data.type;
+        delete this.data.type;
+        for (var i in this.data) {
+            this.showSay( this.data[i], 'n' );
+        }
+        $(".chating-content .he_ov .delChatMes").unbind('click');
+        $(".chating-content .he_ov .delChatMes").bind('click', function () {
+            ChatObj.delChatMes($(this));
+        });
+    },
+    // 显示 对话内容 @parm data 对话数据 @parm direction 显示在上面 还是下面
+    showSay: function ( data, direction ) {
+        this.type = data.mesages_types; // 消息的类型
+        this.messageData = data; // 每条 的消息的 数据
+        this[this.type](); // 根据类型 调取 相应的方法
+        if ( this.type != 'revoke' ) {
+            if ( this.messageData.sender_id == chat_uid ) {
+                this.createStrR( data );
+            } else {
+                this.createStrL( data );
+            }
+        }
+        if ( direction == 'n' ) {
+            this.addHtmlN();
+
+        } else {
+            this.addHtmlP();
+        }
+        this.options = {
+            addVoiceClass: "",
+            addImgClass: "",
+            addImgAttr: "",
+            content2: "",
+            content: "",
+        }
+    },
+    // 添加 消息到 消息容器 下
+    addHtmlN: function () {
+        this.showHtmlBox.prepend( this.showHtmlboxStr );
+    },
+     // 添加 消息到 消息容器 上
+    addHtmlP: function () {
+        this.showHtmlBox.append( this.showHtmlboxStr );
+    },
 }
 /*window消息提醒*/
 function showMsgNotification(title, msg, document_url) {

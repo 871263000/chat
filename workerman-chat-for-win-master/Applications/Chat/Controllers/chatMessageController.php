@@ -77,7 +77,7 @@ class chatMessageController
 						//通知消息的插入 返回 一组发给客户端的数据
 						$sendData = $this->noticeInsert( $insert_id );
 						$sendData['to_uid'] = $this->messageData['to_uid'];
-						$sendData['insert_id'] = $insert_id;
+						$sendData['id'] = $insert_id;
 						return $sendData;
 					}
 					$sendData['to_uid'] = 0;
@@ -88,6 +88,7 @@ class chatMessageController
 				//通知消息的插入 返回 一组发给客户端的数据
 				$sendData = $this->noticeInsert( $insert_id );
 				$sendData['to_uid'] = $this->messageData['to_uid'];
+			// 群聊 插入
 			} else if ( $this->messageData['message_type'] == 'groupMessage' ) {
 				//是否在群聊里 如果在返回 群信息
 				$getData = $this->isInGroup();
@@ -111,7 +112,7 @@ class chatMessageController
                     $sendData['to_uid'] = $getAdmin;
 				}
 			}
-			$sendData['insert_id'] = $insert_id;
+			$sendData['id'] = $insert_id;
             return $sendData;
 			
 		}
@@ -194,7 +195,10 @@ class chatMessageController
 		$this->model->dissoleGroup();
 		return array('type'=>'default');
 	}
-
+	// 退出群
+	public function esc_group () {
+		$this->model->escGroup();
+	}
 	//增加最近联系人
 	public function addContact () 
 	{

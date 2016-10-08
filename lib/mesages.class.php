@@ -60,10 +60,10 @@ class messageList
 	public function groupMesContent(){
 		if (isset($_GET['session_no'])) {
 			$this->session_no = $_GET['session_no'];
-			$sql = "SELECT * FROM `oms_string_message` WHERE `delState`= 0 AND `session_no`='".$_GET['session_no']."' ORDER BY create_time desc limit 0,".$this->pageload;
+			$sql = "SELECT * FROM `oms_string_message` WHERE `delState`= 0 AND `session_no`='" . $_GET['session_no'] . "' ORDER BY create_time desc limit 0, " . $this->pageload;
 			$arrContent = $this->d->findAll($sql);
 			//群聊名字
-			$sql = 'SELECT `group_name` FROM `oms_group_chat` WHERE `id`='.$_GET['session_no'];
+			$sql = 'SELECT `group_name` FROM `oms_group_chat` WHERE `id`=' . $_GET['session_no'];
 		    $arrGroupAccname = $this->d->find($sql);
 		    $this->accname = $arrGroupAccname['group_name'];
 			$this->mes_type = 'groupMessage';
@@ -73,7 +73,7 @@ class messageList
 	//自己的信息
 	public function userinfo()
 	{
-		$sql = 'SELECT `name`,`card_image`, `general_admin` FROM `oms_hr` WHERE staffid='.$this->uid;
+		$sql = 'SELECT `name`,`card_image`, `general_admin` FROM `oms_hr` WHERE staffid=' . $this->uid;
 		$arrName = $this->d->find($sql);
 		return $arrName;
 	}
@@ -92,10 +92,10 @@ class messageList
 		 //右边的消息根据$_SESSION获取名字
 
 		//单聊消息
-		$sql = 'SELECT a.`mes_num`, a.`mes_type`, a.`session_no`,a.`pid`, a.`chat_header_img`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`groupId` FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="'.$this->uid.'"';
+		$sql = 'SELECT a.`mes_num`, a.`mes_type`, a.`session_no`,a.`pid`, a.`chat_header_img`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`groupId` FROM `oms_chat_message_ist` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`pid`="' . $this->uid.'"';
 		$arrMes = $this->d->findALL($sql);
 		//群聊消息
-		$sql = "SELECT a.`mes_num`, a.`id`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_state`=1 AND  a.`staffid`=$this->uid";
+		$sql = "SELECT a.`mes_num`, a.`mention`, a.`id`, b.`sender_id`, b.`sender_name`, b.`accept_id`, b.`accept_name`, b.`message_type`, b.`mesages_types` , b.`message_content`, b.`session_no`, b.`groupId` FROM `oms_groups_people` a LEFT JOIN `oms_string_message` b ON a.`mes_id` = b.`id` WHERE a.`mes_state`=1 AND  a.`staffid`=$this->uid";
   		$arrGroupMes = $this->d->findAll($sql);
   		if ( $isAdmin == 1 ) {
 	  		//管理员群聊消息

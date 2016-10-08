@@ -1,4 +1,44 @@
 
+//群聊 操作 事件
+$(function(){
+  var GroupOperation = function ()　{
+    this.groupid = '';
+    var slef = this;
+    this.sg = $('.mes_con_box');
+  }
+  GroupOperation.prototype = {
+    init: function ( obj ) {
+      var slef = this;
+      obj.click(function (e) {
+        e.stopPropagation();
+        // var groupid = $(this).attr('groupid');
+        if ( $(this).hasClass('groupManShowIng') ) {
+         $('.chat-show-groupMan-box').slideToggle("slow", function () {
+            if ( $('.chat-show-groupMan-box').css('display') == 'none' ) {
+              $('.dropDown-showMan-n').css('background-image', "url(/chat/images/xialaIng.png)");
+            } else {
+              $('.dropDown-showMan-n').css('background-image', "url(/chat/images/xiala.png)");
+            }
+          });
+          return false;
+        };
+        $(this).addClass('groupManShowIng');
+        slef.gpManSh( session_no, 'TshowGroupMans_list' );
+        // ws.send('{"": "", "": "", "": ""}');
+      })
+    },
+    gpManSh: function (groupid, Callback) {
+      ws.send('{"type": "groupManShow", "Callback":"'+Callback+'", "session_id":"'+groupid+'"}');
+    }
+  }
+  var GroupOperationObj = new GroupOperation();
+  window.GroupOperationObj = GroupOperationObj;
+})
+
+
+// 显示聊天信息 初始化
+var mesShow = new messageShow();
+
 // 语音聊天
 var vaChat = function ( obj ) {
   //接收人名字
@@ -90,6 +130,7 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
   $('.chat-session').removeClass('chat-sessioning');
   // 图片 显示 （ 插件 ）
   $('.loadImg').removeClass('loadImging');
+  // 会话里是否有 == -1  没有 
   if ( $.inArray( session_id, this.sessionList ) == -1 ) {
     var liObj = $('<li mes_id ="'+session_id+'" mestype= "'+mestype+'" tab-mes-num = "0" class="chat-sessioning chat-session"><span class="session-tab-head"><img src="'+headerImg+'" alt="'+name+'" /></span><span class="session-tab-name">'+name+'</span><span class="session-tab-close">&times;</span></li>');
     liObj.hover(function () {
@@ -160,10 +201,11 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
               var e = e || event,
                   keycode = e.which || e.keyCode;
               if(e.shiftKey && (e.keyCode==13)){
+
               } else  if (keycode==13) {
                   e.preventDefault();
                   var inputValue = $('.chating-content .pc_mes_input').html();
-                  $('#mes_textarea').html(inputValue);
+                  $('#mes_textarea').html( inputValue );                                           
                   $('.chating-content .pc_mes_input').html('');
                   $("#chat_submit").trigger("click");
               }
@@ -171,7 +213,7 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
            $('.chating-content #pc_mes_input').bind('paste', function (e) {
                 addSession.pasteEvnet( e );return;
              }) 
-            $(".mes_title_con").SliderObject($(".chat-container"));
+            $(".mes_title").SliderObject($(".chat-container"));
             if ( this.sessionList.length == 0 ) {
                 $('.session-tab').hide();
             } else {
@@ -240,7 +282,7 @@ AddSession.prototype.tabSession = function (_index) {
     $('.chat-tab-content').removeClass('chating-content').eq(_NewIndex).addClass('chating-content');
     $('.chat-session').removeClass('chat-sessioning').eq(_index).addClass('chat-sessioning');
     // 图片显示 加载 插件 切换
-    $('.loadImg').removeClass('loadImging').eq(_index).addClass('loadImging');
+    $('.loadImg').removeClass('loadImging').eq(_NewIndex).addClass('loadImging');
 };
 // 消息的数量
 AddSession.prototype.mesnum = function ( uid ) {
@@ -326,6 +368,7 @@ function insertHtmlAtCaret(html) {
             // Range.createContextualFragment() would be useful here but is
             // non-standard and not supported in all browsers (IE9, for one)
             var el = document.createElement("div");
+            html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             el.innerHTML = html;
             var frag = document.createDocumentFragment(), node, lastNode;
             while ( (node = el.firstChild) ) {
@@ -858,7 +901,7 @@ $(document).on('click', '.session_no', function ( event ){
     //end
     var valName = $(this).attr('group-name');//会话名字
     // groupId = $(this).attr('groupId');
-    $('.chating-content .mes_title_con').html(valName);
+    // $('.chating-content .mes_title_con').html(valName);
         //增加一个会话 if 在列表里 返回 false
     if ( IsPC() == true ) {
       var res = addSession.addSession('/chat/images/rens.png', session_no, $(this).attr('group-name'), mes_type);
@@ -866,18 +909,26 @@ $(document).on('click', '.session_no', function ( event ){
         return ;
       };
     } else {
-      var res = addSession.mbAddSession(to_uid);
+      var res = addSession.mbAddSession( to_uid );
       $('.mes_title_con').html( $(this).attr('group-name') );
     }
-
     if ( mes_type == 'groupMessage' ) {
-      $('.chating-content .mes_title_con').append('<i title="群聊添加人" class="add-groupMan"></i>');
+      $('.mes_title_con').append('<i class = "dropDown-showMan-n"></i>');
+      $('.mes_title').append('<i title="群聊添加人" class="add-groupMan"></i>');
+      GroupOperationObj.init($('.chating-content .mes_title_con'));
       $('.chating-content .add-groupMan').show();
       groupJson = '{"type":"mes_groupChat", "session_no":"'+session_no+'" }';
     } else if ( mes_type == 'adminMessage' ) {
       groupJson = '{"type":"chatAdmin", "session_no":"ca" }';
     };
-    if ($(".mes_chakan_close[session_no='"+session_no+"']").length > 0) {
+    var mesCC = $(".mes_chakan_close[session_no='"+session_no+"']");
+    // 是否 有人 @ 
+    if ( mesCC.length > 0 ) {
+      if ( mesCC.find('.mention').length > 0 ) {
+
+        var mentionName = mesCC.find('.mention').attr('data-name');
+        mentionNotice ( mentionName );
+      };
       var con_mes_num =  parseInt($(".mes_chakan_close[session_no='"+session_no+"']").find('.mes_num').html());
       mes_chakan_close(mes_type, session_no, con_mes_num);
     };
@@ -889,7 +940,12 @@ $(document).on('click', '.session_no', function ( event ){
       mesScroll();
     })
 })
-
+// 有人@
+var mentionNotice = function ( name ) {
+  var mentionNoticeObj = $('<div class = "mentionNotice" style="position: relative"><div  style ="position: absolute; top: 0; width: 100%;height: 30px;line-height: 30px;text-align: center;background-color: #A27373;color: #fff;z-index: 999">'+name+'@你</div></div>');
+  $('.mes_con_box').prepend(mentionNoticeObj);
+  setTimeout('$(".mentionNotice").fadeOut(1000)', 4000);
+}
 //表情的添加
 function addempath(className) {
     var emPath = "/chat/emoticons/images/";//表情路径
@@ -1053,6 +1109,12 @@ $(document).click(function (event){
   if (!$(event.target).is('.pc_mes_tool_emoji')) {
       $('.pc_emoji_box').hide();
   };
+  if ( $('.mes_title_con').hasClass('groupManShowIng') ) {
+    $('.chat-show-groupMan-box').slideUp("slow", function () {
+      $('.dropDown-showMan-n').css('background-image', "url(/chat/images/xialaIng.png)");
+    });
+    return false;
+  };
 })
 //右边图标
 $('.mes_ico_box').hover(function (){
@@ -1199,7 +1261,7 @@ function xmlhttp() {
 
     if (window.XMLHttpRequest) {
         // code for IE7+, Firefox, Chrome, Opera, Safari
-        $xmlhttp = new XMLHttpRequest();
+        $xmlhttp = new XMLHttpRequest();                                                                   
     } else {
         // code for IE6, IE5
         $xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
@@ -1260,7 +1322,7 @@ $(document).on('click', '#chat_submit', function () {
     } else {
       addContact.upd( to_uid );
     }
-    onSubmit(to_uid, chat_uid, groupId, mes_type, 'text',session_no);
+    onSubmit(to_uid, chat_uid, groupId, mes_type, 'text',session_no );
 }) 
 // document.getElementById('submit').onclick = function (){
 

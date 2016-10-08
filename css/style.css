@@ -8,8 +8,8 @@ h2{margin-top: 0;}
 .bagimg img{z-index: -1;display: block;position: absolute;width: 100%;height: 100%;top: 0;left: 0;-webkit-animation-name: fadeInOut;-webkit-animation-timing-function: ease-out;-webkit-animation-duration: 2s;-webkit-animation-direction: alternate;}
 .mes_footer{display: none;width: 100%;position: fixed;left: 0;bottom: 0;border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;}
 .speech_item{color: #fff;}
-.mes_title{padding: 3px;border-bottom: 1px solid #fff;}
-.mes_title_con{text-align: center;color: #fff;}
+.mes_title{padding: 3px;border-bottom: 1px solid #fff;text-align: center;cursor: move;}
+.mes_title_con{text-align: center;color: #fff;display: inline-block;}
 .mes_con_box{height: 100% ;}
 .mes_ren{width: 48px;height: 48px;background: url(../images/ren1.png) no-repeat;display: inline-block;position: absolute;cursor: pointer;margin-left: 10px;}
 .mes_rens{width: 48px;height: 48px;background: url(../images/ren.png) no-repeat;display: inline-block;position: absolute;cursor: pointer;left: 90px;}
@@ -57,6 +57,14 @@ h2{margin-top: 0;}
 .chat-home { width: 32px;height: 38px;line-height: 38px; background: url('/chat/images/homepage.png') center no-repeat; display: inline-block; }
 /***********************************/
 
+/*********** 对话面板  *******************/
+.dropDown-showMan-n{    background: url('/chat/images/xialaIng.png') center no-repeat;width: 33px; height: 25px;line-height: 68px;display: inline-block;padding: 5px; }
+.chat-show-groupMan-box{ height: 200px; overflow: auto; } 
+.chat-show-groupMan{position: absolute;background-color: #eee;width: 100%;border-left: 3px #337ab7 solid;}
+.chat-show-groupMan li { width: 118px;text-align: center; height: 60px; border-radius: 100%;display: inline-block; padding: 10px 0;}
+.chat-show-groupMan li img{ width: 46px; height: 46px; border-radius: 100%; }
+.chat-show-groupMan li p {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+/***************************************/
 /*--------------------- 好友 查找----------------*/
 .friendItem{ width: 260px;height: 71px;float: left;margin: 10px 10px; }
 .friendItem img{ width: 60px;}
@@ -244,7 +252,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	.pc_mes_tool_list{cursor: pointer;}
 	.he-ov-box{bottom: 180px;}
 	.pc_mes_input_box{ width: 100%; height: 180px;background: #fff;position: absolute;bottom: 0;border-top: 1px solid #ccc;}
-	.pc_he-ov-box .content-font{border: 1px solid #ccc;}
+	/*.pc_he-ov-box .content-font{border: 1px solid #ccc;}*/
 	.pc_mes_input{padding: 10px;height: 100px;border: 0;outline: none;overflow: auto;}
 	.pc_mes_input_box .pc_mes_tool{width: 100%; height: 40px;padding: 5px;border-bottom: 1px solid #ccc;}
 	.pc_mes_tool ul li{float: left;width: 32px;height: 32px;margin: 0 5px;}
@@ -263,13 +271,13 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	/*********************  聊天框  *************************/
     .modal-css{ width: 965px; }
     .mb-chat-tab-content{ display: none !important; }
-    .mes_content .jian{border: 5px solid transparent; border-right-color: #F3F3F3; border-top-color: #F3F3F3;margin-top: 10px;}
-    .content-font{background-color: #F3F3F3;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
+    .mes_content .jian{border: 5px solid transparent; border-right-color: #eee; border-top-color: #eee;margin-top: 10px;}
+    .content-font{background-color: #eee;padding:6px 10px; display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
     .content-font .Journalism{color: #81E9EC;width: 100%;display: block;text-decoration: none}
 	.pc_he-ov-box .seeMore{ color: #000; }
 	.chat_initial{ background: url('/chat/images/chat_initial.png') center no-repeat;}	
-	.mes_title{padding: 3px;border-bottom: 1px solid #ccc;}
-	.mes_title_con{text-align: center;color: #848080;cursor: move;}
+	.mes_title{padding: 3px;border-bottom: 1px solid #ccc;text-align: center;cursor: move;}
+	.mes_title_con{text-align: center;color: #848080;cursor: move;display: inline-block;}
 	.vaChat{ width: 200px;position: fixed;top: 40%;left: 50%;margin-left: -100px;height: 32px;background-color: #2B6A8A;color: #fff;line-height: 32px;text-align: center;z-index: 999999;} 
 	.vaChat span{ position: absolute;left: 100%;display: inline-block;margin: 0 10px;
     background-color: #CA5050;width: 46px; }
@@ -336,16 +344,15 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
      .handleBox:before{ content: ''; clear: both;}
     .handleBox {width: 171px; margin: auto;}
 	.pc_mes_input_box{display: none;}
-    .content-font{background-color: #fff;padding:5px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
+    .content-font{background-color: #fff;padding:6px 10px;display: block;border-radius: 7px;min-width: 40px; max-width: 400px;font-size: 14px;word-break:break-all; /*支持IE，chrome，FF不支持*/word-wrap:break-word;/*支持IE，chrome，FF*/min-height: 25px;}
     .content-font .Journalism{color: #000;width: 100%;display: block;text-decoration: none}
-    .mes_content .jian{border: 5px solid transparent; border-right-color: #fff; border-top-color: #fff;margin-top: 10px;}
     .mes_content .jian{border: 5px solid transparent; border-right-color: #fff; border-top-color: #fff;margin-top: 10px;}
     .content-font{max-width: 230px !important;}
 .chat_notice_container{padding:0 10px;overflow: auto !important; display: none; width: 100%;position: absolute;top: 200px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999}
 .chat_message_notice{width: 100%;left: 0;margin-left: 0;top: 150px;}
 .online_man{overflow: auto;}
 .mes_dclose{display: block;}
-.mes_title{cursor: pointer;}
+.mes_title{cursor: pointer;text-align: center;cursor: move;}
 .details-list{position: relative;box-shadow: 0 0 10px #656e73;width: 100%;background-color: #fff;height: 100%;float: left;}
 .chat-container{display: none;}
 .container-title{background: rgba(0,0,0,.5)!important;color: #fff;height: 64px;border-bottom: 1px solid #000;}

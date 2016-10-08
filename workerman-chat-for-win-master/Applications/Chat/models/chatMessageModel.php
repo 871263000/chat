@@ -130,21 +130,33 @@ class chatMessageModel
                 $insert_id = $this->db->insert('oms_chat_message_ist')->cols(array('pid'=>$this->messageData['to_uid'], 'session_no'=>$this->messageData['session_id'], 'mes_id'=>$insert_id, 'chat_header_img'=>$this->selfInfo['header_img_url'], 'oms_id'=>$this->selfInfo['room_id']))->query();
             }
 		} else if ( $this->messageData['message_type'] == 'groupMessage' ){
+			$pattern = '/{@(.+)@}/U';
+			preg_match_all($pattern,$this->messageData['content'] , $matches);
+			if ( !empty($matches[1]) ) {
+				$mentionUid = [];
+				foreach ($matches[1] as $key => $value) {
+					$nameUid = explode('|', $value);
+					$mentionUid[] = $nameUid[1];
+				}
+				$mentionUidStr = implode(',', $mentionUid);
+				$this->db->query("UPDATE `oms_groups_people` SET `mention`=concat(`mention`, '" . $this->selfInfo['client_name'] . ",') WHERE `staffid` in (".$mentionUidStr.") AND `pid`=".$this->messageData['session_id']);
+			}
 			$this->db->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `pid`=".$this->messageData['session_id']);
+
 		} elseif ( $this->messageData['message_type'] == 'adminMessage' ) {
 			$this->db->query("UPDATE `oms_hr` SET  `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `general_admin`=1");
 		}
 		$sendMessageData = array(
 			'type'=> 'say_uid',
-			'from_client_name'=> $this->selfInfo['client_name'],
-			'from_uid_id'=> $this->selfInfo['uid'],
-			'header_img_url'=> $this->selfInfo['header_img_url'],
+			'accept_name'=> $this->selfInfo['client_name'],
+			'sender_id'=> $this->selfInfo['uid'],
+			'card_image'=> $this->selfInfo['header_img_url'],
 			'mestype'=> $this->messageData['message_type'],
-			'mes_types'=> $this->messageData['mes_types'],
-			'content'=> $this->messageData['content'],
-			'insert_id'=> $insert_id,
+			'mesages_types'=> $this->messageData['mes_types'],
+			'message_content'=> $this->messageData['content'],
+			'id'=> $insert_id,
 			'session_no'=> $this->messageData['session_id'],
-			'time'=>date('Y-m-d H:i:s'),
+			'create_time'=>date('Y-m-d H:i:s'),
 			);
 		return $sendMessageData;
 	}
@@ -242,7 +254,7 @@ class chatMessageModel
 		if ( $this->messageData['message_type'] == 'message' ) {
             $this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
         } else if ($this->messageData['message_type'] == 'groupMessage') {
-            $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
+            $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mention` = 0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
         } else if ( $this->messageData['message_type'] == 'adminMessage') {
         	$this->db->query("UPDATE `oms_hr` SET `mes_num`=0 AND `mes_id` =0 WHERE `staffid` = ".$this->selfInfo['uid']);
         }
@@ -326,12 +338,32 @@ class chatMessageModel
 
 		$dissolve_group = $this->db->select('group_founder')->from('oms_group_chat')->where('id= :id')->bindValues(array('id'=>$this->messageData['groupId']))->row();
 
-        if ($this->selfInfo['uid'] == $dissolve_group['group_founder']) {
+        if ( $this->selfInfo['uid'] == $dissolve_group['group_founder']) {
 
             $row_count = $this->db->delete('oms_group_chat')->where('id='.$this->messageData['groupId'])->query();
             $row_count = $this->db->delete('oms_groups_people')->where('pid='.$this->messageData['groupId'])->query();
             $this->db->delete('oms_nearest_contact')->where('session_no='.$this->messageData['groupId'].' AND pid='.$this->selfInfo['uid'])->query();
         }
+	}
+	// 退出 群 
+	public function escGroup ( ) 
+	{
+		$dissolve_group = $this->db->select('staffid')->from('oms_groups_people')->where('pid= :pid')->bindValues(array('pid'=>$this->messageData['groupId']))->column();
+
+		if ( !empty( $dissolve_group ) ) {
+
+			foreach ($dissolve_group as $key => $value) {
+				if ( $this->selfInfo['uid'] == $value ) {
+					unset( $dissolve_group[$key] );
+				}
+			}
+			if ( !empty( $dissolve_group ) ) {
+				$str = implode(',', $dissolve_group);
+				$this->db->update('oms_group_chat')->cols(array('group_participants'))->where('id='.$this->messageData['groupId'])->bindValues(array('group_participants'=>$str))->query();
+				$this->db->delete('oms_groups_people')->where('pid = :pid AND staffid =:staffid')->bindValues(array('pid'=> $this->messageData['groupId'], 'staffid'=> $this->selfInfo['uid']))->query();
+			}
+		}
+
 	}
 	//增加最近联系人
 	public function  addCcontactModel ()
@@ -370,6 +402,7 @@ class chatMessageModel
 		}
 		
         $arrGroupMan['type'] = 'showGroupMan';
+        $arrGroupMan['Callback'] = $this->messageData['Callback'];
         return $arrGroupMan;
 	}
 	//根据roomid 获取 所有公司的名字
