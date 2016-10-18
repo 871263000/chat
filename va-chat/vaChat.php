@@ -2,7 +2,7 @@
 require_once 'curl/lib/curl.php';
 require_once 'curl/lib/curl_response.php';
 require_once 'lib/ssmAPI.php';
-error_reporting(E_ALL ^ E_NOTICE^ E_DEPRECATED);
+error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
 // 自己的 id
 $chat_uid = $_SESSION['staffid'];
 // 组织id
@@ -79,17 +79,17 @@ if ( empty($type) ) {
     <title>视频语音</title>
 
     <!-- jQuery -->
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
     
     <!-- 实时猫 RealTimeCat JavaScript SDK -->
-    <script src="//cdn.realtimecat.com/realtimecat/realtimecat-0.2.min.js"></script>
-    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="js/realtimecat-0.4.0.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <!-- css -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="fonts/css/font-awesome.min.css">
 
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <style>
         body{ background-color: #181818;width: 100%;height: 100%; }
         #navbar{ margin: auto; }
@@ -133,6 +133,30 @@ if ( empty($type) ) {
             </div>
         </div>
     </div>
+        <!-- Modal -->
+<!--     <div class="modal fade" id="set-myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">音频视频的设置</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="va-set">
+                        <div class="va-set-v">
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="va-set-a"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-center">
             <li>
@@ -177,6 +201,12 @@ if ( empty($type) ) {
                 </a>
             </li>
             <li>
+                <a id="set-up" data-val="0" href="#"
+                data-hover="tooltip" data-placement="bottom" title="" data-original-title="设置">
+                    <i class="fa fa-refresh"></i>
+                </a>
+            </li>
+            <li>
                 <a id="leave-room" href="#"
                 data-hover="tooltip" data-placement="bottom" title="" data-original-title="离开房间">
                     <i class="fa fa-sign-out">
@@ -193,6 +223,33 @@ if ( empty($type) ) {
     </div>
     <script>
         (function ($) {
+            var va = {cameras: [], audios: []};
+            RTCat.getCameraDevices(function (error,videoDevices) {
+                if(error){
+                    console.log(error);
+                }else{
+                    videoDevices.forEach(function (camera) {
+                        // console.log(camera.deviceId);
+                        va.cameras.push(camera.deviceId);
+                        // cameras.append(`<option value="${camera.deviceId}">${camera.label}</option>`);
+                    });
+                    ssmOptions.options.videoSource = va.cameras[0];
+                }
+            });
+            RTCat.getAudioInputDevices(function (error,audioDevices) {
+                if(error){
+                    console.log(error);
+                }else{
+                    audioDevices.forEach(function (audio) {
+                        va.audios.push(audio.deviceId);
+                        // va.audios.append(`<option value="${audio.deviceId}">${audio.label}</option>`);
+                    });
+                }
+            });
+            var ssmOptions = {
+                token: "<?php echo !empty($token) ? $token : 0;?>",
+                options: {video: true, audio: true, data: true},
+            }
             //拖动
             
             // 浏览器检测对象
@@ -208,13 +265,47 @@ if ( empty($type) ) {
             //         console.log(devices);
             //     }
             // });
-            var ssmOptions = {
-                token: "<?php echo !empty($token) ? $token : 0;?>",
-                options: {video: true, audio: true, data: true},
-            }
+            var stream;
+            var bt1 = $('#set-up');
+            bt1.on('click',function () {
+                var camerasVal;
+                if ( $(this).attr('data-val') == '0') {
+                    if ( va.cameras.length > 1 ) {
+                        ssmOptions.options.videoSource = va.cameras[1];
+                        // camerasVal = cameras[1];
+                    } else {
+                         ssmOptions.options.videoSource = va.cameras[0];
+                        // return false;
+                    }
+                    $(this).attr('data-val', 1);
+                } else {
+                    ssmOptions.options.videoSource = va.cameras[0];
+                    // camerasVal = cameras[0];
+                    $(this).attr('data-val', 0);
+                }
+               // session.disconnect();
+                initStream( ssmOptions.options, function (stream) {
+                    // console.log(ssmOptions.options);
+                    // localStream.release();
+                    // $('#peer-self').html('');
+                    // stream.play('peer-self');
+                    // displayStream('self', stream);
+                    // console.log(stream);
+                });
+                // stream = new RTCat.Stream({
+                //     videoSource:camerasVal });
+                // stream.on('accepted', function () {
+                //     //在 id 为 local 的 div 中播放本地流
+                //     $('#peer-self').html('');
+                //     stream.play('peer-self');
+                // });
+                // stream.init();
+            });
+
             // 声明变量
             var session;
             var localStream;
+            var RemoteStream;
             var mediaList = document.querySelector('#media-list');
 
             /********************************
@@ -253,7 +344,7 @@ if ( empty($type) ) {
                 $(videoPlayer).dblclick(function (event) {
                     var is = $(this).hasClass('big-va-box');
                     if ( !is ) {
-                        $('.va-box .big-va-box').removeClass('big-va-box')
+                        $('.va-box .big-va-box').removeClass('big-va-box');
                         $(this).addClass('big-va-box');
                         $( ".big-va-box" ).draggable();
                     } else {
@@ -287,13 +378,13 @@ if ( empty($type) ) {
                 //         // videoPlayer.className = '';
                 //     }
                 // }
-                videoContainer.appendChild(videoPlayer);
+                videoContainer.appendChild( videoPlayer );
                 mediaList.appendChild(videoContainer);
                 stream.play("peer-" + id);
                 videoPlayer.childNodes[0].setAttribute('poster', '');
 
                 listWidth = parseInt( $('#media-list').css('width').replace('px', '') );
-                listWidth +=320;
+                listWidth += 320;
                 $('#media-list').css('width', listWidth+"px");
                 // Video container
                 // var videoContainer = document.createElement("div");
@@ -394,5 +485,18 @@ if ( empty($type) ) {
             }
         }).apply(this, [jQuery]);
     </script>
+<script>
+
+    // RTCat.getAudioInputDevices(function (error,audioDevices) {
+    //     if(error){
+    //         console.log(error);
+    //     }else{
+    //         audioDevices.forEach(function (audio) {
+    //             // audios.append(`<option value="${audio.deviceId}">${audio.label}</option>`);
+    //         });
+    //     }
+    // });
+
+</script>
 </body>
 </html>

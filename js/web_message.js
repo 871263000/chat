@@ -379,14 +379,13 @@ var showGroupMan = {
                 var menuBox = $('<div class ="groupMenu"></div>');
                 var menuBoxUl = $('<ul></ul>');
                 var menuBoxLi = $('<li onmousedown="return false" ontouchstart="return false"  name="'+name+'" staffid="'+mesId+'">@Ta</li>');
-                menuBox.css({'position': 'absolute', 'width': '85px', 'top': _y+2, 'left': _x+3, 'background-color': '#fff','border': '1px solid #ccc', 'box-shadow': '0 0 12px #ccc', 'padding': '5px', 'cursor': 'pointer'});
+                menuBox.css({'position': 'absolute', 'width': '85px', 'top': _y+2, 'left': _x+3, 'background-color': '#fff','border': '1px solid #ccc', 'box-shadow': '0 0 12px #ccc', 'padding': '5px', 'cursor': 'pointer', 'z-index': 9999999});
                 menuBoxLi.click(function (e) {
                     e.stopPropagation();
                     // 把输入框聚焦
-                    var myInput = document.getElementById('pc_mes_input');
-                    if ( myInput != document.activeElement ) {
-                        myInput.focus();
-                    }
+                    // document.getElementsByClassName('pc_mes_input')[0]
+                    // var myInput = document.getElementById('pc_mes_input');
+                    $('.chating-content #pc_mes_input').focus();
                     var staffid = $(this).attr('staffid');
                     var name = $(this).attr('name');
                     var img = $(textToImg('@'+name));
@@ -411,8 +410,8 @@ function textToImg( text,fontSize, fontWeight ) {
     var len = txt.length;
     var i = 0;
     var fontSize = fontSize || 15;
-    var fontWeight = fontWeight || 'normal';
-    var fillStyle = '#1F5DEC';
+    var fontWeight = fontWeight || 'italic';
+    var fillStyle = '#000';
     var canvas = document.createElement('canvas');
     canvas.width = fontSize * len;
     canvas.height = fontSize * (3 / 2)

@@ -4,13 +4,15 @@
     var mouseDownPosiY;
     var InitPositionX;
     var InitPositionY;
+    var scrollTop ;
     var obj = $(objMoved) == undefined ? $(this) : $(objMoved);
     $(this).mousedown(function (e) {
         //当鼠标按下时捕获鼠标位置以及对象的当前位置
+        scrollTop = $(document).scrollTop();
         mouseDownPosiX = e.pageX;
         mouseDownPosiY = e.pageY;
         InitPositionX = obj.offset().left;
-        InitPositionY = obj.offset().top;
+        InitPositionY = obj.offset().top - parseInt(scrollTop);
         console.log(parseInt(mouseDownPosiY));
         console.log(parseInt(InitPositionY));
         console.log(parseInt(obj.css("marginTop")));

@@ -115,7 +115,8 @@ var AddSession = function () {
     this.sessionList = [];
     this.sessionList.push(session_id);
     //对话框关闭
-    $('.chating-content .mes_dclose').on('click', function (){
+    $('.chating-content .mes_dclose').on('click', function (e){
+      e.stopPropagation();
       session_no = 0;
       $('.session-tab ul li').remove();
       $('.chating-content .mes_load').html('10');
@@ -141,7 +142,7 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
         $(this).find('.session-tab-num').show();
     }).appendTo($('.session-tab ul'));
     var html = '<div class="chat-tab-content chating-content"><div class="mes_title">'+
-               '<h2 class="mes_title_con">'+name+'</h2><span aria-hidden="true" onclick="chatMin()" class="mes_dMinimize">-</span><span aria-hidden="true" class="mes_dclose">&times;</span>'+
+               '<h2 class="mes_title_con" onmousedown="return false" ontouchstart="return false" unselectable="on">'+name+'</h2><span aria-hidden="true" onclick="chatMin()" class="mes_dMinimize">-</span><span aria-hidden="true" class="mes_dclose">&times;</span>'+
            '</div>'+
            '<div class="mes_con_box">'+
                '<div class="">'+
@@ -210,6 +211,10 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
                   $("#chat_submit").trigger("click");
               }
             });
+           $(".chating-content .mes_footer, .chating-content .pc_mes_input").on('drop', function ( e ) {
+                e.stopPropagation();
+                e.preventDefault();
+            })
            $('.chating-content #pc_mes_input').bind('paste', function (e) {
                 addSession.pasteEvnet( e );return;
              }) 
@@ -221,7 +226,8 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
             }
             // 关闭 
             //对话框关闭
-          $('.chating-content .mes_dclose').on('click', function (){
+          $('.chating-content .mes_dclose').on('click', function (e){
+            e.stopPropagation();
             session_no = 0;
             $('.session-tab ul li').remove();
             $('.chat-tab-content').remove();
@@ -357,7 +363,7 @@ $('.chat_notice_close').click(function () {
 // 当前的页面
 var webUrl = '';
 // 粘贴 插入
-function insertHtmlAtCaret(html) {
+function insertHtmlAtCaret(html, bool) {
     var sel, range;
     if (window.getSelection) {
         // IE9 and non-IE
@@ -368,7 +374,9 @@ function insertHtmlAtCaret(html) {
             // Range.createContextualFragment() would be useful here but is
             // non-standard and not supported in all browsers (IE9, for one)
             var el = document.createElement("div");
-            html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            if ( bool ) {
+              html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            };
             el.innerHTML = html;
             var frag = document.createDocumentFragment(), node, lastNode;
             while ( (node = el.firstChild) ) {
@@ -962,6 +970,7 @@ function addempath(className) {
 //表情的点击事件
 $(document).on('click', ".chating-content .emoticons .cli_em, .chating-content .pc_emoji_box .cli_em", function ( event ){
     event.stopPropagation();
+    $('.chating-content .pc_mes_input').focus();
     var em_name = $(this).attr('em_name');
     inputSave = inputSave + "{|"+em_name+"|}";
     var addThis = $(this).clone();
@@ -1110,6 +1119,7 @@ $(document).click(function (event){
       $('.pc_emoji_box').hide();
   };
   if ( $('.mes_title_con').hasClass('groupManShowIng') ) {
+    $('.groupMenu').hide();
     $('.chat-show-groupMan-box').slideUp("slow", function () {
       $('.dropDown-showMan-n').css('background-image', "url(/chat/images/xialaIng.png)");
     });
