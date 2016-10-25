@@ -118,7 +118,7 @@ i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #95
 .panel-title{display: inline-block;}
 .add-groupMan{display: none;cursor: pointer;position: absolute;left: 10px;top: 15px;background: url(../images/pulsGroupman.png) no-repeat;width: 32px;height: 32px;}
 .chat_alert{display: none;position: absolute;width: 200px;z-index: 99;top: 50%;left: 50%;margin-left: -100px;margin-top: -50px;height: 30px;line-height: 30px; text-align: center;}
-.panel-body ul{max-height: 300px;overflow: auto;}
+.myFriend-body ul{max-height: 300px;overflow: auto;}
 .delgroupman{display: none;color: #fff;position: absolute;width: 40px;height: 40px;cursor: pointer;text-align: center;right: 0;background-color: #ed145b; top: 0;}
 .group-people{position: relative;}
 .list-group .header-img{margin-left: 5px;padding: 2px 0;border-radius: 5px;margin-right: 5px;width: 40px;height: 40px;display: inline-block;overflow: hidden;float: left;}

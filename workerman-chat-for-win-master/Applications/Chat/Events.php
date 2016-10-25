@@ -38,9 +38,13 @@ class Events
         // 客户端传递的是json数据
    		//管理员id
         $adminUid = 554;
-
         $message = str_replace(['<', '>'], ["&lt;", "&gt;"] , $message);
         $message_data = json_decode($message, true);
+        if ( empty($message_data) ) {
+            foreach ($message_data as $key => $value) {
+                $message_data[$key] = str_replace(["'", '"'],['&apos;', '&quot;'], $value);
+            }
+        }
         if(!$message_data)
         {
             return ;

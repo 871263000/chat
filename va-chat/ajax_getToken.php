@@ -2,7 +2,7 @@
 
 require_once 'curl/lib/curl.php';
 require_once 'curl/lib/curl_response.php';
-require_once '../config.inc.php';
+require_once '../../config.inc.php';
 require_once 'lib/ssmAPI.php';
 
 // 自己的 id
