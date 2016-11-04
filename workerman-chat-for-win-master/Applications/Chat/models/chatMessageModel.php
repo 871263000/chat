@@ -251,11 +251,20 @@ class chatMessageModel
 	public function messageCloseModel() 
 	{
 		if ( $this->messageData['message_type'] == 'message' ) {
+
+			$mesNum = $this->db->select('mes_num')->from('oms_chat_message_ist')->where('session_no= :session_no')->bindValues(array('session_no'=>$this->messageData['session_id']))->row();
             $this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
         } else if ($this->messageData['message_type'] == 'groupMessage') {
+
+			$mesNum = $this->db->select('mes_num')->from('oms_groups_people')->where('pid= :pid AND staffid= :staffid')->bindValues(array('pid'=>$this->messageData['session_id'], 'staffid'=> $this->selfInfo['uid'] ))->row();
+
             $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mention` = 0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
         } else if ( $this->messageData['message_type'] == 'adminMessage') {
         	$this->db->query("UPDATE `oms_hr` SET `mes_num`=0 AND `mes_id` =0 WHERE `staffid` = ".$this->selfInfo['uid']);
+        	return false;
+        }
+        if ( !empty($mesNum)  ) {
+			return $data = ['type'=> 'mesClose', 'mesNum'=> $mesNum['mes_num'], 'session_id'=> $this->messageData['session_id']];
         }
 	}
 	//增加群聊

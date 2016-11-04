@@ -1,8 +1,7 @@
 <?php 
-require_once('config.inc.php');
+require_once('../config.inc.php');
 header("Content-type:text/html;charset=utf-8");
 $staffid = $_SESSION['staffid'];
-$staffid = 4;
 //创建人id
 $_POST['group_founder'] = $staffid;
 $arrStaffid = explode(",", $_POST['group_participants']);

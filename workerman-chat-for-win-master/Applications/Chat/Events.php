@@ -145,7 +145,10 @@ class Events
                     }
                     return ;
                 }
-                    Gateway::sendToClient($client_id, json_encode($resMessageData));
+                if ( $type == 'mes_close' ) {
+                    Gateway::sendToUid($selfInfo['uid'], json_encode($resMessageData));
+                }
+                 Gateway::sendToClient($client_id, json_encode($resMessageData));
             }
 
         } else {
@@ -170,6 +173,9 @@ class Events
                         $client_name = htmlspecialchars($message_data['client_name']);
                         $uid = $message_data['uid'];
                         $header_img_url = $message_data['header_img_url'];
+                        if ( empty($room_id) && empty($uid) && empty($message_data['header_img_url']) ) {
+                            return false;
+                        }
                         $_SESSION['room_id'] = $room_id;
                         $_SESSION['client_name'] = $client_name;
                         $_SESSION['uid'] = $uid;
@@ -184,7 +190,6 @@ class Events
                     $logined = Gateway::getClientIdByUid($uid);
                     //绑定uid
                     Gateway::bindUid($client_id, $uid);
-                    
                     // 获取房间内所有用户列表 
                     
                     $new_clients_list = [];
@@ -222,7 +227,7 @@ class Events
                         }
                         $new_message['client_list'] = $new_clients_list;
                         Gateway::sendToGroup($room_id, json_encode($new_message));
-                        // 给当前用户发送用户列表 
+                        // 给当前用户发送用户列表  
                         Gateway::sendToCurrentClient(json_encode($new_message));
                         Gateway::joinGroup($client_id, $room_id);
                         //管理员获取所有人的在线人数

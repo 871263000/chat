@@ -1,12 +1,13 @@
 <?php 
-	require_once('config.inc.php');
-	require_once('lib/mesages.class.php');
+	require_once('../config.inc.php');
+	require_once('../lib/mesages.class.php');
 
 	$chat_uid = $_SESSION['staffid'];
 	$oms_id = $_SESSION['oms_id'];
-	
+
 	$mes = new messageList($chat_uid, $oms_id);
 	$arrfrientList = $mes->friendsList();
+
 	if (!empty($arrfrientList)) {
 		foreach ($arrfrientList as $key => $value) {
 			$friend['id'] =  $value['id'];
@@ -25,12 +26,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0" />
-<title>事件</title>
-<script src='js/jquery.js'></script>
+<title>新建群聊</title>
+<script src='js/jquery.min.js'></script>
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <style type="text/css">
-*{font-family: '微软雅黑' !important;}
+/**{font-family: '微软雅黑' !important;}*/
 html,body {
 	height: 100%;
 	/*background: #6699FF;*/
@@ -46,6 +47,7 @@ html,body {
 	width: 100%;
 }
 #name_box{ position:fixed;background:#fff;display:none;width: 100%;margin-top:0px; z-index:9999;height: 100%;}
+#group_name{ z-index: 0; } 
 .myFriend { display: none; width: 80%;height: 300px;margin: auto;border: 1px solid #ccc; }
 .myFriend > div { float: left; }
 .myFriend .myFriend-icon{ width: 8%;height: 100%;line-height: 300px; text-align: center;vertical-align: middle;}
@@ -182,73 +184,135 @@ h2{margin:0;}
 .group_pep::-webkit-scrollbar-resizer{background:#ff0bee}
 .group_pep{text-align: center;max-height: 300px; overflow: auto;}
 .group_pep.ul li{padding: 5px 0; border-bottom: 1px solid #dedede;}
+.latt-container{    height: auto !important;overflow: auto !important;position: inherit !important; }	
+.latt-wrapper{height: auto !important;  }
 </style>
 
 </head>
 
 <body>
 
-
 <div id="name_box">
-	<div>
-		<div class="orgFriend">
-			<p>
-				<span class="orgFriend-list orgFriend-list-cur btn" data-type= "c">公司内部组织</span><span class="orgFriend-list btn" data-type="m">我的好友</span>
-			</p>
-		</div>
-		<div class="myFriend">
-			<!-- 我的好友 -->
-			<div class="chat-orgFriend"> 
-				<div class="panel-group" id="chat-orgFriend">
-					<div class="panel friend-group">
-						<div class="panel-heading" mestype= "groupMessage" data-toggle="collapse" class="group-man-show" data-parent="#chat-orgFriend" href="#chat-orgFriend-list">
-							<h4 class="panel-title"><span title="我的好友" >我的好友</span></h4>
-						</div>
-						<div id="chat-orgFriend-list" class="panel-collapse collapse">
-							<div class="panel-body myFriend-body">
-								<ul class="list-group myFriend-list">
-								<?php if (!empty($arrfrientList)) :?>
-									<?php foreach ($arrfrientList as $k => $v) : ?>
-										<li mes_id="<?php echo $v['staffid'];?>" group-name="<?php echo $v['name'];?>" class="myFriend-items"><span class="myFriend-items-Mask" mes_id="<?php echo $v['staffid'];?>"></span><input type="checkbox" mes_id="<?php echo $v['staffid'];?>" class="myFriend-items-in"><img class="header-img" src="<?php echo empty($v['card_image'])?'/chat/images/niming.png':$v['card_image']; ?>" alt=""><?php echo $v['name'];?></li>
-									<?php endforeach; ?>
-								<?php else:?>
-									还没有好友！
-								<?php endif ;?>
-								</ul>
-							</div>
-						</div>
-						<span class="caret drop-down"></span>
+	<div class="orgFriend">
+		<p>
+			<span class="orgFriend-list orgFriend-list-cur btn" data-type= "c">本组织内部好友</span>
+			<span class="orgFriend-list btn" data-type="m">我的好友</span>
+		</p>
+	</div>
+	<div class="myFriend">
+		<!-- 我的好友 -->
+		<div class="chat-orgFriend"> 
+			<div class="panel-group" id="chat-orgFriend">
+				<div class="panel friend-group">
+					<div class="panel-heading" mestype= "groupMessage" data-toggle="collapse" class="group-man-show" data-parent="#chat-orgFriend" href="#chat-orgFriend-list">
+						<h4 class="panel-title"><span title="我的好友" >我的好友</span></h4>
 					</div>
+
+					<div id="chat-orgFriend-list" class="panel-collapse collapse">
+						<div class="panel-body myFriend-body">
+							<ul class="list-group myFriend-list">
+							<?php if (!empty($arrfrientList)) :?>
+								<?php foreach ($arrfrientList as $k => $v) : ?>
+									<li mes_id="<?php echo $v['staffid'];?>" group-name="<?php echo $v['name'];?>" class="myFriend-items"><span class="myFriend-items-Mask" mes_id="<?php echo $v['staffid'];?>"></span><input type="checkbox" mes_id="<?php echo $v['staffid'];?>" class="myFriend-items-in"><img class="header-img" src="<?php echo empty($v['card_image'])?'/chat/images/niming.png':$v['card_image']; ?>" alt=""><?php echo $v['name'];?></li>
+								<?php endforeach; ?>
+							<?php else:?>
+								还没有好友！
+							<?php endif ;?>
+							</ul>
+						</div>
+					</div>
+					<span class="caret drop-down"></span>
 				</div>
 			</div>
-			<div class="myFriend-icon"><span><img src="/chat/images/jiantou.png" alt=""></span></div>
-			<!-- 选择人后的容器 -->
-			<div class="chat-orgName-select">
-			<h5>已选好友</h5>
-				<ul class="list-group myFriend-list">
-					
-				</ul>
-			</div>
 		</div>
-		<!-- 公司组织 -->
-		<div class="orgJiagou">
-			<?php
-				include('fenlei2/OS.php');
-			?>
+		<div class="myFriend-icon"><span><img src="/chat/images/jiantou.png" alt=""></span></div>
+		<!-- 选择人后的容器 -->
+		<div class="chat-orgName-select">
+		<h5>已选好友</h5>
+			<ul class="list-group myFriend-list">
+				
+			</ul>
 		</div>
-		<div style="clear:both;"></div>
-		<div style="width:100%;text-align: center;"><button style="margin-top:17px;width:157px;height:30px" id="b_no" class="btn btn-sm btn-info" >取&nbsp;消</button><button style="margin-top:17px;width:157px;height:30px;" id="b_is"  class="btn btn-sm btn-info">确&nbsp;定</button></div>
+	</div>
+
+	<!-- 公司组织 -->
+	<div class="orgJiagou" style="height: 400px; overflow: auto;"></div>
+	<div style="clear:both;"></div>
+	<div id="orgAct" style="width:100%;text-align: center;"></div>
+	<div style="width:100%;text-align: center;">
+		<button style="" id="b_no" class="btn btn-sm btn-info" >取&nbsp;消</button><button style="" id="b_is"  class="btn btn-sm btn-info">确&nbsp;定</button>
 	</div>
 </div>
+<script src="/lattice/Publics/Js/selectPerson.js"></script>
 <script type="text/javascript">
+lattSetting({
+	    glob:{ //不设置这个属性或者属性为空就不强制应用全局属性
+	        // val:'#chooseTec',    //字符串值存放位置
+	        // ignore:[true,false],   //是否忽略（如果设置了一致性，下面也还设置val的话讲优先采取下面的）
+	        // type:[1,2,3],
+	        // on:['click','dblclick','.....'],
+	        isfill:false,  //是否把结果值填充的val选择器中 [true,false];
+	    },
+	    items:[
+	        {
+	            type:1,  //组织架构类型
+	            val:'#s_man',   // 选择人
+	            sidstorage: '#group_participants',
+	            callback:function(sidList,names){
+	            	//在手机上交替显示
+	            	var arrStaffid = [];
+					for (var i = 0; i < sidList.length; i++ ) {
+						arrStaffid.push(sidList[i][1]);
+					}
+					if ( typeof friendMap != 'undefined' ) {
+						Array.prototype.push.apply(arrStaffid, friendMap);
+					};
+					$('.group_pep').html('');
+					var jsonText = JSON.stringify(arrStaffid);
+		            $.ajax({
+		              url:'getndp.php',
+		              data:'jsonText='+jsonText,
+		              type:'post',
+		              success:function(data){
+		                var d=eval('('+data+')');
+		                for (var i = 0; i < d.length; i++) {
+		                  $('.group_pep').append("<li class='list-group-item'>"+d[i]['name']+"</li>");    
+		                }
+		              }
+		            });
+	            }
+	        },
+
+	    ],
+	})
+	$(function () {
+		$(document).on('click', '#s_man', function (e) {
+			// e.stopPropagation();
+			$('#name_box').show();
+			$('.latt-container').css('height', '400px !important').appendTo($('.orgJiagou'));
+			$('#latt-ok').hide();
+			$('.latt-container .btn').hide();
+		});
+		var nIs= $('#b_is');
+		var nNo= $('#b_no');
+		nIs.click(function  () {
+			$('#latt-ok').trigger('click');
+			$('#name_box').hide();
+		});
+		nNo.click(function () {
+			$('#name_box').hide();
+		})
+
+	})
 	$(function () {
 		//删除指定数组元素
-		Array.prototype.remove = function(val) {
-			var index = this.indexOf(val);
-			if (index > -1) {
-				this.splice(index, 1);
-			}
-		};
+		var _chat_remove = function (val, array) {
+		    var index = array.indexOf(val);
+		    if (index > -1) {
+		        array.splice(index, 1);
+		    }
+		    return array;
+		}
 		// 手机 上的点击
 		var myFriendItemsIn = $('.myFriend-items-in');
 
@@ -304,11 +368,12 @@ h2{margin:0;}
 			};
 		}
 		friendSelect.prototype.delMan = function (obj) {
-			this.friendMap.remove(this.mes_id);
+			this.friendMap = _chat_remove(this.mes_id, this.friendMap);
+			// this.friendMap.remove(this.mes_id);
 			return window.friendMap = this.friendMap;
 		}
 		var myFriend = new friendSelect();
-
+		
 		friendItem.click(function (e) {
 			var $this = $(this);
 			var $thisIn = $this.find('input');
@@ -374,50 +439,53 @@ h2{margin:0;}
 <script type="text/javascript">
           // console.log(sidList)
           //button确定
-         $('#b_is').click(function (){
-			if ( typeof friendMap != 'undefined' ) {
-				Array.prototype.push.apply(sidList, friendMap);
-			};
-            var jsonText = JSON.stringify(sidList);
-            $('.group_pep').html('')
-            to_uid = sidList.join(',');
-            $('#group_participants').val(to_uid);
-            $.ajax({
-              url:'getndp.php',
-              data:'jsonText='+jsonText,
-              type:'post',
-              success:function(data){
-                var d=eval('('+data+')')
-                for (var i = 0; i < d.length; i++) {
-                  $('.group_pep').append("<li class='list-group-item'>"+d[i]['name']+"</li>");    
-                }
-              }
-            })
-            $('#name_box').hide();
-            $('.selected').find('div').html('<ul></ul>');
-            $('#No1').find('.ltclasscheckbox').attr('checked',false);
-            $('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
-            sidList=[];
-          })
-          //button取消
-          $('#b_no').click(function(){
-            $('#name_box').hide();
-          })
+          // var staffUid = '';
+   //       $('#b_is').click(function (){
+			// if ( typeof friendMap != 'undefined' ) {
+			// 	Array.prototype.push.apply(sidList, friendMap);
+			// };
+   //          var jsonText = JSON.stringify(sidList);
+   //          $('.group_pep').html('')
+   //          to_uid = sidList.join(',');
+   //          $('#group_participants').val(to_uid);
+   //          $.ajax({
+   //            url:'getndp.php',
+   //            data:'jsonText='+jsonText,
+   //            type:'post',
+   //            success:function(data){
+   //              var d=eval('('+data+')')
+   //              for (var i = 0; i < d.length; i++) {
+   //                $('.group_pep').append("<li class='list-group-item'>"+d[i]['name']+"</li>");    
+   //              }
+   //            }
+   //          })
+   //          $('#name_box').hide();
+   //          $('.selected').find('div').html('<ul></ul>');
+   //          $('#No1').find('.ltclasscheckbox').attr('checked',false);
+   //          $('.select_member_num').html($('.selected').find('sid').length+'/'+$('#No1').find('sid').length);
+   //           staffUid = sidList;
+   //           sidList=[];
+
+   //        })
+   //        //button取消
+   //        $('#b_no').click(function(){
+   //          $('#name_box').hide();
+   //        })
         </script>
 <script type="text/javascript">
 
 
 //选择人
-$('#s_man').click(function(){
-  $('#name_box').show();
-})
+// $('#s_man').click(function(){
+//   $('#name_box').show();
+// })
 $('.createGroup').on('click',function(){
 	if ( $('#group_name').val() == '' ){
 		alert('群聊名字不能为空！');
 		return false ;
 	}
-	if (sidList.length == 0) {
-		alert('还没有选择人!');
+	if (staffUid.length == 0) {
+		alert('还没有选择人!')
 		return false;
 	};
 })

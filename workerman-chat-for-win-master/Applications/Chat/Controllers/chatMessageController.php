@@ -162,8 +162,8 @@ class chatMessageController
 	public function mes_close() 
 
 	{
-		$this->model->messageCloseModel();
-		return array( 'type'=>'default' );
+		$data = $this->model->messageCloseModel();
+		return $data;
 	}
 
 	//通知消息的关闭

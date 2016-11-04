@@ -43,10 +43,8 @@ var ChatObj = {
         ws.send('{"type": "delChatMes", "mes_id":"'+mesId+'","uid":"'+uid+'","dataMan": "'+dataMan+'"}');
     }
 };
-// 消息的 点击事件
 // 服务端发来消息时
 function onmessage(e) {
-    // console.log(e.data);
     var data = eval("(" + e.data + ")");
     switch (data['type']) {
         // 服务端ping客户端
@@ -246,54 +244,54 @@ function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types, from_sessi
     var addImgClass = "";
     var addImgAttr = "";
     switch (mes_types) {
-    case 'text':
-        input = document.getElementById("mes_textarea");
-        //里边 有 @
-        if ( $(input).find('.given').length > 0 ) {
-            $(input).find('.given').each(function (i, o) {
-                var name = $(input).find('.given').attr('name');
-                var staffid = $(input).find('.given').attr('staffid');
-                var res = '{@'+name+'|'+staffid+'@}';
-                $(this).after(res);
-                $(this).remove();
-            })
-        };
-        inputValue = input.innerHTML;
+        case 'text':
+            input = document.getElementById("mes_textarea");
+            //里边 有 @
+            if ( $(input).find('.given').length > 0 ) {
+                $(input).find('.given').each(function (i, o) {
+                    var name = $(input).find('.given').attr('name');
+                    var staffid = $(input).find('.given').attr('staffid');
+                    var res = '{@'+name+'|'+staffid+'@}';
+                    $(this).after(res);
+                    $(this).remove();
+                })
+            };
+            inputValue = input.innerHTML;
 
-        inputValue = inputValue.replace(/<img([^>].*?)em_name=\"/ig, '{|').replace(/\"([^<].*?)[>?]/ig, '|}').replace(/<br>/g, '&br&').replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, '&quot;').replace(/[\r\n]/g, "").replace(/[\\]/g, "%5C");
-        inputcur = input.innerHTML;
-        break;
-    case 'image':
-        addImgAttr = ' href = "' + $('.sending-img-box .send-img').attr('src') + '" data-size="1600x1068" data-med="' + $('.sending-img-box .send-img').attr('src') + '" data-med-size="1024x683" data-author=""';
-        addImgClass = 'bigImg';
+            inputValue = inputValue.replace(/<img([^>].*?)em_name=\"/ig, '{|').replace(/\"([^<].*?)[>?]/ig, '|}').replace(/<br>/g, '&br&').replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, '&quot;').replace(/[\r\n]/g, "").replace(/[\\]/g, "%5C");
+            inputcur = input.innerHTML;
+            break;
+        case 'image':
+            addImgAttr = ' href = "' + $('.sending-img-box .send-img').attr('src') + '" data-size="1600x1068" data-med="' + $('.sending-img-box .send-img').attr('src') + '" data-med-size="1024x683" data-author=""';
+            addImgClass = 'bigImg';
 
-        inputcur = "<img index='" + imgIndex + "' src='" + $('.sending-img-box .send-img').attr('src') + "' class='send-img'>";
-        $('.loadImg-box .loadImging').append(inputcur);
-        inputValue = $('.sending-img-box .send-img').attr('src');
-        $('.img-box').hide();
-        imgIndex++;
-        break;
-    case 'images':
-        var ImgSrc = document.getElementById('key').value;
-        addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-med-size="1024x683" data-author=""';
-        addImgClass = 'bigImg';
-        inputcur = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + ImgSrc + "' class='send-img'>";
-        $('.loadImg-box .loadImging').append(inputcur);
-        inputValue = ImgSrc;
-        $('.img-box').hide();
-        imgIndex++;
-        break;
-    case 'file':
-        var fileName = document.getElementById('filename').value;
-        var fileUrl = document.getElementById('key').value;
-        inputcur = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileName + "</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileUrl + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
-        inputValue = fileName + "|" + fileUrl;
-        break;
-    case 'voice':
-        inputValue = $('.chat_voice_box').attr('voice_url'); 
-        ws.send('{"type":"FUid","to_uid":"' + to_uid + '","senderid":"' + chat_uid + '", "groupId":"' + groupId + '", "accept_name":"' + accept_name + '","message_type":"' + message_type + '", "mes_types":"' + mes_types + '","session_no":"' + from_session_no + '","content":"' + inputValue + '"}');
-        $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
-        return;
+            inputcur = "<img index='" + imgIndex + "' src='" + $('.sending-img-box .send-img').attr('src') + "' class='send-img'>";
+            $('.loadImg-box .loadImging').append(inputcur);
+            inputValue = $('.sending-img-box .send-img').attr('src');
+            $('.img-box').hide();
+            imgIndex++;
+            break;
+        case 'images':
+            var ImgSrc = document.getElementById('key').value;
+            addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-med-size="1024x683" data-author=""';
+            addImgClass = 'bigImg';
+            inputcur = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + ImgSrc + "' class='send-img'>";
+            $('.loadImg-box .loadImging').append(inputcur);
+            inputValue = ImgSrc;
+            $('.img-box').hide();
+            imgIndex++;
+            break;
+        case 'file':
+            var fileName = document.getElementById('filename').value;
+            var fileUrl = document.getElementById('key').value;
+            inputcur = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileName + "</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileUrl + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+            inputValue = fileName + "|" + fileUrl;
+            break;
+        case 'voice':
+            inputValue = $('.chat_voice_box').attr('voice_url'); 
+            ws.send('{"type":"FUid","to_uid":"' + to_uid + '","senderid":"' + chat_uid + '", "groupId":"' + groupId + '", "accept_name":"' + accept_name + '","message_type":"' + message_type + '", "mes_types":"' + mes_types + '","session_no":"' + from_session_no + '","content":"' + inputValue + '"}');
+            $(".he-ov-box").scrollTop($(".he-ov-box")[0].scrollHeight);
+            return;
 
     }
     ws.send('{"type":"sayUid","to_uid":"' + to_uid + '","senderid":"' + chat_uid + '", "groupId":"' + groupId + '", "accept_name":"' + accept_name + '","message_type":"' + message_type + '", "mes_types":"' + mes_types + '","session_no":"' + from_session_no + '","content":"' + inputValue + '"}');
@@ -404,8 +402,7 @@ var showGroupMan = {
 }
 // 文字 生成图片
 
-function textToImg( text,fontSize, fontWeight ) {
-
+function textToImg ( text, fontSize, fontWeight ) {
     var txt = text;
     var len = txt.length;
     var i = 0;
@@ -729,11 +726,10 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
             url: '/chat/va-chat/ajax_getToken.php',
             data: 'createSession=1',
             type: 'post',
-            success: function (data) {
-
-                ws.send('{"type": "vaAnswer", "client_id": "'+client_id+'", "act": "'+act+'", "session_id": "'+data+'"}');
+            success: function (session_id) {
+                ws.send('{"type": "vaAnswer", "client_id": "'+client_id+'", "act": "'+act+'", "session_id": "'+session_id+'"}');
                 // window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data+"&Invitation=1";
-                window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data+"&Invitation=1";
+                window.location.href="https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+session_id+"&Invitation=1";
 
                 //window.open("https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+data[1].session_id+"&Invitation=1");
             },
