@@ -21,7 +21,7 @@ function connect() {
 // 连接建立时发送登录信息
 function onopen() {
     // 登录
-    var login_data = '{"type":"login","oms_id":"' + oms_id + '", "uid": "' + chat_uid + '", "header_img_url":"' + header_img_url + '",  "client_name":"' + chat_name + '","room_id":"' + room_id + '"}';
+    var login_data = '{"type":"login", "oms_id":"' + oms_id + '", "uid": "' + chat_uid + '", "header_img_url":"' + header_img_url + '", "token": "'+chat_token+'",  "client_name":"' + chat_name + '","room_id":"' + room_id + '"}';
     ws.send(login_data);
 }
 // 自己 发的 信息 
@@ -96,6 +96,7 @@ function onmessage(e) {
     case 'mes_chat':
         mesShow.init(data);
         mesShow.mes_chat();
+        // console.log(567999);
         // mes_chat(data);
         break;
         // 语音 请求
@@ -105,7 +106,7 @@ function onmessage(e) {
         break;
     // 语音 取消
     case 'vaCancel':
-       mesShow.init(data);
+        mesShow.init(data);
         mesShow.showSay(data, 'p');
         $(".chating-content .he-ov-box").scrollTop($(".chating-content .he-ov-box")[0].scrollHeight);
         $(".chating-content .he_ov .delChatMes").unbind('click');
@@ -178,6 +179,19 @@ function onmessage(e) {
         $(".chating-content .he_ov .delChatMes").bind('click', function () {
             ChatObj.delChatMes($(this));
         });
+        
+        var mesPushObj = {'staffid': data['to_uid'], 'message': '聊天消息', 'type': 'p'};
+        // console.log(data);
+        // app 消息推送
+        $.ajax({
+            url: '/newOms_customer_quotation/ajaxMesPush.php',
+            data: mesPushObj,
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+
+            }
+        })
         // ChatObj.fromMes(data);
         // resSayUid();
         break;
@@ -189,11 +203,40 @@ function onmessage(e) {
         delete client_list[data['from_uid_id']];
         flush_onlineman_list();
         break;
+    case 'mesClose':
+        mesClose(data);
     default:
         return;
 
     }
 }
+/*
+消息的关闭
+
+
+*/
+function mesClose(data) {
+    pushUid = chat_uid;
+    if ( data['mesType'] !='message' ) {
+        var to_uidArr =new Array();
+        for (var i in data['to_uid']) {
+            to_uidArr.push(data['to_uid'][i].staffid);
+        }
+        pushUid = to_uidArr;
+    };
+      var mesPushObj = {'staffid': pushUid, 'message': '', 'type': 's', 'mesNum': data.mesNum};
+        // app 消息推送
+        $.ajax({
+            url: '/newOms_customer_quotation/ajaxMesPush.php',
+            data: mesPushObj,
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+
+            }
+        })
+}
+
 // 提交消息
 /* 
     * content  消息内容
@@ -267,25 +310,28 @@ function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types, from_sessi
 
             inputcur = "<img index='" + imgIndex + "' src='" + $('.sending-img-box .send-img').attr('src') + "' class='send-img'>";
             $('.loadImg-box .loadImging').append(inputcur);
-            inputValue = $('.sending-img-box .send-img').attr('src');
+            inputValue = 'img[http://7xq4o9.com1.z0.glb.clouddn.com/'+ ($('.sending-img-box .send-img').attr('src')||'') +']';
+            // inputValue = $('.sending-img-box .send-img').attr('src');
             $('.img-box').hide();
             imgIndex++;
             break;
         case 'images':
             var ImgSrc = document.getElementById('key').value;
-            addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + ImgSrc + '" data-med-size="1024x683" data-author=""';
+            addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
             addImgClass = 'bigImg';
-            inputcur = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + ImgSrc + "' class='send-img'>";
+            inputcur = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
             $('.loadImg-box .loadImging').append(inputcur);
-            inputValue = ImgSrc;
+            inputValue = 'img[http://7xq4o9.com1.z0.glb.clouddn.com/'+ ( ImgSrc ||'') +']';
+            // inputValue = ImgSrc;
             $('.img-box').hide();
             imgIndex++;
             break;
         case 'file':
             var fileName = document.getElementById('filename').value;
             var fileUrl = document.getElementById('key').value;
-            inputcur = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileName + "</span></div><div class='right'><a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileUrl + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
-            inputValue = fileName + "|" + fileUrl;
+            inputcur = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileName + "</span></div><div class='right'><a href='" + fileUrl + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+            
+            inputValue = 'file(http://7xq4o9.com1.z0.glb.clouddn.com/'+ ""+fileUrl +')['+ fileName +']';
             break;
         case 'voice':
             inputValue = $('.chat_voice_box').attr('voice_url'); 
@@ -470,11 +516,16 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
     var addImgAttr = "";
     switch (image) {
     case 'image':
-        var objE = document.createElement("div");　　objE.innerHTML = content;　　
-        var obj = objE.childNodes;
-        var ImgSrc = obj[0].getAttribute('src');
+        // var objE = document.createElement("div");　　objE.innerHTML = content;　　
+        // var obj = objE.childNodes;
+        // var ImgSrc = obj[0].getAttribute('src');
+        var ImgSrc = content.replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+          return img.replace(/(^img\[)|(\]$)/g, '');
+        });
         content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
+        
         addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
+
         addImgClass = 'bigImg';
         content1 = '【图片】';
         $('.loadImg-box .loadImging').append(content);
@@ -482,9 +533,12 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         break;
     case 'images':
         content1 = '【图片】';
-        addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + content + '" data-med-size="1024x683" data-author=""';
+        content = content.replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+          return img.replace(/(^img\[)|(\]$)/g, '');
+        })
+        addImgAttr = ' href = "' + content + '" data-size="1600x1068" data-med="' + content + '" data-med-size="1024x683" data-author=""';
         addImgClass = 'bigImg';
-        content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + content + "' class='send-img'>";
+        content = "<img index='" + imgIndex + "' src='" + content + "' class='send-img'>";
         $('.loadImg-box .loadImging').append( content );
         imgIndex++;
         break;
@@ -505,11 +559,27 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
             };
             content = content.replace(/\{\@(.*?)\@\}/g, '');
         };
-
         content = content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
         content = content.replace(/\|\}/g, '.gif">');
         content1 = content.replace(/%5C/g, "\\").replace(/\&b\r&/g, " ");
         content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br>");
+        content = content .replace(/\{\|(.*?)\|\}/g, function(face){  ////增加  转义表情
+          var alt = face.replace(/\{\||\|\}/g, '');
+          return '<img alt="'+ alt +'" width="24px" title="'+ alt +'" src="/chat/emoticons/images/' + alt + '.gif">';
+          })
+          .replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+              var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+              var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+              if(!href) return str;
+              content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+              return content;
+            })
+          .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+            $('.loadImg-box .loadImging').append('<img index="' + imgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">');
+            imgIndex++;
+            var newImgIndex = imgIndex - 1;
+              return '<img index="' + newImgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
+            });
         if ( imgStr ) {
             content = imgStr+content;
         };
@@ -530,13 +600,20 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         break;
     case 'file':
         content1 = '【文 件 】';
-        var fileArray = new Array();
-        fileArray = content.split('|');
+        // var fileArray = new Array();
+        // fileArray = content.split('|');
         var addShare = '';
         if (webUrl == 'chat_index') {
             addShare = "<span title='转发' data-placement = '" + content + "' onclick='chatShare(this)' class='chat-share'></span>";
         };
-        content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>" + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+        content = content.replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+              var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+              var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+              if(!href) return str;
+              content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+              return content;
+            });
+        // content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>" + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
         break;
     case 'voice':
         var voiceArray = new Array();
@@ -563,7 +640,6 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
             $(".mes_con").append('<div class="mes_box mes_chakan_close chat_notice" chat_mes_num="1" oms_id= "' + insert_id + '"  mestype="' + mestype + '"  group-name="' + from_client_name + '" mes_id="' + from_uid_id + '" session_no="' + from_session_no + '"><div class= "mes_header"><img src="' + header_img_url + '" alt="' + from_client_name + '" /></div><span class="mex_con">' + from_client_name + '【 请求会话 】</span><div class="mes_content_list" style=""><span class="chat_mes_content">' + content1 + '</span></div><span class="mes_num">1</span><span session_no="' + from_session_no + '" mes_id="' + from_uid_id + '"  mestype="' + mestype + '" group-name="' + from_client_name + '" class="mes_close">X</span></div>');
 
         }
-
         mesnum++;
         // console.log(mesnum);
         $('.mes_radio').html(mesnum);
@@ -596,6 +672,7 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
     if ( mestype != "message" ) {
         from_uid_id = from_session_no;
     }
+
     if ($.inArray(from_uid_id, addSession.sessionList) == -1) {
         ChatOptions.tittle = from_client_name;
         ChatOptions.content = content1;
@@ -641,6 +718,8 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
         // console.log(mesnum);
         $('.mes_radio').html(mesnum);
         arrMessageList.push(from_session_no);
+        
+
     };
     // 发消息者和正在聊天
     if ($.inArray(from_uid_id, addSession.sessionList) != -1) {
@@ -649,7 +728,7 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
             var _index = addSession.mesnum(from_uid_id);
             var tabObj = $('.chat-tab-content').eq(_index + 1).find('.he_ov');
         } else {
-            var tabObj = $('.mb-chat-tab-content .he_ov');
+            var tabObj = $('.chat-tab-content .he_ov');
         }
         if ( typeof Appoint != 'undefined' ) {
             if ( $.inArray(chat_uid, Appoint.staffid) != -1 )  {
@@ -757,6 +836,14 @@ function sayUid(image, mestype, header_img_url, group_name, insert_id, from_sess
     vaQuest.append(handleBox);
     $('body').append(vaQuest);
  }
+ //表情库
+  var faces = function(){
+    var alt = ["[微笑]", "[嘻嘻]", "[哈哈]", "[可爱]", "[可怜]", "[挖鼻]", "[吃惊]", "[害羞]", "[挤眼]", "[闭嘴]", "[鄙视]", "[爱你]", "[泪]", "[偷笑]", "[亲亲]", "[生病]", "[太开心]", "[白眼]", "[右哼哼]", "[左哼哼]", "[嘘]", "[衰]", "[委屈]", "[吐]", "[哈欠]", "[抱抱]", "[怒]", "[疑问]", "[馋嘴]", "[拜拜]", "[思考]", "[汗]", "[困]", "[睡]", "[钱]", "[失望]", "[酷]", "[色]", "[哼]", "[鼓掌]", "[晕]", "[悲伤]", "[抓狂]", "[黑线]", "[阴险]", "[怒骂]", "[互粉]", "[心]", "[伤心]", "[猪头]", "[熊猫]", "[兔子]", "[ok]", "[耶]", "[good]", "[NO]", "[赞]", "[来]", "[弱]", "[草泥马]", "[神马]", "[囧]", "[浮云]", "[给力]", "[围观]", "[威武]", "[奥特曼]", "[礼物]", "[钟]", "[话筒]", "[蜡烛]", "[蛋糕]"], arr = {};
+    $.each(alt, function(index, item){
+      arr[item] = '/omsIm/source/layui/images/face/'+ index + '.gif';
+    });
+    return arr;
+  }();
 // 查找好友 显示
 var searchFriends = function (data) {
     var html = '';
@@ -815,12 +902,32 @@ var messageShow = function () {
         content = this.messageData.message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
         content = content.replace(/\|\}/g, '.gif">');
         content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br/>");
+        content = content.replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
+          var alt = face.replace(/^face/g, '');
+          return '<img alt="'+ alt +'" title="'+ alt +'" src="' + faces[alt] + '">';
+        })
+        .replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+            var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+            var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+            if(!href) return str;
+           content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+              return content;
+        })
+        .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+            $('.loadImg-box .loadImging').append('<img index="' + imgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">');
+            imgIndex++;
+            var newImgIndex = imgIndex - 1;
+          return '<img index="' + newImgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
+        })
         if ( imgStr ) {
             content = imgStr+content;
         };
         this.options.content = content;
 
     },
+    this.kefu = function () {
+        this.text();
+    }, 
     this.va =  function () {
         if ( chat_name == this.messageData.sender_name ) {
             var vName = '我';
@@ -837,22 +944,29 @@ var messageShow = function () {
 
     },
     this.file = function () {
-        var fileArray = new Array();
-        var addShare = '';
-        fileArray = this.messageData.message_content.split('|');
-        if (webUrl == 'chat_index') {
+        // var fileArray = new Array();
+        // var addShare = '';
+        // fileArray = this.messageData.message_content.split('|');
+        // console.log(567);
+        var content = this.messageData.message_content.replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+            var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+            var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+            if(!href) return str;
+           content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+              return content;
+        })
+        // if (webUrl == 'chat_index') {
 
-            addShare = "<span title='分享给别人' data-placement = '" + this.messageData.message_content + "' onclick='chatShare(this)' class='chat-share'></span>";
-        };
-        content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>  " + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+        //     addShare = "<span title='分享给别人' data-placement = '" + this.messageData.message_content + "' onclick='chatShare(this)' class='chat-share'></span>";
+        // };
+        // content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>  " + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
         this.options.content = content;
 
     },
     this.image =  function () {
-        var content = this.messageData.message_content;
-        var objE = document.createElement("div");　　objE.innerHTML = content;　　
-        var obj = objE.childNodes;
-        var ImgSrc = obj[0].getAttribute('src');
+        var ImgSrc = this.messageData.message_content = this.messageData.message_content.replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+          return img.replace(/(^img\[)|(\]$)/g, '');
+        });
         content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
         this.options.addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
         this.options.addImgClass = 'bigImg';
@@ -862,11 +976,13 @@ var messageShow = function () {
 
     },
     this.images = function () {
-        var content = '';
-        this.options.addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-med-size="1024x683" data-author=""';
+        this.messageData.message_content = this.messageData.message_content.replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+          return img.replace(/(^img\[)|(\]$)/g, '');
+        });
+        this.options.addImgAttr = ' href = "' + this.messageData.message_content + '" data-size="1600x1068" data-med="' + this.messageData.message_content + '" data-med-size="1024x683" data-author=""';
         this.options.addImgClass = 'bigImg';
-        this.options.content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' class='send-img'>";
-        $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' ></li>");
+        this.options.content = "<img index='" + imgIndex + "' src='" + this.messageData.message_content + "' class='send-img'>";
+        $('#chat-session-img').append("<li><img src='" + this.messageData.message_content + "' ></li>");
         $('.loadImg-box .loadImging').append(this.options.content);
         imgIndex++;
 
@@ -948,7 +1064,7 @@ messageShow.prototype = {
     showSay: function ( data, direction ) {
         this.type = data.mesages_types; // 消息的类型
         this.messageData = data; // 每条 的消息的 数据
-        this[this.type](); // 根据类型 调取 相应的方法
+        typeof this[this.type] == 'function' && this[this.type]() ; // 根据类型 调取 相应的方法
         if ( this.type != 'revoke' ) {
             if ( this.messageData.sender_id == chat_uid ) {
                 this.createStrR( data );

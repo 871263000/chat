@@ -11,6 +11,12 @@ if (!in_array($staffid, $arrStaffid)) {
 }
 $d = new database();
 //新增一个群聊
+if ( empty($arrStaffid) ) {
+	echo "<script>alert('对不起，添加失败')</script>";
+	//跳转
+	echo "<script>history.back();</script>";
+	die();
+}
 if($d->create('oms_group_chat') > 0){
 	$insertId = $d->lastInsertId();
 	// 有多少参加人 就插入几条数据
@@ -19,6 +25,7 @@ if($d->create('oms_group_chat') > 0){
 	}
 	$value = implode(",", $arrValue);
 	$sql = "INSERT INTO `oms_groups_people` (`pid`, `staffid`, `all_staffid`, `group_name`,`create_time`, `update_time`) values".$value;
+	echo $sql;
 	$d->query($sql);
 	echo "<script>alert('恭喜您创建成功')</script>";
 	echo "<script>location.href='index.php'</script>";

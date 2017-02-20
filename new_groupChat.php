@@ -257,10 +257,10 @@ lattSetting({
 	        {
 	            type:1,  //组织架构类型
 	            val:'#s_man',   // 选择人
-	            sidstorage: '#group_participants',
+	            // sidstorage: '#group_participants',
 	            callback:function(sidList,names){
 	            	//在手机上交替显示
-	            	var arrStaffid = [];
+	            	var arrStaffid = [], strStaffid;
 					for (var i = 0; i < sidList.length; i++ ) {
 						arrStaffid.push(sidList[i][1]);
 					}
@@ -269,6 +269,8 @@ lattSetting({
 					};
 					$('.group_pep').html('');
 					var jsonText = JSON.stringify(arrStaffid);
+					strStaffid = join(',',arrStaffid);
+					$('#group_participants').val(strStaffid);
 		            $.ajax({
 		              url:'getndp.php',
 		              data:'jsonText='+jsonText,

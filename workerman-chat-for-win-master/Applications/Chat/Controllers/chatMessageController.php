@@ -69,8 +69,10 @@ class chatMessageController
 			if ( $this->messageData['message_type'] == 'message' ) {
 				//验证是不是在同一个房间
 				$resRoom = $this->isSameRooom();
+				// 不在同一个房间
 				if ( !$resRoom ) {
 					$resIs = $this->isFriends();
+					// 是好友
 					if ($resIs) {
 						// 消息 内容 插入 返回 插入id
 						$insert_id = $this->messageInsert();
@@ -120,6 +122,12 @@ class chatMessageController
 		$sendData['to_uid'] = 0;
 		return $sendData;
 
+	}
+	// 客服发来的消息
+
+	public function kefuSay() 
+	{
+		return $this->model->kefuSayModel();
 	}
 	// 语音取消
 	public function vaChat() 

@@ -58,18 +58,20 @@ class chatMessageModel
 	}
 
 	//聊天选择人
-	public function selectManModel(){
+	public function selectManModel()
+	{
 
-		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image`, a.`delState`, a.`accept_name` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY id desc limit 0, 10");
+		$mes_list = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`sender_name`, a.`sender_id`, b.`card_image_smail` as card_image, a.`delState`, a.`accept_name` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id` = b.staffid  WHERE a.`dialog` = 1 AND  a.`session_no`= '".$this->messageData['session_id']."' ORDER BY id desc limit 0, 10");
 		if (!empty($mes_list)) {
             foreach ($mes_list as $key => $value) {
-                    $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
+                   $mes_list[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
             }
         }
         $mes_list['type'] = 'mes_chat';
 		return $mes_list;
 	}
-	public function chatAdminModel() {
+	public function chatAdminModel() 
+	{
 		return $this->selectManModel();
 		// $arrChatAdmin = $this->db->select('*')->from('oms_string_message')->where('session_no= :session_no')->bindValues(array('session_no'=> 'ca'))->query();
 	}
@@ -108,9 +110,11 @@ class chatMessageModel
 	 */
 	public function messageInsertModel () 
 	{
-		if ( $this->messageData['mes_types'] == 'image') {
 
+		if ( $this->messageData['mes_types'] == 'image') {
+			$this->messageData['content'] =  str_replace(['img[http://7xq4o9.com1.z0.glb.clouddn.com/', ']'], '', $this->messageData['content']);
 			$this->messageData['content'] = $this->image64tofile( $this->messageData['content'] );
+			$this->messageData['content'] = 'img['.$this->messageData['content'].']';
 		}
 		$insert_id = $this->db->insert('oms_string_message')->cols(array('room_id'=>$this->selfInfo['room_id'], 'sender_id'=>$this->selfInfo['uid'],'accept_id'=>$this->messageData['to_uid'], 'sender_name'=>$this->selfInfo['client_name'], 'accept_name'=>$this->messageData['accept_name'],'message_type'=>$this->messageData['message_type'], 'mesages_types'=>$this->messageData['mes_types'], 'message_content'=>$this->messageData['content'], 'session_no'=>$this->messageData['session_id'], 'create_time'=>time(), 'update_time'=>time()))->query();
 		return $insert_id;
@@ -210,7 +214,7 @@ class chatMessageModel
 	public function mesLoadModel() 
 	{
 		if (!empty($this->messageData['mes_loadnum'])) {
-	        $onlode = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image` FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_id']."' ORDER BY a.create_time desc limit ".$this->messageData['mes_loadnum'].", 10");
+	        $onlode = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image_smail` as card_image  FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_id']."' ORDER BY a.create_time desc limit ".$this->messageData['mes_loadnum'].", 10");
 
 	        if (!empty($onlode)) {
 	            foreach ($onlode as $key => $value) {
@@ -240,7 +244,7 @@ class chatMessageModel
             //新文件名
             $new_file_name = date("YmdHis") . rand(1000, 9999) . '.' . $type;
             if (file_put_contents($save_path.$new_file_name, base64_decode(str_replace($result[1], '', $pa)))){
-                return $message_content = "<img src='".$save_url.$new_file_name."' class='send-img'>";
+                return $message_content = $save_url.$new_file_name;
             } else {
                 return false;
             }
@@ -250,13 +254,16 @@ class chatMessageModel
 	//消息的关闭
 	public function messageCloseModel() 
 	{
+		$to_uid = '';
 		if ( $this->messageData['message_type'] == 'message' ) {
-
+			$to_uid = $this->messageData['to_uid'];
 			$mesNum = $this->db->select('mes_num')->from('oms_chat_message_ist')->where('session_no= :session_no')->bindValues(array('session_no'=>$this->messageData['session_id']))->row();
             $this->db->query("DELETE FROM `oms_chat_message_ist` WHERE `session_no`= '".$this->messageData['session_id']."'");
         } else if ($this->messageData['message_type'] == 'groupMessage') {
 
 			$mesNum = $this->db->select('mes_num')->from('oms_groups_people')->where('pid= :pid AND staffid= :staffid')->bindValues(array('pid'=>$this->messageData['session_id'], 'staffid'=> $this->selfInfo['uid'] ))->row();
+
+			$to_uid = $this->db->select('staffid')->from('oms_groups_people')->where('pid= :pid')->bindValues(array('pid'=>$this->messageData['session_id']))->query();
 
             $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mention` = 0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
         } else if ( $this->messageData['message_type'] == 'adminMessage') {
@@ -264,7 +271,7 @@ class chatMessageModel
         	return false;
         }
         if ( !empty($mesNum)  ) {
-			return $data = ['type'=> 'mesClose', 'mesNum'=> $mesNum['mes_num'], 'session_id'=> $this->messageData['session_id']];
+			return $data = ['type'=> 'mesClose','mesType'=>$this->messageData['message_type'], 'to_uid'=> $to_uid, 'mesNum'=> $mesNum['mes_num'], 'session_id'=> $this->messageData['session_id']];
         }
 	}
 	//增加群聊
@@ -405,9 +412,9 @@ class chatMessageModel
 		if (!empty( $this->messageData['session_id'] )) {
 
 			$groupShowManId = $this->messageData['session_id'];
-        	$arrGroupMan = $this->db->query('SELECT a.*,b.`group_founder`,c.name,c.card_image FROM `oms_groups_people` a LEFT join `oms_group_chat` b ON a.`pid` = b.`id` LEFT join  `oms_hr` c ON a.`staffid` = c.`staffid` WHERE a.`state` = 0 AND a.`pid`='.$groupShowManId);
+        	$arrGroupMan = $this->db->query('SELECT a.*,b.`group_founder`,c.name,c.`card_image_smail` as `card_image` FROM `oms_groups_people` a LEFT join `oms_group_chat` b ON a.`pid` = b.`id` LEFT join  `oms_hr` c ON a.`staffid` = c.`staffid` WHERE a.`state` = 0 AND a.`pid`='.$groupShowManId);
 
-		}
+		}   
 		
         $arrGroupMan['type'] = 'showGroupMan';
         $arrGroupMan['Callback'] = $this->messageData['Callback'];
@@ -491,13 +498,14 @@ class chatMessageModel
 				$res['type'] = "default";
 				return $res;
 			}
-			$res = $this->db->select('oms_hr.name, oms_hr.card_image,oms_general_admin_user.org_name, oms_hr.staffid')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_hr.oms_id = oms_general_admin_user.oms_id')->where('oms_hr.oms_id != '.$this->selfInfo['room_id'].' and name like "%'.$this->messageData['name'].'%" and oms_hr.state=0')->query();
+			$res = $this->db->select('oms_hr.name, oms_hr.card_image_smail as card_image,oms_general_admin_user.org_name, oms_hr.staffid')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_hr.oms_id = oms_general_admin_user.oms_id')->where('oms_hr.oms_id != '.$this->selfInfo['room_id'].' and name like "%'.$this->messageData['name'].'%" and oms_hr.state=0')->query();
 				$res['type'] = 'searchFriends';
 				return $res;
-		} else if ($this->messageData['actType'] == "add") {
+		} else if ($this->messageData['actType'] == "add") { // 好友的添加
 			$sendData = ['type'=>'default'];
 			if ( !empty( $this->messageData['staffid'] ) ) {
 				$staffidInfo = $this->getStaffid( $this->messageData['staffid'] );
+
 				$selectCol = $this->db->select('state')->from('oms_friend_list')->where('pid= :pid AND  staffid= :staffid')->bindValues(array('pid' => $this->selfInfo['uid'], 'staffid'=> $this->messageData['staffid']))->limit(2)->column();
 				if ( !empty($selectCol) ) {
                     if ( count($selectCol) == 1) {
@@ -535,6 +543,38 @@ class chatMessageModel
 		}
 
 	}
+	// 客服的model  
+	public function kefuSayModel() 
+	{
+		$allKefuId = [1,2,4];
+		$kefuId = $this->messageData['to'];
+		$data =[];
+
+		if ( in_array($kefuId, $allKefuId) ) {
+			$this->messageData['to_uid'] = $kefuId;
+			$this->messageData['accept_name'] = '客服';
+			$this->messageData['message_type'] = 'message';
+			$this->messageData['mes_types'] = 'kefu';
+			$this->messageData['session_id'] =   $this->selfInfo['uid'] > $kefuId ? $kefuId.'-'.$this->selfInfo['uid'] : $this->selfInfo['uid'].'-'.$kefuId;
+			$insertId = $this->messageInsertModel();
+			$this->noticeInsertModel($insertId);
+		}
+		$sendMessageData = array(
+			'type'=> 'say_uid',
+			'accept_name'=> $this->selfInfo['client_name'],
+			'sender_id'=> $this->selfInfo['uid'],
+			'card_image'=> $this->selfInfo['header_img_url'],
+			'mestype'=> 'message',
+			'mesages_types'=> 'kefu',
+			'message_content'=> $this->messageData['content'],
+			'id'=> $insertId,
+			'session_no'=> $this->messageData['session_id'],
+			'create_time'=>date('Y-m-d H:i:s'),
+			'to_uid'=> $kefuId,
+		);
+		return $sendMessageData;
+	}
+
 	// 查找一个人的信息
 	/**
 	 * @staffid 员工的id
@@ -543,7 +583,7 @@ class chatMessageModel
 	{
 		$res = [];
 		if ( !empty( $staffid ) ) {
-			$res = $this->db->select('oms_hr.name, oms_general_admin_user.org_name, oms_hr.card_image, oms_hr.oms_id')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_general_admin_user.oms_id = oms_hr.oms_id')->where('oms_hr.staffid =:staffid')->bindValues(array('staffid'=>$staffid))->row();
+			$res = $this->db->select('oms_hr.name, oms_general_admin_user.org_name, oms_hr.card_image_smail as card_image, oms_hr.oms_id')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_general_admin_user.oms_id = oms_hr.oms_id')->where('oms_hr.staffid =:staffid')->bindValues(array('staffid'=>$staffid))->row();
 		}
 		return $res;
 	}

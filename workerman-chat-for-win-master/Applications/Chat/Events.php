@@ -54,7 +54,7 @@ class Events
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer','friendAdd','esc_group');
+        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer','friendAdd','esc_group', 'kefuSay');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -123,6 +123,7 @@ class Events
             //根据客户端传来的类型调用相应的方法
            $resMessageData = $chatMessageData->init($type,$selfInfo, $message_data );
            if ($type == 'sayUid') {
+            // var_dump($resMessageData);
                 Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
                 $resMessageData['type'] = 'resSayUid';
                 // 发给自己
@@ -136,19 +137,22 @@ class Events
                     Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
                     // 发给自己
                     return ;
-                }
-                if (  $type == 'friendAdd' ) {
+                } else if (  $type == 'friendAdd' ) {
                     if ( !empty($resMessageData['to_uid']) ) {
                         Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
                     } else {
                         Gateway::sendToClient($client_id, json_encode($resMessageData));
                     }
                     return ;
-                }
-                if ( $type == 'mes_close' ) {
+                } else if ( $type == 'mes_close' ) {
                     Gateway::sendToUid($selfInfo['uid'], json_encode($resMessageData));
+                    return ;
+                } else if ( $type == 'kefuSay' ) {
+                    $resMessageData['type'] = 'say_uid';
+                    Gateway::sendToUid($resMessageData['to_uid'], json_encode($resMessageData));
+                    return false;
                 }
-                 Gateway::sendToClient($client_id, json_encode($resMessageData));
+                Gateway::sendToClient($client_id, json_encode($resMessageData));
             }
 
         } else {
@@ -168,6 +172,11 @@ class Events
                         $exist = (bool)false;
                         
                     } else {
+                        $token = $message_data['token'];
+                        $yToken = md5(date('y-m-d h:i').$message_data['uid'].$message_data['room_id'].'oms');
+                        if ( $token != $yToken) {
+                            return false;
+                        }
                         // 把房间号昵称放到session中
                         $room_id = $message_data['room_id'];
                         $client_name = htmlspecialchars($message_data['client_name']);
