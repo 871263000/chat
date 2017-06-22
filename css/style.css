@@ -229,11 +229,11 @@ i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #95
 .mes_num, .session-tab-num{    cursor: pointer;margin-right: 5px;background: #ed145b;color: #fff;position: absolute;width: 20px;height: 20px;border-radius: 50%;right: 0;top: 50%;line-height: 20px;text-align: center;margin-top: -10px;}
 .mes_move{cursor: move;background-color: #fff;text-align: center;}
 .mes_move i, .dropdown i{font-family: FontAwesome !important;}
-.dropdown{position: absolute !important;top: 10px;right: 10px;}
+.container-box .dropdown{position: absolute !important;top: 10px;right: 10px;}
 .panel-default{position: relative;}
 .panel-group .panel{overflow: visible;}
-.dropdown-menu{right: 0;left: inherit;}
-.dropdown-menu .dropdown-menu-man{padding: 0 10px;cursor: pointer;}
+.container-box .dropdown-menu{right: 0;left: inherit;}
+.container-box .dropdown-menu .dropdown-menu-man{padding: 0 10px;cursor: pointer;}
 .staff-info-box{height: 108px;width: 260px;position: absolute;z-index: 99999999;padding: 5px;box-shadow: 0 5px 10px rgba(0, 0, 0, .2);-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);background-color: #fff;border: 1px solid rgba(0, 0, 0, .2);}
 .staff-info-box .arrow{top: 50%;margin-top: -11px;border-right-color: #999;border-right-color: rgba(0, 0, 0, .25);position: absolute;display: block;width: 0;height: 0;border-top:8px solid transparent;border-bottom:8px solid transparent;}
 .staff-info{position: relative;}
@@ -290,7 +290,7 @@ i.fri-sanjiao{ display: none;    width: 0;height: 0;border-bottom: 8px solid #95
 
 .chat_mes_content img{ width: 24px !important; }
 .man_tittle{position: absolute;top: 0;z-index: 1111;}
-.dropdown-menu{color: #000;}
+.container-box .dropdown-menu{color: #000;}
 /*************  消息提示  *********************/
 /*.mesNoticeSet{ background-image: url('/chat/images/mesNotice.png');background-position: left; background-repeat: no-repeat;  }*/
 .mesNoticeContainer{  position: absolute; bottom: 0; right: 0;z-index: 999999;width: 320px; margin-right: 10px;}
@@ -339,7 +339,7 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
 	.pc_mes_tool_video{background: url('/chat/images/chat_video.png') center no-repeat;width: 32px;height: 32px;float: left;}
 	.pc_mes_tool_videoM{background: url('/chat/images/vMChat.png') center no-repeat;width: 32px;height: 32px;display: inline-block}
 	.pc_mes_input_box .pc_mes_send{height: 40px;text-align: right;}
-	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 10px;}
+	.pc_mes_input_box .chat_btn{height: 30px;cursor: pointer; background-color: #fff;color: #222;padding-left: 30px;padding-right: 30px;display: inline-block;border: 1px solid #ccc;line-height: 30px;text-align: center;margin: 0 30px;}
 	/** 表情  */
 	.pc_emoji_box{ display: none; background: #fff; position: absolute; width: 350px; box-shadow: 0 0 10px #ccc;border-radius: 5px;max-height: 200px;min-height: 100px; overflow: auto !important;bottom: 100%;}
 	/******************  end  *****************************/
@@ -364,6 +364,46 @@ i.deskOn{display: inline-block; background: url('/chat/images/deskOff.png') cent
     .handleBox{     height: 50px;line-height: 50px;text-align: center;padding-left: 20px; }
 	/*********************  end  *************************/
 	.viewer-container{ background-color: #000; }
+  .chat-send-select { 
+    display: inline-block;
+    position: absolute;
+    height: 30px;
+    width: 20px;
+    right: 10px;
+    border: 1px solid #ccc;
+   }
+  .chat-send-form{
+    cursor: pointer;
+    border-top: 8px solid #955F34;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    position: absolute;
+    top: 12px;
+    right: 4px;
+  }
+  .send-list {
+    position: absolute;
+    border: 1px solid #E2E2E2;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 1px 1px 20px rgba(0,0,0,.1);
+    left: auto;
+    right: 0;
+    bottom: 100%;
+    width: 180px;
+    padding: 10px 0;
+  }
+  .send-list li{
+      cursor: pointer;
+        padding-right: 15px;
+    line-height: 28px;
+  } 
+  .send-list li:hover{ 
+    background-color: #ccc;
+  } 
+  .send-current {
+    border-left: 8px solid #88154c ; 
+  } 
 /*********  群  ***************/
 .chat_notice_container{padding: 0 10px;display: none;overflow: auto !important;width: 500px;height: 300px;position: absolute;top: 50%;left: 50%;margin-top: -200px;margin-left: -250px;border:1px solid #ccc;box-shadow: 0 0 10px #6F6A6A;background-color: #fff;color: #000;z-index: 999999
 }

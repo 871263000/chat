@@ -172,6 +172,9 @@ AddSession.prototype.addSession = function ( headerImg, session_id, name, mestyp
                        '<div class="pc_mes_send">'+
                            '<span style = "color: #aaa">按Esc 关闭，Shift + Enter 换行， Enter提交</span>'+
                            '<div class="chat_btn">发送</div>'+
+                            '<div class="chat-send-select">'+
+                              '<span class="chat-send-form"></span>'+
+                            '</div>'+
                        '</div>'+
                    '</div>'+
                    '<div class="mes_footer mb_mes_footer mb_mes_footer">'+
@@ -601,7 +604,32 @@ $(document).on( 'click', '.chating-content .chat_btn',function () {
   $('.chating-content .pc_mes_input').html('');
   $('.chating-content .pc_mes_input').focus();
   
-})
+});
+/// 发送选择项
+
+$('.chat-send-form').click(function (e) {
+  e.stopPropagation();
+  var localSend = localStorage.getItem('sendForm');
+  localSend = parseInt(localSend) ? 1 : 0;
+  var html = '<ul class="send-list focus-hide">\
+    <li data-parm ="1"> 按Enter发送</li>\
+    <li data-parm ="0"> 按Ctrl + Enter发送</li>\
+  </ul>';
+  $('.send-list').remove();
+  $(this).before(html);
+  $(this).parent().find('li').eq(localSend).addClass('send-current');
+  $(this).parent().find('li').click(function (e) {
+    e.stopPropagation();
+    $('.send-current').removeClass('send-current');
+    $(this).addClass('send-current');
+    var para = $(this).data('parm');
+    localSend = localSend ? 0 : 1;
+    console.log(localSend);
+    localStorage.setItem('sendForm',localSend );
+  });
+});
+
+
 //pc 输入框聚焦
 $('.chating-content .pc_mes_input').focus( function () {
   $(".chating-content .pc_emoji_box").hide();
@@ -819,19 +847,52 @@ $('.com-close-act').click(function(){
 $(".plus_icon").click( function (){
   $(".plus_menu_box").toggle();
 });
+//enter 提交
+$(".mes_footer, .pc_mes_input").keydown(function(e){
+
+});
+
 //shift+enter 换行
 //enter 提交
 $(".chating-content .mes_footer, .chating-content .pc_mes_input").keydown(function(e){
-    var e = e || event,
-        keycode = e.which || e.keyCode;
-    if(e.shiftKey && (e.keyCode==13)){
-    } else  if (keycode==13) {
+    // var e = e || event,
+    //     keycode = e.which || e.keyCode;
+    // if(e.shiftKey && (e.keyCode==13)){
+    // } else  if (keycode==13) {
+    //     e.preventDefault();
+    //     var inputValue = $('.chating-content .pc_mes_input').html();
+    //     $('#mes_textarea').html(inputValue);
+    //     $('.chating-content .pc_mes_input').html('');
+    //     $("#chat_submit").trigger("click");
+    // }
+    // if( keycode==13 ) {
+    //   keycode = e.which || e.keyCode;
+    //   $('.chating-content .pc_mes_input').html();
+    // }
+
+  var e = e || event,
+  keycode = e.which || e.keyCode;
+  if(e.shiftKey && (e.keyCode==13)){
+    var localSend = localStorage.getItem('sendForm');
+    if ( localSend == '1' ) {
         e.preventDefault();
         var inputValue = $('.chating-content .pc_mes_input').html();
         $('#mes_textarea').html(inputValue);
         $('.chating-content .pc_mes_input').html('');
         $("#chat_submit").trigger("click");
-    }
+    };
+  } else if (keycode==13) {
+      var localSend = localStorage.getItem('sendForm');
+      if ( !localSend || localSend == '0' ) {
+        e.preventDefault();
+        var inputValue = $('.chating-content .pc_mes_input').html();
+        $('#mes_textarea').html(inputValue);
+        $('.chating-content .pc_mes_input').html('');
+        $("#chat_submit").trigger("click");
+      };
+  }
+
+
 });
 //对话框的高度
 var mesHeight = 0;

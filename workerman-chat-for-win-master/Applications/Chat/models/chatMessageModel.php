@@ -126,11 +126,11 @@ class chatMessageModel
 		if ( $this->messageData['message_type'] == 'message' ) {
 			$chat_res = $this->db->single('SELECT `id` FROM `oms_chat_message_ist` WHERE  `pid`= '.$this->messageData['to_uid'].' AND `session_no`="'.$this->messageData['session_id'].'"');
             if (!empty($chat_res)) {
-               $this->db->query("UPDATE `oms_chat_message_ist` SET `mes_num` = `mes_num`+1, `mes_id`=".$insert_id ." WHERE id=".$chat_res);
+               $this->db->query("UPDATE `oms_chat_message_ist` SET `mes_num` = `mes_num`+1, `mesIds`= concat(`mesIds`, ',".$insert_id."'),`mes_id`=".$insert_id ." WHERE id=".$chat_res);
                $insert_id = $chat_res;
 
             } else {
-                $insert_id = $this->db->insert('oms_chat_message_ist')->cols(array('pid'=>$this->messageData['to_uid'], 'session_no'=>$this->messageData['session_id'], 'mes_id'=>$insert_id, 'chat_header_img'=>$this->selfInfo['header_img_url'], 'oms_id'=>$this->selfInfo['room_id']))->query();
+                $insert_id = $this->db->insert('oms_chat_message_ist')->cols(array('pid'=>$this->messageData['to_uid'], 'session_no'=>$this->messageData['session_id'], 'mes_id'=>$insert_id, 'chat_header_img'=>$this->selfInfo['header_img_url'], 'mesIds'=> $insert_id,'oms_id'=>$this->selfInfo['room_id']))->query();
             }
 		} else if ( $this->messageData['message_type'] == 'groupMessage' ){
 			$pattern = '/{@(.+)@}/U';
@@ -144,7 +144,7 @@ class chatMessageModel
 				$mentionUidStr = implode(',', $mentionUid);
 				$this->db->query("UPDATE `oms_groups_people` SET `mention`=concat(`mention`, '" . $this->selfInfo['client_name'] . ",') WHERE `staffid` in (".$mentionUidStr.") AND `pid`=".$this->messageData['session_id']);
 			}
-			$this->db->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `pid`=".$this->messageData['session_id']);
+			$this->db->query("UPDATE `oms_groups_people` SET `mes_state`=1, `mes_num`=`mes_num`+1, `mesIds` =concat(`mesIds`, ',".$insert_id."') ,`mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `pid`=".$this->messageData['session_id']);
 
 		} elseif ( $this->messageData['message_type'] == 'adminMessage' ) {
 			$this->db->query("UPDATE `oms_hr` SET  `mes_num`=`mes_num`+1, `mes_id`=".$insert_id." WHERE `staffid` != ".$this->selfInfo['uid']." AND `general_admin`=1");
@@ -214,7 +214,7 @@ class chatMessageModel
 	public function mesLoadModel() 
 	{
 		if (!empty($this->messageData['mes_loadnum'])) {
-	        $onlode = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image_smail` as card_image  FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_id']."' ORDER BY a.create_time desc limit ".$this->messageData['mes_loadnum'].", 10");
+	        $onlode = $this->db->query("SELECT a.`id`, a.`message_content`, a.`mesages_types`, a.`create_time`, a.`accept_name`, a.`sender_id`, a.`sender_name`,b.`card_image_smail` as `card_image`  FROM `oms_string_message` a LEFT JOIN `oms_hr` b ON a.`sender_id`=b.`staffid` WHERE a.`dialog` = 1 AND a.`session_no`= '".$this->messageData['session_id']."' ORDER BY a.create_time desc limit ".$this->messageData['mes_loadnum'].", 10");
 
 	        if (!empty($onlode)) {
 	            foreach ($onlode as $key => $value) {
@@ -265,7 +265,7 @@ class chatMessageModel
 
 			$to_uid = $this->db->select('staffid')->from('oms_groups_people')->where('pid= :pid')->bindValues(array('pid'=>$this->messageData['session_id']))->query();
 
-            $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mention` = 0, `mes_num`=0 WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
+            $this->db->query("UPDATE `oms_groups_people` SET `mes_state`=0, `mention` = 0, `mes_num`=0, `mesIds` = '' WHERE `staffid` = ".$this->selfInfo['uid']." AND `pid`='".$this->messageData['session_id']."'");
         } else if ( $this->messageData['message_type'] == 'adminMessage') {
         	$this->db->query("UPDATE `oms_hr` SET `mes_num`=0 AND `mes_id` =0 WHERE `staffid` = ".$this->selfInfo['uid']);
         	return false;
@@ -498,7 +498,7 @@ class chatMessageModel
 				$res['type'] = "default";
 				return $res;
 			}
-			$res = $this->db->select('oms_hr.name, oms_hr.card_image_smail as card_image,oms_general_admin_user.org_name, oms_hr.staffid')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_hr.oms_id = oms_general_admin_user.oms_id')->where('oms_hr.oms_id != '.$this->selfInfo['room_id'].' and name like "%'.$this->messageData['name'].'%" and oms_hr.state=0')->query();
+			$res = $this->db->select('a.`name`, a.`card_image_smail` AS`card_image`, b.`org_name`, a.`staffid`')->from('oms_hr as a')->innerJoin('oms_general_admin_user as b', 'a.`oms_id` = b.`oms_id`')->where('a.`oms_id` != '.$this->selfInfo['room_id'].' and a.`name` like "%'.$this->messageData['name'].'%" and a.`state`=0')->query();
 				$res['type'] = 'searchFriends';
 				return $res;
 		} else if ($this->messageData['actType'] == "add") { // 好友的添加
@@ -583,7 +583,7 @@ class chatMessageModel
 	{
 		$res = [];
 		if ( !empty( $staffid ) ) {
-			$res = $this->db->select('oms_hr.name, oms_general_admin_user.org_name, oms_hr.card_image_smail as card_image, oms_hr.oms_id')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_general_admin_user.oms_id = oms_hr.oms_id')->where('oms_hr.staffid =:staffid')->bindValues(array('staffid'=>$staffid))->row();
+			$res = $this->db->select('oms_hr.name, oms_general_admin_user.org_name, oms_hr.`card_image_smail`as`card_image`, oms_hr.oms_id')->from('oms_hr')->innerJoin('oms_general_admin_user', 'oms_general_admin_user.oms_id = oms_hr.oms_id')->where('oms_hr.staffid =:staffid')->bindValues(array('staffid'=>$staffid))->row();
 		}
 		return $res;
 	}

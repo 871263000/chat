@@ -40,7 +40,7 @@ class Events
         $adminUid = 554;
         $message = str_replace(['<', '>'], ["&lt;", "&gt;"] , $message);
         $message_data = json_decode($message, true);
-        if ( empty($message_data) ) {
+        if ( !empty($message_data) ) {
             foreach ($message_data as $key => $value) {
                 $message_data[$key] = str_replace(["'", '"'],['&apos;', '&quot;'], $value);
             }
@@ -50,11 +50,11 @@ class Events
             return ;
         }
         // 客户端回应服务端的心跳
-        if ( $message_data['type'] == 'pong') {
+        if ( $message_data['type'] == 'ping') {
             return;
         }
         //所有的控制器
-        $arrType = array( 'sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer','friendAdd','esc_group', 'kefuSay');
+        $arrType = array('sayUid', 'mes_chat', 'mes_groupChat', 'mes_load','mes_close', 'mes_notice_close', 'addGroupMan', 'delgroupman', 'dissolve_group', 'addContact', 'delContact', 'updContact', 'groupManShow', 'signOut', 'allOnlineNum', 'sys_mes_close' , 'sysNotice', 'chatAdmin', 'delFriend','delChatMes', 'vaChat', 'vaAnswer','friendAdd','esc_group', 'kefuSay');
         //发来的类型
         $type = $message_data['type'];
         //自己的信息
@@ -174,9 +174,9 @@ class Events
                     } else {
                         $token = $message_data['token'];
                         $yToken = md5(date('y-m-d h:i').$message_data['uid'].$message_data['room_id'].'oms');
-                        if ( $token != $yToken) {
-                            return false;
-                        }
+                        // if ( $token != $yToken) {
+                        //     return false;
+                        // }
                         // 把房间号昵称放到session中
                         $room_id = $message_data['room_id'];
                         $client_name = htmlspecialchars($message_data['client_name']);
@@ -247,8 +247,15 @@ class Events
                         $new_message['client_list'] = $new_clients_list;
                         Gateway::sendToCurrentClient(json_encode($new_message));
                     }
-                    Gateway::joinGroup($client_id, $room_id);   
+                    Gateway::joinGroup($client_id, $room_id);
+                    $selfMessage = [
+                        'type' => 'selfLogin',
+                    ];
+                    Gateway::sendToCurrentClient(json_encode($selfMessage));   
                     return;
+                case 'selectSession':
+                    $_SESSION['dialogueId'] = $message_data['dialogueId'];
+                    break;
                 case 'va':
                     $uid = $_SESSION['uid'];
                     $client_name = $_SESSION['client_name'];
@@ -263,8 +270,26 @@ class Events
                     break;
                 //admin 登录 
                 case 'adminLogin':
-
                     $res = ['type'=> 'adminLogin'];
+                     $token = $message_data['token'];
+                    $yToken = md5(date('y-m-d h:i').$adminUid.$message_data['room_id'].'oms');
+                    echo $yToken;
+                    if ( $token != $yToken) {
+                        return false;
+                    }
+                    if (!isset($_SESSION['uid'])) {
+                        $_SESSION['uid'] = $adminUid;
+                       $_SESSION['room_id'] = $message_data['room_id'];
+                        $_SESSION['client_name'] = $message_data['client_name'];
+                        $_SESSION['header_img_url'] = $message_data['header_img_url'];
+                        
+                    } else {
+                        $uid = $_SESSION['uid'];
+                        $room_id = $_SESSION['room_id'];
+                        $client_name = $_SESSION['client_name'];
+                        $header_img_url = $_SESSION['header_img_url'];
+                    }
+                    var_dump($res);
                     Gateway::sendToClient($client_id, json_encode($res));
                     return;
                 case 'getChainEmployees':

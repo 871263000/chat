@@ -65,6 +65,7 @@ class chatMessageController
 	public function sayUid()
 	{
 		$insert_id= 0;
+		$sendData = [];
 		if ($this->messageData['to_uid'] != 'all') {
 			if ( $this->messageData['message_type'] == 'message' ) {
 				//验证是不是在同一个房间
@@ -230,7 +231,7 @@ class chatMessageController
 	}
 	//统计 所有在线人数的 详情信息
 	public function allOnlineNum() {
-
+            var_dump(44);
 		$uid = $this->selfInfo['uid'];
 
         $arrALlonlineInfo = []; //储存所有在线人信息 ps: 没有重复

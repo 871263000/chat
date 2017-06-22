@@ -23,6 +23,7 @@ function onopen() {
     // 登录
     var login_data = '{"type":"login", "oms_id":"' + oms_id + '", "uid": "' + chat_uid + '", "header_img_url":"' + header_img_url + '", "token": "'+chat_token+'",  "client_name":"' + chat_name + '","room_id":"' + room_id + '"}';
     ws.send(login_data);
+
 }
 // 自己 发的 信息 
 var ChatObj = {
@@ -53,6 +54,7 @@ function onmessage(e) {
         break;
         // 登录 更新用户列表
     case 'login':
+    
         if (data['client_list']) {
             client_list = data['client_list'];
         } else {
@@ -65,10 +67,16 @@ function onmessage(e) {
             //添加人员名字到在线人员名字
             online++;
         }
+
         $('.online_ren').html(online);
         setTimeout( 'flush_onlineman_list()', 1000 );
         // flush_onlineman_list();
         // console.log(data['client_name']+"登录成功");
+        break;
+    case 'selfLogin':
+        if ( typeof(sChat) != 'undefined' && typeof sChat.ConSucCal == 'function') {
+            sChat.ConSucCal();
+        };
         break;
     case 'say_uid':
         sayUid(data['mesages_types'], data['mestype'], data['card_image'], data['group_name'], data['id'], data['session_no'], data['sender_id'], data['to_uid'], data['from_client_id'], data['accept_name'], data['message_content'], data['create_time']);
@@ -300,8 +308,8 @@ function onSubmit(to_uid, chat_uid, groupId, message_type, mes_types, from_sessi
                 })
             };
             inputValue = input.innerHTML;
-
-            inputValue = inputValue.replace(/<img([^>].*?)em_name=\"/ig, '{|').replace(/\"([^<].*?)[>?]/ig, '|}').replace(/<br>/g, '&br&').replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, '&quot;').replace(/[\r\n]/g, "").replace(/[\\]/g, "%5C");
+            inputValue = inputValue.replace(/<img([^>].*?)em_name=\"/ig, '{|').replace(/\"([^<].*?)[>?]/ig, '|}').replace(/<br>/g, '&br&').replace(/<[^.<].*?>/g, '&br&').replace(/<\/[^>].*?>/g, '');
+            inputValue = inputValue.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, '&quot;').replace(/[\r\n]/g, "").replace(/[\\]/g, "%5C");
             inputcur = input.innerHTML;
             break;
         case 'image':

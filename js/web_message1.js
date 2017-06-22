@@ -23,15 +23,15 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
     function onopen()
     {
         // 登录
-      var login_data = '{"type":"login","oms_id":"'+oms_id+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+chat_name+'","room_id":"'+room_id+'"}';
-      ws.send(login_data);
-      ws.send('{"type":"adminLogin","oms_id":"'+oms_id+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+chat_name+'","room_id":"'+room_id+'"}');
+      var login_data = '{"type":"adminLogin","oms_id":"'+oms_id+'","token":"'+chat_token+'", "uid": "'+chat_uid+'", "header_img_url":"'+header_img_url+'",  "client_name":"'+chat_name+'","room_id":"'+room_id+'"}';
+        console.log(login_data);
+        ws.send(login_data);
     }
 
     // 服务端发来消息时
     function onmessage(e)
     {
-        // console.log(e.data);
+        console.log(e.data);
         var data = eval("("+e.data+")");
         switch(data['type']){
             // 服务端ping客户端
@@ -94,7 +94,7 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
             //所有的在线人数
             case 'allOnlineNum':
                 allclient_list = data;
-              // console.log(data);
+              console.log(data);
               var allOnlineNum = 0;
               for( var i in  data['arrALlonlineInfo'] ) {
                 allOnlineNum ++;
@@ -267,7 +267,238 @@ if (typeof console == "undefined") {    this.console = { log: function (msg) {  
       // $('.onlinesSroll-box').css('height', (docuHeight - onlineTop) * proScroll);
     }
     //发言2
+var messageShow = function () {
+    this.data = ''; // 消息的 数据
+    this.type = ''; // 消息的 类型
+    this.showHtmlBox = ''; // 显示消息 容器
+    this.showHtmlboxStr = ''; // 需要添加的 到 显示消息的容器 所有东西
+    this.messageData = '';  // 单条消息的 数据
+    this.sender_id = '';
+    this.options = {
+        addVoiceClass: "",
+        addImgClass: "",
+        addImgAttr: "",
+        content2: "",
+        content: "",
+    },
 
+        this.createStrL = function (data) {
+            this.showHtmlboxStr = '<li ' + this.options.addImgAttr + ' class="Chat_le ' + this.options.addImgClass + '"><div class="user"><span class="head le"><span class="header-img"><img src="' + data.card_image + '" alt=""></span></span> <span class="name le">' + data.sender_name + '<span style="padding: 0 0 0 20px">' + data.create_time + '</span></span><div class="mes_content le chatMesCon"><span mes_id= "'+data.id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="other" class="delChatMes delChatMes_right">&times;</span><span class="jian le"></span> <span class="content-font ' + this.options.addVoiceClass + ' le">' + this.options.content + '</span>' + this.options.content2 + '</div></div></li>';
+        },
+        this.createStrR = function (data) {
+            this.showHtmlboxStr = '<li ' + this.options.addImgAttr + ' class="Chat_ri he ' + this.options.addImgClass + '"><div class="user_ri he"><span class="ri head_ri"><span class="header-img"><img src="' + header_img_url + '" alt=""></span></span> <span class="ri name_ri"><span style="padding: 0 20px 0 0">' + data.create_time + '</span>' + chat_name + '</span> <div class="ri content_ri chatMesCon"><span mes_id= "'+data.id+'" title ="撤销消息" uid = "'+to_uid+'" data-man="self" class="delChatMes delChatMes_left">&times;</span><span class="arrow ri"></span><span class="content_font_ri ' + this.options.addVoiceClass + '">' + this.options.content + '</span> ' + this.options.content2 + ' </div></div></li>';
+        },
+        this.text = function () {
+            var content = '';
+            var res = this.messageData.message_content.match(/\{\@(.*?)\@\}/g);
+            var imgStr = '';
+            if ( res ) {
+                var Appoint = {staffid: [], name: [], sn: {} };
+                for (var i = 0; i <= res.length - 1; i++) {
+                    var ress = res[i].match(/^{@(.*)@}$/);
+                    var ressArr = ress[1].split('|');
+                    // Appoint.name.push(ressArr[0]);
+                    // Appoint.sn[from_uid_id] = from_client_name;
+                    imgStr += $(textToImg('@'+ressArr[0]))[0].outerHTML;
+                    // Appoint.staffid.push(ressArr[1]);
+                };
+                this.messageData.message_content = this.messageData.message_content.replace(/\{\@(.*?)\@\}/g, '');
+            };
+            content = this.messageData.message_content.replace(/\{\|/g, '<img width="24px" class="cli_em" src="/chat/emoticons/images/');
+            content = content.replace(/\|\}/g, '.gif">');
+            content = content.replace(/%5C/g, "\\").replace(/\&br\&/g, "<br/>");
+            content = content.replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
+                var alt = face.replace(/^face/g, '');
+                return '<img alt="'+ alt +'" title="'+ alt +'" src="' + faces[alt] + '">';
+            })
+                .replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+                    var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+                    var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+                    if(!href) return str;
+                    content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+                    return content;
+                })
+                .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+                    $('.loadImg-box .loadImging').append('<img index="' + imgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">');
+                    imgIndex++;
+                    var newImgIndex = imgIndex - 1;
+                    return '<img index="' + newImgIndex + '" class="layui-layim-photos send-img" src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
+                })
+            if ( imgStr ) {
+                content = imgStr+content;
+            };
+            this.options.content = content;
+
+        },
+        this.kefu = function () {
+            this.text();
+        },
+        this.va =  function () {
+            if ( chat_name == this.messageData.sender_name ) {
+                var vName = '我';
+            } else {
+                var vName = this.messageData.sender_name;
+            }
+            var content = "<div style='width:100%;height: 88px;background-color: #fff;color: #000;padding: 10px;'>"+
+                "<div style='width: 100%; height: 43px;border-bottom: 1px solid #ccc;'>"+vName+
+                "开启了群聊视频</div>"+
+                "<div style='width: 100%; height: 43px;text-align: center;line-height: 43px;'>"+
+                "<a href='https://www.omso2o.com/chat/va-chat/vaChat.php?session_id="+this.messageData.message_content+"&Invitation=1'  target='_blank' >加入</a></div>"+
+                "</div>";
+            this.options.content = content;
+
+        },
+        this.file = function () {
+            // var fileArray = new Array();
+            // var addShare = '';
+            // fileArray = this.messageData.message_content.split('|');
+            // console.log(567);
+            var content = this.messageData.message_content.replace(/file\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义文件
+                var href = (str.match(/file\(([\s\S]+?)\)\[/)||[])[1];
+                var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+                if(!href) return str;
+                content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + (text||href) + "</span></div><div class='right'><a download target='_blank' href='" + href + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+                return content;
+            })
+            // if (webUrl == 'chat_index') {
+
+            //     addShare = "<span title='分享给别人' data-placement = '" + this.messageData.message_content + "' onclick='chatShare(this)' class='chat-share'></span>";
+            // };
+            // content = "<div class='file-box'><div><i class='icon-folder-open icon-2x'> </i><span>" + fileArray[0] + "</span></div><div class='right'>  " + addShare + "<a href='http://7xq4o9.com1.z0.glb.clouddn.com/" + fileArray[1] + "?attname='><i class='icon-cloud-download icon-2x'></i></a></div></div>";
+            this.options.content = content;
+
+        },
+        this.image =  function () {
+            var content = this.messageData.message_content;
+            var objE = document.createElement("div");　　objE.innerHTML = content;　　
+        var obj = objE.childNodes;
+            var ImgSrc = obj[0].getAttribute('src');
+            content = "<img index='" + imgIndex + "' src='" + ImgSrc + "' class='send-img'>";
+            this.options.addImgAttr = ' href = "' + ImgSrc + '" data-size="1600x1068" data-med="' + ImgSrc + '" data-med-size="1024x683" data-author=""';
+            this.options.addImgClass = 'bigImg';
+            this.options.content = content;
+            $('.loadImg-box .loadImging').append(content);
+            imgIndex++;
+
+        },
+        this.images = function () {
+            var content = '';
+            this.options.addImgAttr = ' href = "http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-size="1600x1068" data-med="http://7xq4o9.com1.z0.glb.clouddn.com/' + this.messageData.message_content + '" data-med-size="1024x683" data-author=""';
+            this.options.addImgClass = 'bigImg';
+            this.options.content = "<img index='" + imgIndex + "' src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' class='send-img'>";
+            $('#chat-session-img').append("<li><img src='http://7xq4o9.com1.z0.glb.clouddn.com/" + this.messageData.message_content + "' ></li>");
+            $('.loadImg-box .loadImging').append(this.options.content);
+            imgIndex++;
+
+        }
+    this.voice = function () {
+        var voiceArray = new Array();
+        voiceArray = this.messageData.message_content.split('|');
+        if ( this.messageData.sender_id == chat_uid ) {
+            this.options.content = '<div class="he_ov_mes_audio web_voice web_chat_voice_right_play" web_voice_data = "right" web_voice = "' + voiceArray[0] + '"></div>';
+            this.options.content2 = '<span class="chat_duration_right">' + voiceArray[1] + '\"</span';
+        } else {
+            this.options.content = '<div class="he_ov_mes_audio web_voice web_chat_voice_left_play" web_voice_data = "left" web_voice = "' + voiceArray[0] + '"></div>';
+            this.options.content2 = '<span class="chat_duration_left">' + voiceArray[1] + '\"</span';
+        }
+        this.options.addVoiceClass = "web_chat_voice";
+
+    },
+        this.revoke = function () {
+            this.showHtmlboxStr = '<div style="text-align:center;margin:10px 0;color:#ccc;">'+this.messageData.sender_name+'撤销了一条信息</div>';
+        }
+}
+// 显示消息 操作
+messageShow.prototype = {
+    init: function (data) {
+        this.data = data;
+        this.showHtmlBox = $(".chating-content .he_ov");
+    },
+    // 自己 说的消息
+    resSayUid: function () {
+
+    },
+    // sayUid: function () {
+
+    // },
+    //选择人后的消息列表
+    mes_chat : function () {
+        this.showHtmlBox.html('');
+        this.showOldMore();
+        this.showHtmlBox.prepend(" <div class='onload'  style='text-align: center;'><span style='color: #000;padding: 5px 0;'>---查看更多---</span></div>");
+        // 回到底部
+        $(".chating-content .he_ov img").load(function() {
+            $(".chating-content .he-ov-box").scrollTop($(".chating-content .he_ov")[0].scrollHeight);
+        });
+        return false;
+    },
+    // 加载更多消息
+    onlode: function () {
+        $(".chating-content .onload").remove();
+        if (this.data.save == 0) {
+            $(".chating-content .he_ov").prepend("<div style='text-align: center;' class= 'seeMore' ><span style='padding: 5px 0;'>没有了！</span></div>");
+            $('.chating-content .loader').hide();
+            $('.chating-content .onload').remove();
+            $('.chating-content .he-ov-box').unbind('scroll');
+            return;
+        };
+        delete this.data.save;
+        this.showOldMore();
+        $('.loader').hide();
+        var mes_load = $('.chating-content .mes_load').html();
+        $('.chating-content .mes_load').html(parseInt(mes_load) + 10);
+        $(".chating-content .he_ov img").load(function() {
+            $(".chating-content .he-ov-box").scrollTop($('.chating-content .he_ov').height() - mesHeight);
+        });
+        return false;
+    },
+    // 显示消息
+    showOldMore: function (data) {
+        var type = this.data.type;
+        delete this.data.type;
+        for (var i in this.data) {
+            this.showSay( this.data[i], 'n' );
+        }
+        $(".chating-content .he_ov .delChatMes").unbind('click');
+        $(".chating-content .he_ov .delChatMes").bind('click', function () {
+            ChatObj.delChatMes($(this));
+        });
+    },
+    // 显示 对话内容 @parm data 对话数据 @parm direction 显示在上面 还是下面
+    showSay: function ( data, direction ) {
+        this.type = data.mesages_types; // 消息的类型
+        this.messageData = data; // 每条 的消息的 数据
+        typeof this[this.type] == 'function' && this[this.type]() ; // 根据类型 调取 相应的方法
+        if ( this.type != 'revoke' ) {
+            if ( this.messageData.sender_id == chat_uid ) {
+                this.createStrR( data );
+            } else {
+                this.createStrL( data );
+            }
+        }
+        if ( direction == 'n' ) {
+            this.addHtmlN();
+
+        } else {
+            this.addHtmlP();
+        }
+        this.options = {
+            addVoiceClass: "",
+            addImgClass: "",
+            addImgAttr: "",
+            content2: "",
+            content: "",
+        }
+    },
+    // 添加 消息到 消息容器 下
+    addHtmlN: function () {
+        this.showHtmlBox.prepend( this.showHtmlboxStr );
+    },
+    // 添加 消息到 消息容器 上
+    addHtmlP: function () {
+        this.showHtmlBox.append( this.showHtmlboxStr );
+    },
+}
     //通知消息
     var ChatOptions = {
       tittle: '',

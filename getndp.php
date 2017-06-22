@@ -3,7 +3,7 @@ require_once('../config.inc.php');
 $sidList=json_decode($_POST['jsonText']);
 $d=new database();
 // print_r($sidList);
-
+$sidList = array_unique($sidList);
 $str = implode(',', $sidList);
 
 $res=$d->findAll('select `staffid`, `new_department`,`new_department_two`, `new_position`,`name`, `card_image` from oms_hr where `staffid` in (' . $str . ')');

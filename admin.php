@@ -1,6 +1,6 @@
 <?php
-require_once('config.inc.php');
-require_once('lib/mesages.class.php');
+require_once('../config.inc.php');
+require_once('../lib/mesages.class.php');
 $chat_uid = $_SESSION['staffid'];
 $oms_id = $_SESSION['oms_id'];
 $chat_uid = 554;
@@ -9,6 +9,9 @@ $pageload = 10;//消息显示的条数
 $session_no = 0;//会话id
 $mesNum = 0;
 $messageSessionList = [];
+$secret = 'oms';
+
+$token = md5(date('y-m-d h:i').$chat_uid.$oms_id.$secret);
 //消息类型
 $mes_type = 'message';
 //实例化消息
@@ -82,6 +85,7 @@ $arrGroup = $mes->groupChatList();
     var groupId = 0;
     var header_img_url = "<?php echo $card_image?>";
     nearestContact = new Object();
+    var chat_token = "<?php echo !empty($token) ? $token : 1?>";
     nearestContact = <?php echo !empty($ContactManSession) ? json_encode( $ContactManSession ): json_encode([]);?>;
 
   </script>
